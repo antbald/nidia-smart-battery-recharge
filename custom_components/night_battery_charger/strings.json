@@ -1,0 +1,73 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Core Configuration",
+                "description": "Let's start with the basics. Select the inverter switch and your battery details.",
+                "data": {
+                    "inverter_switch_entity_id": "Inverter Grid Charge Switch",
+                    "battery_capacity_kwh": "Battery Capacity",
+                    "battery_soc_sensor_entity_id": "Battery SOC Sensor"
+                },
+                "data_description": {
+                    "inverter_switch_entity_id": "The switch entity that controls whether the inverter charges from the grid.",
+                    "battery_capacity_kwh": "The total usable energy capacity of your battery in kWh.",
+                    "battery_soc_sensor_entity_id": "The sensor indicating the current battery percentage (0-100%)."
+                }
+            },
+            "sensors": {
+                "title": "Sensors Setup",
+                "description": "Select the sensors used to monitor consumption and solar forecast.",
+                "data": {
+                    "house_load_power_sensor_entity_id": "House Load Power Sensor",
+                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow"
+                },
+                "data_description": {
+                    "house_load_power_sensor_entity_id": "A sensor measuring the instantaneous power consumption of the house (Watts). Used to learn daily habits.",
+                    "solar_forecast_sensor_entity_id": "A sensor providing the estimated solar production for the next day (kWh)."
+                }
+            },
+            "tuning": {
+                "title": "Tuning & Notifications",
+                "description": "Fine-tune the algorithm and setup notifications.",
+                "data": {
+                    "min_soc_reserve_percent": "Minimum SOC Reserve",
+                    "safety_spread_percent": "Safety Spread",
+                    "notify_service": "Notification Service"
+                },
+                "data_description": {
+                    "min_soc_reserve_percent": "The battery level (%) that should always be preserved and never counted as 'available' for tomorrow's load.",
+                    "safety_spread_percent": "Percentage of extra energy to charge on top of the calculated need, acting as a safety buffer.",
+                    "notify_service": "Optional. A notification service (e.g. notify.mobile_app_...) to receive a summary every morning."
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "abort": {
+            "already_configured": "Device is already configured"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Nidia Smart Battery Recharge Options",
+                "data": {
+                    "battery_capacity_kwh": "Battery Capacity",
+                    "min_soc_reserve_percent": "Minimum SOC Reserve",
+                    "safety_spread_percent": "Safety Spread",
+                    "notify_service": "Notification Service"
+                },
+                "data_description": {
+                    "battery_capacity_kwh": "The total usable energy capacity of your battery in kWh.",
+                    "min_soc_reserve_percent": "The battery level (%) that should always be preserved.",
+                    "safety_spread_percent": "Percentage of extra energy to charge as a safety buffer.",
+                    "notify_service": "A notification service (e.g. notify.mobile_app_...) to receive a summary every morning."
+                }
+            }
+        }
+    }
+}

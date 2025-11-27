@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+- **Fix**: Config flow now correctly shows multi-step wizard (Core → Sensors → Tuning).
+- **New**: Added Italian translation (it.json) for Italian users.
+- **New**: Added strings.json for proper translation support.
+- **Improvement**: Field descriptions now appear correctly under each input field.
+
 ## 0.2.2
 
 - **UI Improvement**: Added detailed descriptions for every configuration field in the UI.

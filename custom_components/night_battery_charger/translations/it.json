@@ -1,0 +1,73 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Configurazione Base",
+                "description": "Iniziamo con le impostazioni essenziali. Seleziona lo switch dell'inverter e i dettagli della batteria.",
+                "data": {
+                    "inverter_switch_entity_id": "Switch Carica da Rete Inverter",
+                    "battery_capacity_kwh": "Capacità Batteria",
+                    "battery_soc_sensor_entity_id": "Sensore SOC Batteria"
+                },
+                "data_description": {
+                    "inverter_switch_entity_id": "L'entità switch che controlla se l'inverter può caricare dalla rete elettrica.",
+                    "battery_capacity_kwh": "La capacità energetica totale utilizzabile della tua batteria in kWh.",
+                    "battery_soc_sensor_entity_id": "Il sensore che indica la percentuale attuale della batteria (0-100%)."
+                }
+            },
+            "sensors": {
+                "title": "Configurazione Sensori",
+                "description": "Seleziona i sensori utilizzati per monitorare i consumi e le previsioni solari.",
+                "data": {
+                    "house_load_power_sensor_entity_id": "Sensore Potenza Casa",
+                    "solar_forecast_sensor_entity_id": "Previsione Solare Domani"
+                },
+                "data_description": {
+                    "house_load_power_sensor_entity_id": "Un sensore che misura il consumo istantaneo della casa (Watt). Usato per imparare le abitudini giornaliere.",
+                    "solar_forecast_sensor_entity_id": "Un sensore che fornisce la produzione solare stimata per il giorno successivo (kWh)."
+                }
+            },
+            "tuning": {
+                "title": "Ottimizzazione e Notifiche",
+                "description": "Affina l'algoritmo e configura le notifiche.",
+                "data": {
+                    "min_soc_reserve_percent": "Riserva SOC Minima",
+                    "safety_spread_percent": "Margine di Sicurezza",
+                    "notify_service": "Servizio Notifiche"
+                },
+                "data_description": {
+                    "min_soc_reserve_percent": "Il livello della batteria (%) che deve essere sempre preservato e mai considerato 'disponibile' per il carico di domani.",
+                    "safety_spread_percent": "Percentuale di energia extra da caricare oltre il calcolato, come margine di sicurezza.",
+                    "notify_service": "Opzionale. Un servizio di notifica (es. notify.mobile_app_...) per ricevere un riepilogo ogni mattina."
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Connessione fallita",
+            "invalid_auth": "Autenticazione non valida",
+            "unknown": "Errore imprevisto"
+        },
+        "abort": {
+            "already_configured": "Il dispositivo è già configurato"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Opzioni Nidia Smart Battery Recharge",
+                "data": {
+                    "battery_capacity_kwh": "Capacità Batteria",
+                    "min_soc_reserve_percent": "Riserva SOC Minima",
+                    "safety_spread_percent": "Margine di Sicurezza",
+                    "notify_service": "Servizio Notifiche"
+                },
+                "data_description": {
+                    "battery_capacity_kwh": "La capacità energetica totale utilizzabile della tua batteria in kWh.",
+                    "min_soc_reserve_percent": "Il livello della batteria (%) che deve essere sempre preservato.",
+                    "safety_spread_percent": "Percentuale di energia extra da caricare come margine di sicurezza.",
+                    "notify_service": "Un servizio di notifica (es. notify.mobile_app_...) per ricevere un riepilogo ogni mattina."
+                }
+            }
+        }
+    }
+}
