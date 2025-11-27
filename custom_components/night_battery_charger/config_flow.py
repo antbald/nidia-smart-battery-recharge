@@ -56,7 +56,15 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     vol.Required(
                         CONF_BATTERY_CAPACITY, default=DEFAULT_BATTERY_CAPACITY
-                    ): vol.Coerce(float),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1,
+                            max=500.0,
+                            step=0.1,
+                            unit_of_measurement="kWh",
+                            mode=selector.NumberSelectorMode.BOX,
+                        )
+                    ),
                     vol.Required(CONF_BATTERY_SOC_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(
                             domain="sensor", device_class="battery"
@@ -110,10 +118,26 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(
                         CONF_MIN_SOC_RESERVE, default=DEFAULT_MIN_SOC_RESERVE
-                    ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=100,
+                            step=1,
+                            unit_of_measurement="%",
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        )
+                    ),
                     vol.Required(
                         CONF_SAFETY_SPREAD, default=DEFAULT_SAFETY_SPREAD
-                    ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=100,
+                            step=1,
+                            unit_of_measurement="%",
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        )
+                    ),
                     vol.Optional(CONF_NOTIFY_SERVICE): selector.TextSelector(),
                 }
             ),
@@ -155,7 +179,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                                 CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY
                             ),
                         ),
-                    ): vol.Coerce(float),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1,
+                            max=500.0,
+                            step=0.1,
+                            unit_of_measurement="kWh",
+                            mode=selector.NumberSelectorMode.BOX,
+                        )
+                    ),
                     vol.Required(
                         CONF_MIN_SOC_RESERVE,
                         default=self.config_entry.options.get(
@@ -164,7 +196,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                                 CONF_MIN_SOC_RESERVE, DEFAULT_MIN_SOC_RESERVE
                             ),
                         ),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=100,
+                            step=1,
+                            unit_of_measurement="%",
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        )
+                    ),
                     vol.Required(
                         CONF_SAFETY_SPREAD,
                         default=self.config_entry.options.get(
@@ -173,7 +213,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                                 CONF_SAFETY_SPREAD, DEFAULT_SAFETY_SPREAD
                             ),
                         ),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=100,
+                            step=1,
+                            unit_of_measurement="%",
+                            mode=selector.NumberSelectorMode.SLIDER,
+                        )
+                    ),
                     vol.Optional(
                         CONF_NOTIFY_SERVICE,
                         default=self.config_entry.options.get(

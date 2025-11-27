@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- **UI Improvement**: Used native Home Assistant selectors (Sliders, Boxes) for numeric inputs in Config and Options flow.
+- **UI Improvement**: Added units of measurement to configuration fields.
+
 ## 0.2.0
 
 - **New**: Added `sensor.night_charge_plan_reasoning` to explain the algorithm's decision.
