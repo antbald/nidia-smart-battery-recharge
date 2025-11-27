@@ -59,26 +59,36 @@ A Home Assistant custom integration that optimizes night-time grid charging of h
 
 ## Lovelace Dashboard Example
 
-Here is a simple YAML configuration for a Lovelace card to monitor the system:
+Here is a complete example using a `vertical-stack` card to group everything together. This configuration uses standard Home Assistant cards (Entities, Gauge, Markdown).
 
 ```yaml
 type: vertical-stack
 cards:
+  - type: tile
+    entity: binary_sensor.night_charge_active
+    name: Night Charge Status
+    icon: mdi:battery-charging
+    color: blue
+
   - type: entities
-    title: Night Charge Status
+    title: Planning & Forecast
     entities:
       - entity: binary_sensor.night_charge_scheduled_tonight
         name: Scheduled Tonight
-      - entity: binary_sensor.night_charge_active
-        name: Currently Charging
       - entity: sensor.night_charge_planned_grid_energy_kwh
-        name: Planned Charge (kWh)
+        name: Planned Charge
       - entity: sensor.night_charge_target_soc_percent
         name: Target SOC
       - entity: sensor.night_charge_load_forecast_tomorrow_kwh
         name: Load Forecast (Tomorrow)
       - entity: sensor.night_charge_solar_forecast_tomorrow_kwh
         name: Solar Forecast (Tomorrow)
+
+  - type: markdown
+    title: Algorithm Reasoning
+    content: >
+      {{ states('sensor.night_charge_plan_reasoning') }}
+
   - type: markdown
     title: Last Run Summary
     content: >

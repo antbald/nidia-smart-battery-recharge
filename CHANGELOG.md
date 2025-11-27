@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- **New**: Added `sensor.night_charge_plan_reasoning` to explain the algorithm's decision.
+- **Improvement**: Redesigned Config Flow with multiple steps (Core, Sensors, Tuning) and better descriptions.
+- **Docs**: Updated README with a better Dashboard example.
+
 ## 0.1.0
 
 - Initial release.

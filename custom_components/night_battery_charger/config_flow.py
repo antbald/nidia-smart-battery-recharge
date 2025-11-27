@@ -39,11 +39,13 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Handle the initial step."""
+        """Step 1: Core Configuration."""
+        self._data = {}
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            return self.async_create_entry(title=DEFAULT_NAME, data=user_input)
+            self._data.update(user_input)
+            return await self.async_step_sensors()
 
         return self.async_show_form(
             step_id="user",
@@ -52,14 +54,33 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_INVERTER_SWITCH): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="switch")
                     ),
+                    vol.Required(
+                        CONF_BATTERY_CAPACITY, default=DEFAULT_BATTERY_CAPACITY
+                    ): vol.Coerce(float),
                     vol.Required(CONF_BATTERY_SOC_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(
                             domain="sensor", device_class="battery"
                         )
                     ),
-                    vol.Required(
-                        CONF_BATTERY_CAPACITY, default=DEFAULT_BATTERY_CAPACITY
-                    ): vol.Coerce(float),
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_sensors(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 2: Sensors Configuration."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            self._data.update(user_input)
+            return await self.async_step_tuning()
+
+        return self.async_show_form(
+            step_id="sensors",
+            data_schema=vol.Schema(
+                {
                     vol.Required(CONF_HOUSE_LOAD_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(
                             domain="sensor", device_class="power"
@@ -68,13 +89,32 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_SOLAR_FORECAST_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="sensor")
                     ),
-                    vol.Optional(CONF_NOTIFY_SERVICE): selector.TextSelector(),
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_tuning(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 3: Tuning & Notifications."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            self._data.update(user_input)
+            return self.async_create_entry(title=DEFAULT_NAME, data=self._data)
+
+        return self.async_show_form(
+            step_id="tuning",
+            data_schema=vol.Schema(
+                {
                     vol.Required(
                         CONF_MIN_SOC_RESERVE, default=DEFAULT_MIN_SOC_RESERVE
                     ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
                     vol.Required(
                         CONF_SAFETY_SPREAD, default=DEFAULT_SAFETY_SPREAD
                     ): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+                    vol.Optional(CONF_NOTIFY_SERVICE): selector.TextSelector(),
                 }
             ),
             errors=errors,

@@ -1,12 +1,12 @@
 {
-  "domain": "night_battery_charger",
-  "name": "Nidia Smart Battery Recharge",
-  "codeowners": [],
-  "config_flow": true,
-  "dependencies": [],
-  "documentation": "https://github.com/antoniobaldassarre/nidia-smart-battery-recharge",
-  "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/antoniobaldassarre/nidia-smart-battery-recharge/issues",
-  "requirements": [],
-  "version": "0.1.0"
+    "domain": "night_battery_charger",
+    "name": "Nidia Smart Battery Recharge",
+    "codeowners": [],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/antoniobaldassarre/nidia-smart-battery-recharge",
+    "iot_class": "local_polling",
+    "issue_tracker": "https://github.com/antoniobaldassarre/nidia-smart-battery-recharge/issues",
+    "requirements": [],
+    "version": "0.2.0"
 }

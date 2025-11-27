@@ -2,17 +2,29 @@
     "config": {
         "step": {
             "user": {
-                "title": "Nidia Smart Battery Recharge Configuration",
-                "description": "Configure your battery and sensors for smart night charging.",
+                "title": "Core Configuration",
+                "description": "Let's start with the basics. Select the inverter switch and your battery details.",
                 "data": {
                     "inverter_switch_entity_id": "Inverter Grid Charge Switch",
-                    "battery_soc_sensor_entity_id": "Battery SOC Sensor (%)",
                     "battery_capacity_kwh": "Battery Capacity (kWh)",
+                    "battery_soc_sensor_entity_id": "Battery SOC Sensor (%)"
+                }
+            },
+            "sensors": {
+                "title": "Sensors Setup",
+                "description": "Select the sensors used to monitor consumption and solar forecast.",
+                "data": {
                     "house_load_power_sensor_entity_id": "House Load Power Sensor (W)",
-                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow (kWh)",
-                    "notify_service": "Notification Service (Optional, e.g. notify.mobile_app)",
+                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow (kWh)"
+                }
+            },
+            "tuning": {
+                "title": "Tuning & Notifications",
+                "description": "Fine-tune the algorithm and setup notifications.",
+                "data": {
                     "min_soc_reserve_percent": "Minimum SOC Reserve (%)",
-                    "safety_spread_percent": "Safety Spread (%)"
+                    "safety_spread_percent": "Safety Spread (%)",
+                    "notify_service": "Notification Service (Optional)"
                 }
             }
         },
