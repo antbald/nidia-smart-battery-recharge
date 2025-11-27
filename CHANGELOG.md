@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- **UI Improvement**: Added detailed descriptions for every configuration field in the UI.
+
 ## 0.2.1
 
 - **UI Improvement**: Used native Home Assistant selectors (Sliders, Boxes) for numeric inputs in Config and Options flow.
