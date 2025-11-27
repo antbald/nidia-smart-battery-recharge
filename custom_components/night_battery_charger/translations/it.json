@@ -69,5 +69,12 @@
                 }
             }
         }
+    },
+    "entity": {
+        "button": {
+            "recalculate_plan": {
+                "name": "Ricalcola Piano"
+            }
+        }
     }
 }

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1
+
+- **New**: Added button entity `button.night_charge_recalculate_plan` to manually trigger plan calculation
+  - Allows you to preview what the integration will do tomorrow with current data
+  - Useful for testing and understanding the algorithm's decisions
+  - Updates `sensor.night_charge_plan_reasoning` immediately when pressed
+- **Testing**: Added 2 new tests for button entity (21 total tests, all passing)
+- **Translations**: Added button translations for English and Italian
+
 ## 0.5.0
 
 - **New**: Added 7 new sensors showing average consumption for each day of the week (Monday through Sunday)

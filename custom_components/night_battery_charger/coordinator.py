@@ -503,3 +503,7 @@ class NidiaBatteryManager:
         self._disable_charge_next_night = True
         self._force_charge_next_night = False
         await self._plan_night_charge(dt_util.now())
+
+    async def async_recalculate_plan(self):
+        """Public method to recalculate plan (used by button entity)."""
+        await self._plan_night_charge(dt_util.now())
