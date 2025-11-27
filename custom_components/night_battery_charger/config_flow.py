@@ -97,7 +97,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         )
                     ),
                     vol.Required(CONF_SOLAR_FORECAST_SENSOR): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="sensor")
+                        selector.EntitySelectorConfig(
+                            domain="sensor"
+                        )
                     ),
                 }
             ),

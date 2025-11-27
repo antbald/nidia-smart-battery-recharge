@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1
+
+- **Note**: The sensor selector already accepts all sensor entities (no device_class filter). If you can't see your combined/helper sensors in the dropdown:
+  1. Restart Home Assistant completely to reload the integration
+  2. Clear your browser cache (Ctrl+F5 or Cmd+Shift+R)
+  3. Delete and re-add the integration if the issue persists
+- **Clarification**: Combined sensors (like those created with "Combine state of multiple entities" helper) should be visible as long as they have `domain: sensor`.
+
 ## 0.4.0
 
 - **Fix**: Removed `device_class="power"` filter from house load sensor to allow selecting any sensor including helpers.
