@@ -1,0 +1,11 @@
+recalculate_plan_now:
+  name: Recalculate Plan Now
+  description: Forces an immediate recalculation of the night charge plan.
+
+force_charge_tonight:
+  name: Force Charge Tonight
+  description: Forces the system to charge tonight, overriding the optimization logic.
+
+disable_tonight:
+  name: Disable Charge Tonight
+  description: Prevents the system from charging tonight, even if the plan suggests it.
