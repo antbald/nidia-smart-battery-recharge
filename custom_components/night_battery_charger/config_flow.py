@@ -93,7 +93,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_HOUSE_LOAD_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(
-                            domain="sensor", device_class="power"
+                            domain="sensor"
                         )
                     ),
                     vol.Required(CONF_SOLAR_FORECAST_SENSOR): selector.EntitySelector(
@@ -123,6 +123,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
             return self.async_create_entry(title=DEFAULT_NAME, data=data)
 
+        # Get available notify services
+        notify_services = self._get_notify_services()
+
         return self.async_show_form(
             step_id="tuning",
             data_schema=vol.Schema(
@@ -149,7 +152,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.NumberSelectorMode.SLIDER,
                         )
                     ),
-                    vol.Optional(CONF_NOTIFY_SERVICE): selector.TextSelector(),
+                    vol.Optional(CONF_NOTIFY_SERVICE): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=notify_services,
+                            mode=selector.SelectSelectorMode.DROPDOWN,
+                        )
+                    ) if notify_services else selector.TextSelector(),
                 }
             ),
             errors=errors,
@@ -158,6 +166,16 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "total_steps": "3"
             }
         )
+
+    def _get_notify_services(self) -> list[str]:
+        """Get list of available notify services."""
+        notify_services = self.hass.services.async_services().get("notify", {})
+        services_list = [
+            f"notify.{service}"
+            for service in notify_services.keys()
+        ]
+        return services_list if services_list else []
+
 
     @staticmethod
     @callback

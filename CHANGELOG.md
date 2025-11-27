@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- **Fix**: Removed `device_class="power"` filter from house load sensor to allow selecting any sensor including helpers.
+- **Improvement**: Notification service now uses a dropdown selector showing all available notify services instead of manual text input.
+- **Important**: After updating, you MUST restart Home Assistant to reload the config flow code.
+
 ## 0.3.1
 
 - **Fix**: Config flow completely rewritten following the working pattern from ha-ev-smart-charger.
