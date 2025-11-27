@@ -339,17 +339,38 @@ class NidiaBatteryManager:
         """Forecast load based on history for the given weekday."""
         history = self._data["history"]
         same_weekday_values = [e["consumption_kwh"] for e in history if e["weekday"] == weekday]
-        
+
         if same_weekday_values:
             return sum(same_weekday_values) / len(same_weekday_values)
-        
+
         # Fallback: average of all history
         all_values = [e["consumption_kwh"] for e in history]
         if all_values:
             return sum(all_values) / len(all_values)
-            
+
         # Fallback: default
         return 10.0
+
+    def get_weekday_average(self, weekday: int) -> float:
+        """Get average consumption for a specific weekday (0=Monday, 6=Sunday)."""
+        history = self._data["history"]
+        same_day_values = [
+            entry["consumption_kwh"]
+            for entry in history
+            if entry["weekday"] == weekday
+        ]
+        if same_day_values:
+            return sum(same_day_values) / len(same_day_values)
+        return 0.0
+
+    @property
+    def weekday_averages(self) -> dict[str, float]:
+        """Get all weekday averages."""
+        weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        return {
+            weekdays[i]: self.get_weekday_average(i)
+            for i in range(7)
+        }
 
     def _get_solar_forecast(self) -> float:
         """Get solar forecast from sensor."""

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.0
+
+- **New**: Added 7 new sensors showing average consumption for each day of the week (Monday through Sunday)
+  - `sensor.night_charge_avg_consumption_monday`
+  - `sensor.night_charge_avg_consumption_tuesday`
+  - `sensor.night_charge_avg_consumption_wednesday`
+  - `sensor.night_charge_avg_consumption_thursday`
+  - `sensor.night_charge_avg_consumption_friday`
+  - `sensor.night_charge_avg_consumption_saturday`
+  - `sensor.night_charge_avg_consumption_sunday`
+- **Testing**: Comprehensive test suite added with 19 tests covering:
+  - Multi-step configuration flow
+  - Sensor and binary sensor creation
+  - Integration setup and teardown
+  - Service handlers
+  - Coordinator business logic
+- **Testing**: Enhanced fixtures for better integration testing
+- **Improvement**: Code organization improved for better maintainability
+
 ## 0.4.1
 
 - **Note**: The sensor selector already accepts all sensor entities (no device_class filter). If you can't see your combined/helper sensors in the dropdown:

@@ -99,6 +99,63 @@ async def async_setup_entry(
                 None,
                 lambda m: m.plan_reasoning,
             ),
+            # Weekday average consumption sensors
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_monday",
+                "Average Consumption Monday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("monday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_tuesday",
+                "Average Consumption Tuesday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("tuesday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_wednesday",
+                "Average Consumption Wednesday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("wednesday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_thursday",
+                "Average Consumption Thursday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("thursday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_friday",
+                "Average Consumption Friday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("friday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_saturday",
+                "Average Consumption Saturday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("saturday", 0.0),
+            ),
+            NidiaSensor(
+                manager,
+                "night_charge_avg_consumption_sunday",
+                "Average Consumption Sunday",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.weekday_averages.get("sunday", 0.0),
+            ),
         ]
     )
 
