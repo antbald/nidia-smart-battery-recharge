@@ -109,6 +109,8 @@ async def test_planning_logic(hass: HomeAssistant, mock_config_entry):
     assert manager.target_soc_percent == 100.0
     assert manager.planned_grid_charge_kwh == 5.0
     assert manager.is_charging_scheduled is True
+    assert "Planned 5.00 kWh grid charge" in manager.plan_reasoning
+    assert "Tomorrow's estimated load is 10.00 kWh" in manager.plan_reasoning
 
     # Scenario 2: Low Load, High Solar
     # Load Forecast: 5 kWh
@@ -129,6 +131,7 @@ async def test_planning_logic(hass: HomeAssistant, mock_config_entry):
     assert manager.target_soc_percent == 16.5
     assert manager.planned_grid_charge_kwh == 0.0
     assert manager.is_charging_scheduled is False
+    assert "Planned 0.00 kWh grid charge" in manager.plan_reasoning
 
 @pytest.mark.asyncio
 async def test_charging_execution(hass: HomeAssistant, mock_config_entry):

@@ -91,6 +91,14 @@ async def async_setup_entry(
                 None,
                 lambda m: m.safety_spread,
             ),
+            NidiaSensor(
+                manager,
+                "night_charge_plan_reasoning",
+                "Plan Reasoning",
+                None,
+                None,
+                lambda m: m.plan_reasoning,
+            ),
         ]
     )
 

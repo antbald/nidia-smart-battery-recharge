@@ -72,6 +72,9 @@ class NidiaBatteryManager:
         # Overrides
         self._force_charge_next_night = False
         self._disable_charge_next_night = False
+        
+        # Reasoning string
+        self.plan_reasoning = "No plan calculated yet."
 
     @property
     def battery_capacity(self) -> float:
@@ -310,6 +313,20 @@ class NidiaBatteryManager:
         else:
             self.planned_grid_charge_kwh = needed_kwh
             self.is_charging_scheduled = needed_kwh > 0
+
+        # Construct reasoning string
+        reasoning_prefix = ""
+        if self._disable_charge_next_night:
+            reasoning_prefix = "[DISABLED BY USER] "
+        elif self._force_charge_next_night:
+            reasoning_prefix = "[FORCED BY USER] "
+
+        self.plan_reasoning = (
+            f"{reasoning_prefix}Planned {self.planned_grid_charge_kwh:.2f} kWh grid charge. "
+            f"Tomorrow's estimated load is {self.load_forecast_kwh:.2f} kWh, "
+            f"with {self.solar_forecast_kwh:.2f} kWh solar forecast. "
+            f"Target SOC: {self.target_soc_percent:.1f}%."
+        )
 
         _LOGGER.info(
             f"Plan: Load={self.load_forecast_kwh:.2f}kWh, Solar={self.solar_forecast_kwh:.2f}kWh, "
