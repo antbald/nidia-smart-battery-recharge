@@ -217,9 +217,12 @@ class NidiaBatteryManager:
         energy_kwh = (avg_power * time_diff) / 1000.0
 
         self._current_day_consumption_kwh += energy_kwh
-        
+
         self._last_load_reading_time = now
         self._last_load_reading_value = new_val
+
+        # Update sensors to reflect new consumption value
+        self._update_sensors()
 
     async def _handle_midnight(self, now):
         """Close the current day's consumption and store it."""
@@ -371,6 +374,11 @@ class NidiaBatteryManager:
             weekdays[i]: self.get_weekday_average(i)
             for i in range(7)
         }
+
+    @property
+    def current_day_consumption_kwh(self) -> float:
+        """Get current day's consumption so far."""
+        return self._current_day_consumption_kwh
 
     def _get_solar_forecast(self) -> float:
         """Get solar forecast from sensor."""

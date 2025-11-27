@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2
+
+- **New**: Added `sensor.night_charge_current_day_consumption_kwh` to track real-time daily consumption
+  - Shows the energy consumed so far today (resets at midnight)
+  - Updates automatically as the house load sensor changes
+  - Useful for verifying the integration is learning consumption patterns
+  - Helps understand if the tracking system is working correctly
+
 ## 0.5.1
 
 - **New**: Added button entity `button.night_charge_recalculate_plan` to manually trigger plan calculation

@@ -99,6 +99,14 @@ async def async_setup_entry(
                 None,
                 lambda m: m.plan_reasoning,
             ),
+            NidiaSensor(
+                manager,
+                "night_charge_current_day_consumption_kwh",
+                "Current Day Consumption",
+                UnitOfEnergy.KILO_WATT_HOUR,
+                SensorDeviceClass.ENERGY,
+                lambda m: m.current_day_consumption_kwh,
+            ),
             # Weekday average consumption sensors
             NidiaSensor(
                 manager,
