@@ -1,7 +1,6 @@
 """Config flow for Nidia Smart Battery Recharge integration."""
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 import voluptuous as vol
@@ -28,17 +27,11 @@ from .const import (
     DOMAIN,
 )
 
-_LOGGER = logging.getLogger(__name__)
-
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Nidia Smart Battery Recharge."""
 
     VERSION = 1
-
-    def __init__(self) -> None:
-        """Initialize the config flow."""
-        self._data: dict[str, Any] = {}
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -47,7 +40,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            self._data.update(user_input)
+            # Store core configuration and move to sensors step
+            self.core_info = user_input
             return await self.async_step_sensors()
 
         return self.async_show_form(
@@ -76,6 +70,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+            description_placeholders={
+                "step": "1",
+                "total_steps": "3"
+            }
         )
 
     async def async_step_sensors(
@@ -85,7 +83,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            self._data.update(user_input)
+            # Store sensor configuration and move to tuning step
+            self.sensor_info = user_input
             return await self.async_step_tuning()
 
         return self.async_show_form(
@@ -103,6 +102,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+            description_placeholders={
+                "step": "2",
+                "total_steps": "3"
+            }
         )
 
     async def async_step_tuning(
@@ -112,8 +115,13 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(title=DEFAULT_NAME, data=self._data)
+            # Merge all data and create entry
+            data = {
+                **self.core_info,
+                **self.sensor_info,
+                **user_input
+            }
+            return self.async_create_entry(title=DEFAULT_NAME, data=data)
 
         return self.async_show_form(
             step_id="tuning",
@@ -145,6 +153,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+            description_placeholders={
+                "step": "3",
+                "total_steps": "3"
+            }
         )
 
     @staticmethod

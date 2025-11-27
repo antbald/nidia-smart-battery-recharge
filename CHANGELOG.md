@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- **Fix**: Config flow completely rewritten following the working pattern from ha-ev-smart-charger.
+- **Fix**: Multi-step wizard now works correctly with instance attributes instead of _data dictionary.
+- **Fix**: Step indicators (1/3, 2/3, 3/3) now display correctly.
+
 ## 0.3.0
 
 - **Fix**: Config flow now correctly shows multi-step wizard (Core → Sensors → Tuning).
