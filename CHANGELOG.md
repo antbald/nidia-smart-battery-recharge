@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.3
+
+- **Fix**: Minimum consumption fallback now properly applied in main planning logic
+  - Fixed regression where fallback was only applied during EV recalculation
+  - Main planning (button press, scheduled 22:59) now uses fallback-protected forecast
+  - Removed redundant `_calculate_load_forecast()` method
+  - Unified consumption forecast logic to use `_get_consumption_forecast_value()` everywhere
+  - When historical consumption < minimum threshold, system now correctly uses fallback value
+  - Warning logged when fallback is applied for transparency
+
 ## 0.6.2
 
 - **Fix**: Number entities now properly visible in Home Assistant UI

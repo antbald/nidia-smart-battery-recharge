@@ -268,13 +268,8 @@ class NidiaBatteryManager:
         _LOGGER.info("Planning night charge (include_ev=%s, use_today=%s)...", include_ev, use_today)
 
         # 1. Forecast Consumption for Tomorrow (or Today if after midnight)
-        if use_today:
-            target_weekday = now.weekday()
-        else:
-            target_date = now + timedelta(days=1)
-            target_weekday = target_date.weekday()
-
-        self.load_forecast_kwh = self._calculate_load_forecast(target_weekday)
+        # Use consumption forecast with fallback protection
+        self.load_forecast_kwh = self._get_consumption_forecast_value(for_today=use_today)
 
         # 2. Solar Forecast (use today's or tomorrow's based on parameter)
         self.solar_forecast_kwh = self._get_solar_forecast_value(for_today=use_today)
@@ -352,22 +347,6 @@ class NidiaBatteryManager:
         )
         
         self._update_sensors()
-
-    def _calculate_load_forecast(self, weekday: int) -> float:
-        """Forecast load based on history for the given weekday."""
-        history = self._data["history"]
-        same_weekday_values = [e["consumption_kwh"] for e in history if e["weekday"] == weekday]
-
-        if same_weekday_values:
-            return sum(same_weekday_values) / len(same_weekday_values)
-
-        # Fallback: average of all history
-        all_values = [e["consumption_kwh"] for e in history]
-        if all_values:
-            return sum(all_values) / len(all_values)
-
-        # Fallback: default
-        return 10.0
 
     def get_weekday_average(self, weekday: int) -> float:
         """Get average consumption for a specific weekday (0=Monday, 6=Sunday)."""
