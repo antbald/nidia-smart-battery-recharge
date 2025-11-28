@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.1
+
+- **New**: `number.night_battery_charger_minimum_consumption_fallback` entity for consumption forecast protection
+  - Configurable minimum consumption threshold (default: 10 kWh)
+  - User-adjustable range: 0-50 kWh in 0.5 kWh steps
+  - Automatically applied when historical consumption forecast is below threshold
+  - Prevents incorrect charging decisions when insufficient historical data is available
+- **Fix**: Consumption forecast now uses fallback value when historical data is missing or too low
+  - Logged warning when fallback is applied for transparency
+  - Ensures safe operation during initial setup or data gaps
+
 ## 0.6.0
 
 - **New**: `number.night_charge_ev_energy` entity for external load integration (e.g., EV charging)

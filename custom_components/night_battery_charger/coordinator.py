@@ -82,6 +82,9 @@ class NidiaBatteryManager:
         self._ev_energy_kwh = 0.0
         self._bypass_switch_active = False
 
+        # Consumption fallback
+        self._minimum_consumption_fallback = 10.0
+
     @property
     def battery_capacity(self) -> float:
         """Return configured battery capacity."""
@@ -527,6 +530,11 @@ class NidiaBatteryManager:
 
     # EV Integration Methods
 
+    def set_minimum_consumption_fallback(self, value: float):
+        """Set the minimum consumption fallback value."""
+        self._minimum_consumption_fallback = value
+        _LOGGER.info("Minimum consumption fallback updated to %.2f kWh", value)
+
     async def async_handle_ev_energy_change(self, new_value: float):
         """Handle EV energy sensor value change during night window."""
         from datetime import time
@@ -606,7 +614,17 @@ class NidiaBatteryManager:
             tomorrow = dt_util.now() + timedelta(days=1)
             weekday = tomorrow.weekday()
 
-        return self._get_weekday_average(weekday)
+        consumption = self._get_weekday_average(weekday)
+
+        # Apply fallback if consumption is below minimum threshold
+        if consumption < self._minimum_consumption_fallback:
+            _LOGGER.warning(
+                "Consumption forecast %.2f kWh is below minimum fallback %.2f kWh, using fallback",
+                consumption, self._minimum_consumption_fallback
+            )
+            return self._minimum_consumption_fallback
+
+        return consumption
 
     async def _enable_bypass_switch(self):
         """Enable battery bypass switch."""

@@ -79,6 +79,14 @@
             "recalculate_plan": {
                 "name": "Ricalcola Piano"
             }
+        },
+        "number": {
+            "ev_energy": {
+                "name": "Energia EV"
+            },
+            "minimum_consumption_fallback": {
+                "name": "Consumo Minimo di Fallback"
+            }
         }
     }
 }
