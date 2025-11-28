@@ -20,11 +20,13 @@
                 "description": "Seleziona i sensori utilizzati per monitorare i consumi e le previsioni solari.",
                 "data": {
                     "house_load_power_sensor_entity_id": "Sensore Potenza Casa",
-                    "solar_forecast_sensor_entity_id": "Previsione Solare Domani"
+                    "solar_forecast_sensor_entity_id": "Previsione Solare Domani",
+                    "solar_forecast_today_sensor": "Previsione Solare Oggi"
                 },
                 "data_description": {
                     "house_load_power_sensor_entity_id": "Un sensore che misura il consumo istantaneo della casa (Watt). Usato per imparare le abitudini giornaliere.",
-                    "solar_forecast_sensor_entity_id": "Un sensore che fornisce la produzione solare stimata per il giorno successivo (kWh)."
+                    "solar_forecast_sensor_entity_id": "Un sensore che fornisce la produzione solare stimata per il giorno successivo (kWh).",
+                    "solar_forecast_today_sensor": "Un sensore che fornisce la produzione solare stimata per oggi (kWh). Usato per ricalcoli dopo mezzanotte."
                 }
             },
             "tuning": {
@@ -33,12 +35,14 @@
                 "data": {
                     "min_soc_reserve_percent": "Riserva SOC Minima",
                     "safety_spread_percent": "Margine di Sicurezza",
-                    "notify_service": "Servizio Notifiche"
+                    "notify_service": "Servizio Notifiche",
+                    "battery_bypass_switch": "Switch Bypass Batteria (Opzionale)"
                 },
                 "data_description": {
                     "min_soc_reserve_percent": "Il livello della batteria (%) che deve essere sempre preservato e mai considerato 'disponibile' per il carico di domani.",
                     "safety_spread_percent": "Percentuale di energia extra da caricare oltre il calcolato, come margine di sicurezza.",
-                    "notify_service": "Opzionale. Un servizio di notifica (es. notify.mobile_app_...) per ricevere un riepilogo ogni mattina."
+                    "notify_service": "Opzionale. Un servizio di notifica (es. notify.mobile_app_...) per ricevere un riepilogo ogni mattina.",
+                    "battery_bypass_switch": "Opzionale. Uno switch che impedisce la scarica della batteria (permette solo la carica). Usato per integrazione EV per evitare che l'auto scarichi la batteria di casa."
                 }
             }
         },

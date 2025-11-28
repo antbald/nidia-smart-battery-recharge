@@ -8,11 +8,13 @@ CONF_BATTERY_SOC_SENSOR = "battery_soc_sensor_entity_id"
 CONF_BATTERY_CAPACITY = "battery_capacity_kwh"
 CONF_HOUSE_LOAD_SENSOR = "house_load_power_sensor_entity_id"
 CONF_SOLAR_FORECAST_SENSOR = "solar_forecast_sensor_entity_id"
+CONF_SOLAR_FORECAST_TODAY_SENSOR = "solar_forecast_today_sensor"
 CONF_NOTIFY_SERVICE = "notify_service"
 
 # Tuning Parameters
 CONF_MIN_SOC_RESERVE = "min_soc_reserve_percent"
 CONF_SAFETY_SPREAD = "safety_spread_percent"
+CONF_BATTERY_BYPASS_SWITCH = "battery_bypass_switch"
 
 # Defaults
 DEFAULT_NAME = "Nidia Smart Battery Recharge"

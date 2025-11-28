@@ -20,11 +20,13 @@
                 "description": "Select the sensors used to monitor consumption and solar forecast.",
                 "data": {
                     "house_load_power_sensor_entity_id": "House Load Power Sensor",
-                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow"
+                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow",
+                    "solar_forecast_today_sensor": "Solar Forecast Today"
                 },
                 "data_description": {
                     "house_load_power_sensor_entity_id": "A sensor measuring the instantaneous power consumption of the house (Watts). Used to learn daily habits.",
-                    "solar_forecast_sensor_entity_id": "A sensor providing the estimated solar production for the next day (kWh)."
+                    "solar_forecast_sensor_entity_id": "A sensor providing the estimated solar production for the next day (kWh).",
+                    "solar_forecast_today_sensor": "A sensor providing the estimated solar production for today (kWh). Used for recalculations after midnight."
                 }
             },
             "tuning": {
@@ -33,12 +35,14 @@
                 "data": {
                     "min_soc_reserve_percent": "Minimum SOC Reserve",
                     "safety_spread_percent": "Safety Spread",
-                    "notify_service": "Notification Service"
+                    "notify_service": "Notification Service",
+                    "battery_bypass_switch": "Battery Bypass Switch (Optional)"
                 },
                 "data_description": {
                     "min_soc_reserve_percent": "The battery level (%) that should always be preserved and never counted as 'available' for tomorrow's load.",
                     "safety_spread_percent": "Percentage of extra energy to charge on top of the calculated need, acting as a safety buffer.",
-                    "notify_service": "Optional. A notification service (e.g. notify.mobile_app_...) to receive a summary every morning."
+                    "notify_service": "Optional. A notification service (e.g. notify.mobile_app_...) to receive a summary every morning.",
+                    "battery_bypass_switch": "Optional. A switch that prevents battery discharge (allows only charging). Used for EV integration to prevent the car from draining the home battery."
                 }
             }
         },

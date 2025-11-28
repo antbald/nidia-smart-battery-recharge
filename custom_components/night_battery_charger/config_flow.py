@@ -12,6 +12,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
 from .const import (
+    CONF_BATTERY_BYPASS_SWITCH,
     CONF_BATTERY_CAPACITY,
     CONF_BATTERY_SOC_SENSOR,
     CONF_HOUSE_LOAD_SENSOR,
@@ -20,6 +21,7 @@ from .const import (
     CONF_NOTIFY_SERVICE,
     CONF_SAFETY_SPREAD,
     CONF_SOLAR_FORECAST_SENSOR,
+    CONF_SOLAR_FORECAST_TODAY_SENSOR,
     DEFAULT_BATTERY_CAPACITY,
     DEFAULT_MIN_SOC_RESERVE,
     DEFAULT_NAME,
@@ -101,6 +103,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             domain="sensor"
                         )
                     ),
+                    vol.Required(CONF_SOLAR_FORECAST_TODAY_SENSOR): selector.EntitySelector(
+                        selector.EntitySelectorConfig(
+                            domain="sensor"
+                        )
+                    ),
                 }
             ),
             errors=errors,
@@ -160,6 +167,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             mode=selector.SelectSelectorMode.DROPDOWN,
                         )
                     ) if notify_services else selector.TextSelector(),
+                    vol.Optional(CONF_BATTERY_BYPASS_SWITCH): selector.EntitySelector(
+                        selector.EntitySelectorConfig(domain="switch")
+                    ),
                 }
             ),
             errors=errors,

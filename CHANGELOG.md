@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.6.0
+
+- **New**: `number.night_charge_ev_energy` entity for external load integration (e.g., EV charging)
+  - Writable by external integrations to communicate additional energy needs during the night
+  - Automatically triggers recalculation when value changes during charging window (23:59-07:00)
+  - Resets to 0 at 07:00 each morning
+- **New**: Dynamic recalculation during night (23:59-07:00)
+  - System monitors EV energy sensor and recalculates charging plan automatically
+  - Adjusts target SOC and bypass switch based on new energy requirements
+- **New**: Battery bypass switch support (optional configuration)
+  - Prevents battery discharge when activated
+  - Automatically enabled when insufficient energy for home + EV loads
+  - Automatically disabled at 07:00
+- **New**: Solar forecast today sensor (required configuration)
+  - Used for recalculations after midnight (00:00-07:00)
+  - Ensures accurate planning when operating in the target day
+- **Improvement**: Forecast switching at midnight
+  - Before midnight: uses tomorrow's solar forecast and tomorrow's consumption
+  - After midnight: uses today's solar forecast and today's consumption
+  - Provides accurate recalculations regardless of time
+- **Documentation**: Added EV integration guide in README with automation examples
+
 ## 0.5.2
 
 - **New**: Added `sensor.night_charge_current_day_consumption_kwh` to track real-time daily consumption
