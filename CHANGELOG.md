@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.4
+
+- **Fix**: Critical bug fix for v0.6.3 - method name mismatch causing runtime error
+  - Fixed `AttributeError: 'NidiaBatteryManager' object has no attribute '_get_weekday_average'`
+  - Changed call from `self._get_weekday_average()` to `self.get_weekday_average()`
+  - Recalculate Plan button now works correctly
+
 ## 0.6.3
 
 - **Fix**: Minimum consumption fallback now properly applied in main planning logic

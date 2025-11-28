@@ -593,7 +593,7 @@ class NidiaBatteryManager:
             tomorrow = dt_util.now() + timedelta(days=1)
             weekday = tomorrow.weekday()
 
-        consumption = self._get_weekday_average(weekday)
+        consumption = self.get_weekday_average(weekday)
 
         # Apply fallback if consumption is below minimum threshold
         if consumption < self._minimum_consumption_fallback:
