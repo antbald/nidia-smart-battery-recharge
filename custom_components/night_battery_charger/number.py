@@ -37,11 +37,11 @@ class EVEnergyNumber(NumberEntity):
     _attr_device_class = "energy"
     _attr_mode = NumberMode.BOX
     _attr_icon = "mdi:ev-station"
+    _attr_entity_category = None  # Make it visible in the main UI
 
     def __init__(self, manager: NidiaBatteryManager) -> None:
         """Initialize the number entity."""
         self._manager = manager
-        self.entity_id = f"number.{DOMAIN}_ev_energy"
         self._attr_name = "EV Energy"
         self._attr_unique_id = f"{manager.entry.entry_id}_ev_energy"
         self._attr_native_value = 0.0
@@ -72,11 +72,11 @@ class MinimumConsumptionFallbackNumber(NumberEntity):
     _attr_device_class = "energy"
     _attr_mode = NumberMode.BOX
     _attr_icon = "mdi:gauge-low"
+    _attr_entity_category = None  # Make it visible in the main UI
 
     def __init__(self, manager: NidiaBatteryManager) -> None:
         """Initialize the number entity."""
         self._manager = manager
-        self.entity_id = f"number.{DOMAIN}_minimum_consumption_fallback"
         self._attr_name = "Minimum Consumption Fallback"
         self._attr_unique_id = f"{manager.entry.entry_id}_minimum_consumption_fallback"
         self._attr_native_value = 10.0

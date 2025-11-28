@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2
+
+- **Fix**: Number entities now properly visible in Home Assistant UI
+  - Removed manual `entity_id` assignment that conflicted with `has_entity_name`
+  - Added explicit `entity_category = None` to ensure entities appear in main UI
+  - Entities now correctly discoverable by other integrations and automations
+
 ## 0.6.1
 
 - **New**: `number.night_battery_charger_minimum_consumption_fallback` entity for consumption forecast protection
