@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.5
+
+- **Testing**: Added comprehensive EV time logic verification test suite
+  - 353 lines of exhaustive testing covering all time scenarios
+  - Verified time logic `use_today = current_time < time(23, 59)` is CORRECT
+  - 6 real-world EV charging scenarios tested
+  - 11 edge cases verified (23:59, midnight, boundaries)
+  - All tests pass - confirms integration works correctly
+- **Documentation**: Detailed time logic analysis and troubleshooting guide
+  - Explains how forecast switching works (today vs tomorrow)
+  - Diagnostic steps for troubleshooting EV integration issues
+  - Log analysis guide for identifying sensor problems
+
 ## 0.6.4
 
 - **Fix**: Critical bug fix for v0.6.3 - method name mismatch causing runtime error
