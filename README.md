@@ -100,15 +100,13 @@ The integration monitors your **House Load Power Sensor** throughout the day:
 - Maintains a 3-week rolling history
 - Automatically learns your weekly patterns
 
-### 2. 🔮 **Forecasting Phase** (22:59 daily)
-Every night at 22:59, the system forecasts tomorrow's needs:
-- Retrieves historical consumption for tomorrow's weekday
+### 2. 🔮 **Planning & Forecasting Phase** (00:01 daily)
+Every night at 00:01, the system forecasts today's needs:
+- Retrieves historical consumption for today's weekday
 - Calculates average consumption from similar past days
-- Reads tomorrow's solar production forecast from your sensor
+- Reads today's solar production forecast from your sensor
 - Estimates the energy deficit: `Deficit = Consumption - Solar`
-
-### 3. 🧮 **Planning Phase** (22:59 daily)
-The algorithm calculates the optimal charging strategy:
+- Calculates the optimal charging strategy:
 
 ```
 Current Battery Energy = (Current SOC / 100) × Battery Capacity
@@ -123,14 +121,14 @@ Target SOC = min(100%, max(Min SOC Reserve, Target Energy / Battery Capacity × 
 Charge Needed = max(0, Target Energy - Current Battery Energy)
 ```
 
-### 4. ⚡ **Execution Phase** (23:59 - 07:00)
+### 3. ⚡ **Execution Phase** (00:01 - 07:00)
 If charging is needed:
-- **23:59**: Turns ON the inverter grid charge switch
-- **Monitoring**: Checks battery SOC every 5 minutes
+- **00:01**: Turns ON the inverter grid charge switch
+- **Monitoring**: Checks battery SOC every minute
 - **Auto-shutoff**: Turns OFF when Target SOC is reached OR at 07:00 (whichever comes first)
 - **Recording**: Saves the actual energy charged for next day's learning
 
-### 5. 📝 **Reporting Phase** (07:00)
+### 4. 📝 **Reporting Phase** (07:00)
 Every morning:
 - Generates a summary of the night's activity
 - Updates the "Last Run Summary" sensor
@@ -145,8 +143,8 @@ Every morning:
 |-----------|-------------|------|
 | `sensor.night_charge_planned_grid_energy_kwh` | Energy planned to charge from grid tonight | kWh |
 | `sensor.night_charge_target_soc_percent` | Target battery SOC to reach | % |
-| `sensor.night_charge_load_forecast_tomorrow_kwh` | Forecasted consumption for tomorrow | kWh |
-| `sensor.night_charge_solar_forecast_tomorrow_kwh` | Forecasted solar production for tomorrow | kWh |
+| `sensor.night_charge_load_forecast_today_kwh` | Forecasted consumption for today | kWh |
+| `sensor.night_charge_solar_forecast_today_kwh` | Forecasted solar production for today | kWh |
 | `sensor.night_charge_last_run_charged_energy_kwh` | Actual energy charged in last run | kWh |
 | `sensor.night_charge_last_run_summary` | Text summary of last charging session | - |
 | `sensor.night_charge_plan_reasoning` | Detailed explanation of current plan | - |
@@ -218,7 +216,7 @@ cards:
   # Tonight's Plan
   - type: custom:mushroom-title-card
     title: Tonight's Plan
-    subtitle: What will happen at 23:59
+    subtitle: What will happen at 00:01
 
   - type: horizontal-stack
     cards:
@@ -234,21 +232,21 @@ cards:
         icon: mdi:battery-check
         icon_color: blue
 
-  # Tomorrow's Forecast
+  # Today's Forecast
   - type: custom:mushroom-title-card
-    title: Tomorrow's Forecast
-    subtitle: Predicted consumption and solar production
+    title: Today's Forecast
+    subtitle: Predicted consumption and solar for today
 
   - type: horizontal-stack
     cards:
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_load_forecast_tomorrow_kwh
+        entity: sensor.night_charge_load_forecast_today_kwh
         name: Consumption
         icon: mdi:home-lightning-bolt
         icon_color: orange
 
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_solar_forecast_tomorrow_kwh
+        entity: sensor.night_charge_solar_forecast_today_kwh
         name: Solar
         icon: mdi:solar-power
         icon_color: amber
@@ -368,12 +366,12 @@ cards:
 
   # Forecasts
   - type: entities
-    title: Tomorrow's Forecast
+    title: Today's Forecast
     entities:
-      - entity: sensor.night_charge_load_forecast_tomorrow_kwh
+      - entity: sensor.night_charge_load_forecast_today_kwh
         name: Load Forecast
         icon: mdi:home-lightning-bolt
-      - entity: sensor.night_charge_solar_forecast_tomorrow_kwh
+      - entity: sensor.night_charge_solar_forecast_today_kwh
         name: Solar Forecast
         icon: mdi:solar-power
 

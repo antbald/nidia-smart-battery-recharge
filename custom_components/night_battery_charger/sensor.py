@@ -29,16 +29,16 @@ async def async_setup_entry(
         [
             NidiaSensor(
                 manager,
-                "night_charge_load_forecast_tomorrow_kwh",
-                "Load Forecast Tomorrow",
+                "night_charge_load_forecast_today_kwh",
+                "Load Forecast Today",
                 UnitOfEnergy.KILO_WATT_HOUR,
                 SensorDeviceClass.ENERGY,
                 lambda m: m.load_forecast_kwh,
             ),
             NidiaSensor(
                 manager,
-                "night_charge_solar_forecast_tomorrow_kwh",
-                "Solar Forecast Tomorrow",
+                "night_charge_solar_forecast_today_kwh",
+                "Solar Forecast Today",
                 UnitOfEnergy.KILO_WATT_HOUR,
                 SensorDeviceClass.ENERGY,
                 lambda m: m.solar_forecast_kwh,

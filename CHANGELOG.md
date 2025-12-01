@@ -1,5 +1,67 @@
 # Changelog
 
+## 0.7.0 - 2025-12-01
+
+### BREAKING CHANGES
+
+⚠️ **This release contains breaking changes that require manual intervention**
+
+#### 1. Timing Change: 23:59 → 00:01
+- **Previous**: Charging planning started at 23:59 (the day before)
+- **New**: Charging planning starts at 00:01 (already in the target day)
+- **Impact**: More reliable behavior, eliminates bugs with midnight transitions
+- **Action Required**: None - timing adjusts automatically
+
+#### 2. Sensor Names Changed: "Tomorrow" → "Today"
+- **Previous Sensors**:
+  - `sensor.night_charge_load_forecast_tomorrow_kwh`
+  - `sensor.night_charge_solar_forecast_tomorrow_kwh`
+- **New Sensors**:
+  - `sensor.night_charge_load_forecast_today_kwh`
+  - `sensor.night_charge_solar_forecast_today_kwh`
+- **Impact**: Dashboard configurations using old sensor names will show "unavailable"
+- **Action Required**: Update your Lovelace dashboards to use new sensor names (see README.md for updated examples)
+
+#### 3. EV Integration Window Updated
+- **Previous**: EV recalculation window was 23:59-07:00
+- **New**: EV recalculation window is 00:01-07:00
+- **Impact**: EV energy changes between 23:59 and 00:01 will be ignored (minimal impact)
+- **Action Required**: None
+
+### Added
+
+- **Modular Service Architecture**: Complete refactoring with specialized services
+  - `LearningService`: Manages consumption tracking and historical data
+  - `ForecastService`: Handles energy predictions
+  - `PlanningService`: Calculates optimal charging strategy
+  - `ExecutionService`: Controls inverter and hardware
+  - `EVIntegrationService`: Manages EV charging integration
+- **Data Models**: Clean DTOs for data transfer between services
+- **Better Logging**: More detailed and structured logging throughout
+- **Improved Code Organization**: Reduced coordinator from 661 to 368 lines (-44%)
+
+### Changed
+
+- **Timing Schedule**: Charging window now 00:01-07:00 (was 23:59-07:00)
+- **Forecast Logic**: Always use current day forecasts (eliminated `use_today` parameter complexity)
+- **Code Structure**: Services-based architecture for better maintainability and testing
+
+### Fixed
+
+- **Midnight Transition Bugs**: Eliminated issues with EV updates after midnight
+- **Forecast Accuracy**: Predictions now always match the target day
+- **Code Complexity**: Reduced coupling and improved separation of concerns
+
+### Upgrading
+
+1. **Backup** your configuration before upgrading
+2. **Update** the integration through HACS or manual installation
+3. **Restart** Home Assistant
+4. **Update dashboards** - replace sensor references: `_tomorrow_kwh` → `_today_kwh`
+5. **Verify** sensors are showing data (check Developer Tools → States)
+
+---
+
 ## 0.6.5
 
 - **Testing**: Added comprehensive EV time logic verification test suite
