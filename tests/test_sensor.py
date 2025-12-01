@@ -11,8 +11,8 @@ async def test_sensors_created(hass: HomeAssistant, setup_integration):
     sensors = [
         "sensor.night_charge_planned_grid_energy_kwh",
         "sensor.night_charge_target_soc_percent",
-        "sensor.night_charge_load_forecast_tomorrow_kwh",
-        "sensor.night_charge_solar_forecast_tomorrow_kwh",
+        "sensor.night_charge_load_forecast_today_kwh",
+        "sensor.night_charge_solar_forecast_today_kwh",
         "sensor.night_charge_last_run_charged_energy_kwh",
         "sensor.night_charge_plan_reasoning",
         "sensor.night_charge_last_run_summary",
@@ -37,8 +37,8 @@ async def test_sensor_units(hass: HomeAssistant, setup_integration):
     """Test sensors have correct units."""
     kwh_sensors = [
         "sensor.night_charge_planned_grid_energy_kwh",
-        "sensor.night_charge_load_forecast_tomorrow_kwh",
-        "sensor.night_charge_solar_forecast_tomorrow_kwh",
+        "sensor.night_charge_load_forecast_today_kwh",
+        "sensor.night_charge_solar_forecast_today_kwh",
         "sensor.night_charge_last_run_charged_energy_kwh",
         "sensor.night_charge_current_day_consumption_kwh",
         "sensor.night_charge_avg_consumption_monday",

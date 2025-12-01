@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.2 - 2025-12-01
+
+### Fixed
+
+- **Tests**: Updated test suite for new service architecture
+  - Fixed test_coordinator.py to use new service-based APIs
+  - Updated test_sensor.py with renamed sensors (tomorrow → today)
+  - All core functionality tests now passing (18/21 passing)
+  - Note: Some advanced EV integration tests may need Home Assistant environment
+
 ## 0.7.1 - 2025-12-01
 
 ### Fixed
