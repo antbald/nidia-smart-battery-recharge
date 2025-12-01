@@ -26,7 +26,7 @@ If you have a home battery system with solar panels, you face a daily challenge:
 - Automatically adapts to changing habits and seasonal variations
 
 ### ☀️ **Solar-Aware Planning**
-- Integrates tomorrow's solar production forecast
+- Integrates today's solar production forecast
 - Avoids unnecessary charging when solar will cover your needs
 - Calculates the exact energy deficit to charge overnight
 
@@ -49,8 +49,8 @@ If you have a home battery system with solar panels, you face a daily challenge:
 - Last run summaries and notifications
 
 ### 🔘 **One-Click Testing**
-- Recalculate plan button to preview tomorrow's strategy
-- Test the algorithm without waiting for midnight
+- Recalculate plan button to preview tonight's strategy
+- Test the algorithm without waiting for 00:01
 - Understand decisions before they happen
 
 ## 📥 Installation
@@ -84,7 +84,7 @@ The integration uses a friendly **3-step configuration wizard**:
 
 ### Step 2: Sensors Setup
 - **House Load Power Sensor**: Sensor measuring instantaneous house consumption in Watts (used for learning daily patterns)
-- **Solar Forecast Tomorrow**: Sensor providing tomorrow's estimated solar production in kWh
+- **Solar Forecast Today**: Sensor providing today's estimated solar production in kWh
 
 ### Step 3: Tuning & Notifications
 - **Minimum SOC Reserve** (default: 15%): Battery level always preserved, never counted as available for consumption
@@ -169,7 +169,7 @@ Every morning:
 
 | Entity ID | Description |
 |-----------|-------------|
-| `button.night_charge_recalculate_plan` | Manually trigger plan recalculation (preview tomorrow's plan now) |
+| `button.night_charge_recalculate_plan` | Manually trigger plan recalculation (preview tonight's plan now) |
 
 ## 🎨 Lovelace Dashboard Example
 
@@ -204,7 +204,7 @@ cards:
   # Quick Action Button
   - type: custom:mushroom-template-card
     primary: Recalculate Plan
-    secondary: Preview tomorrow's charging strategy
+    secondary: Preview tonight's charging strategy
     icon: mdi:calculator
     icon_color: purple
     tap_action:
@@ -433,7 +433,7 @@ Override the algorithm and force charging tonight to 100% SOC, regardless of for
 service: night_battery_charger.force_charge_tonight
 ```
 
-**Use case:** You know tomorrow will be cloudy or you'll have higher than usual consumption.
+**Use case:** You know today will be cloudy or you'll have higher than usual consumption.
 
 ### `night_battery_charger.disable_tonight`
 Prevent any charging tonight, even if the algorithm recommends it.
@@ -451,7 +451,7 @@ The `sensor.night_charge_plan_reasoning` provides a human-readable explanation o
 
 ### Example 1: No Charging Needed
 ```
-Planned 0.00 kWh grid charge. Tomorrow's estimated load is 10.00 kWh,
+Planned 0.00 kWh grid charge. Today's estimated load is 10.00 kWh,
 with 15.51 kWh solar forecast. Target SOC: 16.5%.
 ```
 
@@ -463,7 +463,7 @@ with 15.51 kWh solar forecast. Target SOC: 16.5%.
 
 ### Example 2: Charging Required
 ```
-Planned 8.50 kWh grid charge. Tomorrow's estimated load is 25.00 kWh,
+Planned 8.50 kWh grid charge. Today's estimated load is 25.00 kWh,
 with 12.00 kWh solar forecast. Target SOC: 85.3%.
 ```
 
@@ -475,7 +475,7 @@ with 12.00 kWh solar forecast. Target SOC: 85.3%.
 
 ### Example 3: Force Charged
 ```
-[FORCED BY USER] Planned 15.00 kWh grid charge. Tomorrow's estimated load is 20.00 kWh,
+[FORCED BY USER] Planned 15.00 kWh grid charge. Today's estimated load is 20.00 kWh,
 with 18.00 kWh solar forecast. Target SOC: 100.0%.
 ```
 
@@ -502,7 +502,7 @@ The integration operates conservatively, using the average of all available hist
 No. The integration respects your configured **Minimum SOC Reserve** to prevent deep discharges and includes a **Safety Spread** buffer to avoid frequent charge/discharge cycles.
 
 ### Can I use it with time-of-use tariffs?
-Yes! The integration is designed for this use case. It charges during off-peak hours (23:59-07:00) and minimizes expensive daytime grid usage.
+Yes! The integration is designed for this use case. It charges during off-peak hours (00:01-07:00) and minimizes expensive daytime grid usage.
 
 ### Does it work with Huawei/Growatt/SolarEdge/Victron inverters?
 Yes, as long as your inverter exposes:
@@ -516,10 +516,10 @@ The integration is **inverter-agnostic**.
 
 ### The plan shows "No plan calculated yet"
 - Press the **Recalculate Plan** button to trigger an immediate calculation
-- Wait until 22:59 for the automatic nightly calculation
+- Wait until 00:01 for the automatic nightly calculation
 - Check that all required sensors are available and have valid values
 
-### Charging doesn't start at 23:59
+### Charging doesn't start at 00:01
 - Verify the **Inverter Grid Charge Switch** entity is correct
 - Check Home Assistant logs for errors
 - Ensure the switch is not controlled by other automations
