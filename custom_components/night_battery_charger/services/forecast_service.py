@@ -39,22 +39,24 @@ class ForecastService:
         self.learning_service = learning_service
         self._minimum_consumption_fallback = minimum_consumption_fallback
 
-    def get_forecast_data(self) -> ForecastData:
-        """Get forecast data for today.
+    def get_forecast_data(self, for_preview: bool = False) -> ForecastData:
+        """Get forecast data.
 
-        Since we now plan at 00:01, we're already in the target day,
-        so we always use today's forecasts.
+        Args:
+            for_preview: If True, get forecasts for tomorrow (used by recalculate button).
+                        If False, get forecasts for today (used at 00:01 for actual planning).
 
         Returns:
             ForecastData with solar and consumption predictions
         """
-        solar_kwh = self._get_solar_forecast_value()
-        consumption_kwh = self._get_consumption_forecast_value()
+        solar_kwh = self._get_solar_forecast_value(for_preview=for_preview)
+        consumption_kwh = self._get_consumption_forecast_value(for_preview=for_preview)
         timestamp = dt_util.now()
 
+        day_label = "tomorrow" if for_preview else "today"
         _LOGGER.info(
-            "Forecast data for today: Solar=%.2f kWh, Consumption=%.2f kWh",
-            solar_kwh, consumption_kwh
+            "Forecast data for %s: Solar=%.2f kWh, Consumption=%.2f kWh",
+            day_label, solar_kwh, consumption_kwh
         )
 
         return ForecastData(
@@ -63,24 +65,37 @@ class ForecastService:
             timestamp=timestamp
         )
 
-    def _get_solar_forecast_value(self) -> float:
-        """Get solar forecast for today.
+    def _get_solar_forecast_value(self, for_preview: bool = False) -> float:
+        """Get solar forecast.
+
+        Args:
+            for_preview: If True, get tomorrow's forecast. If False, get today's forecast.
 
         Returns:
             Solar forecast in kWh, or 0.0 if not available
         """
-        # Always use "today" sensor since we plan at 00:01 (already in target day)
-        sensor_id = self.entry.data.get(CONF_SOLAR_FORECAST_TODAY_SENSOR)
+        # For preview (during the day), we want tomorrow's forecast
+        # For actual planning at 00:01, we want today's forecast
+        from ..const import CONF_SOLAR_FORECAST_SENSOR
+
+        if for_preview:
+            # Use "tomorrow" sensor for preview
+            sensor_id = self.entry.data.get(CONF_SOLAR_FORECAST_SENSOR)
+        else:
+            # Use "today" sensor for actual planning at 00:01
+            sensor_id = self.entry.data.get(CONF_SOLAR_FORECAST_TODAY_SENSOR)
 
         if not sensor_id:
-            _LOGGER.warning("Solar forecast sensor not configured")
+            day_label = "tomorrow" if for_preview else "today"
+            _LOGGER.warning("Solar forecast sensor for %s not configured", day_label)
             return 0.0
 
         state = self.hass.states.get(sensor_id)
         if state and state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
             try:
                 value = float(state.state)
-                _LOGGER.debug("Solar forecast from sensor %s: %.2f kWh", sensor_id, value)
+                day_label = "tomorrow" if for_preview else "today"
+                _LOGGER.debug("Solar forecast for %s from sensor %s: %.2f kWh", day_label, sensor_id, value)
                 return value
             except (ValueError, TypeError):
                 _LOGGER.error("Invalid solar forecast value from %s: %s", sensor_id, state.state)
@@ -89,26 +104,38 @@ class ForecastService:
         _LOGGER.warning("Solar forecast sensor %s unavailable", sensor_id)
         return 0.0
 
-    def _get_consumption_forecast_value(self) -> float:
-        """Get consumption forecast for today.
+    def _get_consumption_forecast_value(self, for_preview: bool = False) -> float:
+        """Get consumption forecast.
+
+        Args:
+            for_preview: If True, get tomorrow's forecast. If False, get today's forecast.
 
         Returns:
             Consumption forecast in kWh, with minimum fallback applied
         """
-        # Always use today's weekday since we plan at 00:01 (already in target day)
-        weekday = dt_util.now().weekday()
+        from datetime import timedelta
+
+        if for_preview:
+            # For preview, get tomorrow's weekday
+            tomorrow = dt_util.now() + timedelta(days=1)
+            weekday = tomorrow.weekday()
+            day_label = "tomorrow"
+        else:
+            # For actual planning at 00:01, get today's weekday
+            weekday = dt_util.now().weekday()
+            day_label = "today"
 
         consumption = self.learning_service.get_weekday_average(weekday)
 
         # Apply fallback if consumption is below minimum threshold
         if consumption < self._minimum_consumption_fallback:
             _LOGGER.warning(
-                "Consumption forecast %.2f kWh is below minimum fallback %.2f kWh, using fallback",
-                consumption, self._minimum_consumption_fallback
+                "Consumption forecast for %s (%.2f kWh) is below minimum fallback %.2f kWh, using fallback",
+                day_label, consumption, self._minimum_consumption_fallback
             )
             return self._minimum_consumption_fallback
 
-        _LOGGER.debug("Consumption forecast for weekday %d: %.2f kWh", weekday, consumption)
+        _LOGGER.debug("Consumption forecast for %s (weekday %d): %.2f kWh", day_label, weekday, consumption)
         return consumption
 
     def set_minimum_consumption_fallback(self, value: float) -> None:

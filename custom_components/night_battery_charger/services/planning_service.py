@@ -52,24 +52,27 @@ class PlanningService:
         self,
         include_ev: bool = False,
         ev_energy_kwh: float = 0.0,
+        for_preview: bool = False,
     ) -> ChargePlan:
         """Calculate the optimal charging plan.
-
-        Since we now plan at 00:01, we're already in the target day,
-        so we always use today's forecasts (no more use_today parameter).
 
         Args:
             include_ev: Whether to include EV energy in calculations
             ev_energy_kwh: EV energy requirement in kWh
+            for_preview: If True, calculate for tomorrow (preview mode).
+                        If False, calculate for today (actual planning at 00:01).
 
         Returns:
             ChargePlan with calculated values
         """
-        _LOGGER.info("Calculating charge plan (include_ev=%s, ev_energy=%.2f kWh)",
-                     include_ev, ev_energy_kwh)
+        day_label = "tomorrow" if for_preview else "today"
+        _LOGGER.info(
+            "Calculating charge plan for %s (include_ev=%s, ev_energy=%.2f kWh, preview=%s)",
+            day_label, include_ev, ev_energy_kwh, for_preview
+        )
 
-        # 1. Get forecasts (always for today since we plan at 00:01)
-        forecast = self.forecast_service.get_forecast_data()
+        # 1. Get forecasts
+        forecast = self.forecast_service.get_forecast_data(for_preview=for_preview)
         load_forecast_kwh = forecast.consumption_kwh
         solar_forecast_kwh = forecast.solar_kwh
 
@@ -123,9 +126,10 @@ class PlanningService:
             reasoning_prefix = ""
 
         # 10. Construct reasoning string
+        day_prefix = "Tomorrow's" if for_preview else "Today's"
         reasoning = (
             f"{reasoning_prefix}Planned {planned_charge_kwh:.2f} kWh grid charge. "
-            f"Today's estimated load is {load_forecast_kwh:.2f} kWh, "
+            f"{day_prefix} estimated load is {load_forecast_kwh:.2f} kWh, "
             f"with {solar_forecast_kwh:.2f} kWh solar forecast. "
             f"Target SOC: {target_soc_percent:.1f}%."
         )

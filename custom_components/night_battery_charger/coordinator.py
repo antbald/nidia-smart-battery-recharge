@@ -337,7 +337,7 @@ class NidiaBatteryManager:
         """Service: Recalculate plan now."""
         _LOGGER.info("Service called: recalculate_plan_now")
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=True
         )
         self._update_sensors()
 
@@ -346,7 +346,7 @@ class NidiaBatteryManager:
         _LOGGER.info("Service called: force_charge_tonight")
         self.planning_service.set_force_charge(True)
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=True
         )
         self._update_sensors()
 
@@ -355,13 +355,13 @@ class NidiaBatteryManager:
         _LOGGER.info("Service called: disable_tonight")
         self.planning_service.set_disable_charge(True)
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=True
         )
         self._update_sensors()
 
     async def async_recalculate_plan(self):
         """Public method to recalculate plan (used by button entity)."""
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=True
         )
         self._update_sensors()

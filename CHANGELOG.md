@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.1 - 2025-12-01
+
+### Fixed
+
+- **Preview Functionality**: Recalculate Plan button now correctly shows forecasts for TOMORROW
+  - Previously showed today's forecasts, which was incorrect for preview purposes
+  - Users press this button during the day to preview the upcoming night
+  - Now uses tomorrow's solar forecast and tomorrow's consumption forecast
+  - Reasoning text now says "Tomorrow's estimated load" instead of "Today's" in preview mode
+  - Affects: Recalculate Plan button, Force Charge service, Disable Charge service
+
 ## 0.7.0 - 2025-12-01
 
 ### BREAKING CHANGES
