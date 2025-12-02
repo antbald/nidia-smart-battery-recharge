@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.3 - 2025-12-01
+
+### Fixed
+
+- **CRITICAL**: Fixed missing `for_preview` parameter in night charge planning
+  - Night charge at 00:01 was not explicitly setting `for_preview=False`
+  - This caused incorrect forecast selection and prevented charging from starting
+  - Now explicitly sets `for_preview=False` for all real-time operations (00:01-07:00)
+  - Preview mode (`for_preview=True`) is only used for manual recalculation button
+  - Affected locations:
+    - `_start_night_charge_window()` - main 00:01 planning
+    - `async_handle_ev_energy_change()` - EV updates during charging window
+    - `ev_integration_service._recalculate_with_ev()` - EV recalculations
+
 ## 0.7.2 - 2025-12-01
 
 ### Fixed

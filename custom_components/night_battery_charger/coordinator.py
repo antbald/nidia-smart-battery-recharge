@@ -240,7 +240,7 @@ class NidiaBatteryManager:
 
         # Calculate plan (always for today since we're at 00:01)
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=False
         )
 
         _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning)
@@ -320,9 +320,9 @@ class NidiaBatteryManager:
         Delegates to EV integration service.
         """
         await self.ev_service.handle_ev_energy_change(new_value)
-        # Update plan state
+        # Update plan state (for_preview=False since this happens during charging window)
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=True, ev_energy_kwh=self.ev_service.ev_energy_kwh
+            include_ev=True, ev_energy_kwh=self.ev_service.ev_energy_kwh, for_preview=False
         )
         self._update_sensors()
 

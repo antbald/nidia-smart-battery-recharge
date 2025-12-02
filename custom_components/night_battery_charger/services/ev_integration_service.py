@@ -78,14 +78,14 @@ class EVIntegrationService:
         Determines if bypass is needed based on available vs needed energy.
         """
         # Get forecasts (always for today since we plan at 00:01)
-        forecast = self.forecast_service.get_forecast_data()
+        forecast = self.forecast_service.get_forecast_data(for_preview=False)
         solar_forecast = forecast.solar_kwh
         consumption_forecast = forecast.consumption_kwh
 
         # Calculate current battery state
         # Note: Using planning service to get SOC through its method
         plan_temp = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0
+            include_ev=False, ev_energy_kwh=0.0, for_preview=False
         )
         soc = self.planning_service._get_battery_soc()
         current_energy = (soc / 100.0) * self.battery_capacity
@@ -113,7 +113,8 @@ class EVIntegrationService:
         # Always replan with EV included to update targets
         plan = await self.planning_service.calculate_plan(
             include_ev=True,
-            ev_energy_kwh=self._ev_energy_kwh
+            ev_energy_kwh=self._ev_energy_kwh,
+            for_preview=False
         )
 
         _LOGGER.info(
