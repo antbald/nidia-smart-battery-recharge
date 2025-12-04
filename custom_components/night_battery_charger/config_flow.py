@@ -10,6 +10,7 @@ from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
+import homeassistant.helpers.config_validation as cv
 
 from .const import (
     CONF_BATTERY_BYPASS_SWITCH,
@@ -286,21 +287,21 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_NOTIFY_ON_START,
                             self.config_entry.data.get(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
                         ),
-                    ): bool,
+                    ): cv.boolean,
                     vol.Optional(
                         CONF_NOTIFY_ON_UPDATE,
                         default=self.config_entry.options.get(
                             CONF_NOTIFY_ON_UPDATE,
                             self.config_entry.data.get(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
                         ),
-                    ): bool,
+                    ): cv.boolean,
                     vol.Optional(
                         CONF_NOTIFY_ON_END,
                         default=self.config_entry.options.get(
                             CONF_NOTIFY_ON_END,
                             self.config_entry.data.get(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
                         ),
-                    ): bool,
+                    ): cv.boolean,
                 }
             ),
         )

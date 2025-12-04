@@ -230,12 +230,8 @@ class NotificationService:
 
         try:
             if not session:
-                # No session data available
-                message = (
-                    "ℹ️ Nidia Battery: Finestra di Carica Terminata\n\n"
-                    "Nessuna sessione di carica registrata."
-                )
-                await self._send_notification(message)
+                # No session data - don't send notification
+                _LOGGER.debug("No session data for end notification, skipping")
                 return
 
             # Calculate charged energy
@@ -247,64 +243,27 @@ class NotificationService:
 
             now = dt_util.now()
 
-            if early_completion:
-                # Case A: Early completion
+            # Calculate duration
+            if session.start_time:
+                duration = now - session.start_time
+                duration_hours = int(duration.total_seconds() // 3600)
+                duration_minutes = int((duration.total_seconds() % 3600) // 60)
+                start_time = session.start_time.strftime("%H:%M")
                 end_time = now.strftime("%H:%M")
-
-                # Calculate time saved (until 07:00)
-                target_end = now.replace(hour=7, minute=0, second=0, microsecond=0)
-                if now > target_end:
-                    # Already past 07:00, calculate from yesterday
-                    from datetime import timedelta
-
-                    target_end = target_end + timedelta(days=1)
-
-                time_saved = target_end - now
-                hours_saved = int(time_saved.total_seconds() // 3600)
-                minutes_saved = int((time_saved.total_seconds() % 3600) // 60)
-
-                # Calculate duration
-                if session.start_time:
-                    duration = now - session.start_time
-                    duration_hours = int(duration.total_seconds() // 3600)
-                    duration_minutes = int((duration.total_seconds() % 3600) // 60)
-                    duration_str = f"{duration_hours}h {duration_minutes:02d}m"
-                else:
-                    duration_str = "N/A"
-
-                target_soc = plan.target_soc_percent if plan else session.end_soc
-
-                message = (
-                    "✅ Nidia Battery: Target Raggiunto in Anticipo!\n\n"
-                    f"⏱️ Completato alle {end_time} ({hours_saved}h{minutes_saved:02d}m in anticipo)\n\n"
-                    "📊 Riepilogo:\n"
-                    f"• Energia caricata: {charged_kwh:.1f} kWh\n"
-                    f"• SOC: {session.start_soc:.0f}% → {session.end_soc:.0f}% (target: {target_soc:.0f}%)\n"
-                    f"• Durata effettiva: {duration_str}\n\n"
-                    f"💰 Tempo risparmiato: {hours_saved}h {minutes_saved:02d}m"
-                )
+                duration_str = f"{duration_hours}h {duration_minutes:02d}m"
+                time_range_str = f" ({start_time} - {end_time})"
             else:
-                # Case B: Normal completion at 07:00
-                if session.start_time:
-                    duration = now - session.start_time
-                    duration_hours = int(duration.total_seconds() // 3600)
-                    duration_minutes = int((duration.total_seconds() % 3600) // 60)
-                    start_time = session.start_time.strftime("%H:%M")
-                    end_time = now.strftime("%H:%M")
-                    duration_str = f"{duration_hours}h {duration_minutes:02d}m ({start_time} - {end_time})"
-                else:
-                    duration_str = "6h 00m (00:01 - 07:00)"
+                duration_str = "N/A"
+                time_range_str = ""
 
-                target_soc = plan.target_soc_percent if plan else session.end_soc
-
-                message = (
-                    "✅ Nidia Battery: Carica Notturna Completata\n\n"
-                    "📊 Riepilogo:\n"
-                    f"• Energia caricata: {charged_kwh:.1f} kWh\n"
-                    f"• SOC: {session.start_soc:.0f}% → {session.end_soc:.0f}% (target: {target_soc:.0f}%)\n"
-                    f"• Durata: {duration_str}\n\n"
-                    "✅ Target raggiunto con successo"
-                )
+            # Simple unified message - always show summary
+            message = (
+                "✅ Nidia Battery: Carica Completata\n\n"
+                "📊 Riepilogo:\n"
+                f"• Energia caricata: {charged_kwh:.1f} kWh\n"
+                f"• SOC: {session.start_soc:.0f}% → {session.end_soc:.0f}%\n"
+                f"• Durata: {duration_str}{time_range_str}"
+            )
 
             await self._send_notification(message)
 
