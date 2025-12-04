@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.1 - 2025-12-04
+
+### Fixed
+
+- **CRITICAL**: Fixed 500 Internal Server Error in config flow
+  - Added explicit `BooleanSelectorConfig()` to notification flag selectors
+  - Ensures compatibility across Home Assistant versions
+  - Config flow now loads correctly
+
 ## 0.8.0 - 2025-12-04
 
 ### Added
