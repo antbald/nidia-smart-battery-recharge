@@ -63,13 +63,19 @@
                     "battery_capacity_kwh": "Capacità Batteria",
                     "min_soc_reserve_percent": "Riserva SOC Minima",
                     "safety_spread_percent": "Margine di Sicurezza",
-                    "notify_service": "Servizio Notifiche"
+                    "notify_service": "Servizio Notifiche",
+                    "notify_on_start": "Notifica all'Avvio Carica",
+                    "notify_on_update": "Notifica su Aggiornamenti Piano",
+                    "notify_on_end": "Notifica a Fine Carica"
                 },
                 "data_description": {
                     "battery_capacity_kwh": "La capacità energetica totale utilizzabile della tua batteria in kWh.",
                     "min_soc_reserve_percent": "Il livello della batteria (%) che deve essere sempre preservato.",
                     "safety_spread_percent": "Percentuale di energia extra da caricare come margine di sicurezza.",
-                    "notify_service": "Un servizio di notifica (es. notify.mobile_app_...) per ricevere un riepilogo ogni mattina."
+                    "notify_service": "Un servizio di notifica (es. notify.mobile_app_...) per ricevere le notifiche.",
+                    "notify_on_start": "Invia notifica alle 00:01 con il piano di carica calcolato.",
+                    "notify_on_update": "Invia notifica quando il piano viene aggiornato (es. cambio energia EV).",
+                    "notify_on_end": "Invia notifica quando la carica si completa o alle 07:00."
                 }
             }
         }

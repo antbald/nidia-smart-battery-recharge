@@ -43,6 +43,9 @@ class EVIntegrationService:
 
         self._ev_energy_kwh = 0.0
 
+        # Will be injected by coordinator
+        self.notification_service = None
+
     async def handle_ev_energy_change(self, new_value: float) -> None:
         """Handle EV energy value change during charging window.
 
@@ -77,16 +80,17 @@ class EVIntegrationService:
 
         Determines if bypass is needed based on available vs needed energy.
         """
+        # Save old plan for notification comparison
+        old_plan = await self.planning_service.calculate_plan(
+            include_ev=False, ev_energy_kwh=0.0, for_preview=False
+        )
+
         # Get forecasts (always for today since we plan at 00:01)
         forecast = self.forecast_service.get_forecast_data(for_preview=False)
         solar_forecast = forecast.solar_kwh
         consumption_forecast = forecast.consumption_kwh
 
         # Calculate current battery state
-        # Note: Using planning service to get SOC through its method
-        plan_temp = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=False
-        )
         soc = self.planning_service._get_battery_soc()
         current_energy = (soc / 100.0) * self.battery_capacity
 
@@ -101,6 +105,8 @@ class EVIntegrationService:
             energy_needed, consumption_forecast, self._ev_energy_kwh
         )
 
+        # Determine if bypass needed
+        bypass_activated = False
         if energy_available >= energy_needed:
             # Sufficient energy - disable bypass
             _LOGGER.info("Sufficient energy available, disabling bypass if active")
@@ -109,9 +115,10 @@ class EVIntegrationService:
             # Insufficient energy - enable bypass
             _LOGGER.info("Insufficient energy, enabling bypass")
             await self.execution_service.enable_bypass()
+            bypass_activated = True
 
         # Always replan with EV included to update targets
-        plan = await self.planning_service.calculate_plan(
+        new_plan = await self.planning_service.calculate_plan(
             include_ev=True,
             ev_energy_kwh=self._ev_energy_kwh,
             for_preview=False
@@ -119,8 +126,24 @@ class EVIntegrationService:
 
         _LOGGER.info(
             "EV integration plan updated: Target SOC=%.1f%%, Charge=%.2f kWh",
-            plan.target_soc_percent, plan.planned_charge_kwh
+            new_plan.target_soc_percent, new_plan.planned_charge_kwh
         )
+
+        # Send update notification
+        if self.notification_service:
+            energy_balance = {
+                'available': energy_available,
+                'needed': energy_needed,
+                'solar': solar_forecast,
+                'consumption': consumption_forecast
+            }
+            await self.notification_service.send_update_notification(
+                ev_energy_kwh=self._ev_energy_kwh,
+                old_plan=old_plan,
+                new_plan=new_plan,
+                bypass_activated=bypass_activated,
+                energy_balance=energy_balance,
+            )
 
     def is_in_charging_window(self, current_time: time) -> bool:
         """Check if current time is within charging window.

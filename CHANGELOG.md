@@ -1,5 +1,65 @@
 # Changelog
 
+## 0.8.0 - 2025-12-04
+
+### Added
+
+- **Comprehensive Notification System**: 3 types of detailed notifications with individual on/off flags
+  - **Start Notification (00:01)**: Sent when system calculates night charge plan
+    - Shows charging scheduled: SOC current→target, energy to charge, estimated duration, forecasts, reasoning
+    - Shows no charge needed: Current SOC, surplus energy, daily forecasts
+  - **Update Notification (00:01-07:00)**: Sent when EV integration changes energy requirements
+    - Shows bypass activated: EV energy, energy balance, old→new target, bypass reason
+    - Shows sufficient energy: EV energy, old→new target, no bypass needed
+  - **End Notification**: Sent when charging completes
+    - Early completion: Target reached before 07:00, shows time saved
+    - Normal completion: Charging finished at 07:00, full summary with energy charged and duration
+
+- **Configuration Flags**: 3 independent switches to enable/disable each notification type
+  - `notify_on_start` - Notify at charge plan calculation (default: True)
+  - `notify_on_update` - Notify on EV energy updates (default: True)
+  - `notify_on_end` - Notify at charge completion (default: True)
+  - All flags available in integration options UI with full translations (EN/IT)
+
+- **NotificationService**: New specialized service for managing notifications
+  - Centralized notification logic with best-effort delivery
+  - Graceful error handling - failures logged but don't block execution
+  - Italian messages with emoji for mobile readability (🔋, 📊, 📈, 🚗, ⚡, ⚠️, ✅)
+
+- **Comprehensive Testing**: Full test coverage for notification system
+  - 18 unit tests in `test_notification_service.py`
+  - 4 integration tests in `test_coordinator.py`
+  - Tests for all notification types, flag handling, and message formatting
+
+### Changed
+
+- **Service Integration**: NotificationService injected into ExecutionService and EVIntegrationService
+  - Early completion notifications sent directly from ExecutionService when target reached
+  - EV update notifications sent from EVIntegrationService on plan recalculation
+  - Clean dependency injection pattern for testability
+
+### Technical Details
+
+- **Files Added**:
+  - `custom_components/night_battery_charger/services/notification_service.py` (313 lines)
+  - `tests/test_notification_service.py` (554 lines)
+
+- **Files Modified**:
+  - `coordinator.py` - Integrated NotificationService, added start notification
+  - `execution_service.py` - Added early completion notification support
+  - `ev_integration_service.py` - Added EV update notification
+  - `config_flow.py` - Added 3 notification flag selectors
+  - `const.py` - Added notification flag constants
+  - `strings.json`, `translations/en.json`, `translations/it.json` - Added translations
+  - `tests/test_coordinator.py` - Added 4 integration tests
+
+### Notes
+
+- **Backward Compatible**: All notification flags default to True, no breaking changes
+- **Optional**: Notifications only sent if `notify_service` is configured
+- **Best Effort**: Notification failures are logged but don't affect charging operations
+- **Mobile Optimized**: Messages formatted with emoji and structured sections for readability
+
 ## 0.7.3 - 2025-12-01
 
 ### Fixed

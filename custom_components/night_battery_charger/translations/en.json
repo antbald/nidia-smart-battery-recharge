@@ -63,13 +63,19 @@
                     "battery_capacity_kwh": "Battery Capacity",
                     "min_soc_reserve_percent": "Minimum SOC Reserve",
                     "safety_spread_percent": "Safety Spread",
-                    "notify_service": "Notification Service"
+                    "notify_service": "Notification Service",
+                    "notify_on_start": "Notify on Charge Start",
+                    "notify_on_update": "Notify on Plan Updates",
+                    "notify_on_end": "Notify on Charge End"
                 },
                 "data_description": {
                     "battery_capacity_kwh": "The total usable energy capacity of your battery in kWh.",
                     "min_soc_reserve_percent": "The battery level (%) that should always be preserved.",
                     "safety_spread_percent": "Percentage of extra energy to charge as a safety buffer.",
-                    "notify_service": "A notification service (e.g. notify.mobile_app_...) to receive a summary every morning."
+                    "notify_service": "A notification service (e.g. notify.mobile_app_...) to receive notifications.",
+                    "notify_on_start": "Send notification at 00:01 with the calculated charge plan.",
+                    "notify_on_update": "Send notification when the plan is updated (e.g. EV energy change).",
+                    "notify_on_end": "Send notification when charging completes or at 07:00."
                 }
             }
         }

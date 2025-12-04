@@ -27,6 +27,7 @@ from .services import (
     ExecutionService,
     ForecastService,
     LearningService,
+    NotificationService,
     PlanningService,
 )
 
@@ -66,6 +67,12 @@ class NidiaBatteryManager:
             hass, entry, battery_capacity=self.battery_capacity
         )
 
+        # Initialize notification service
+        self.notification_service = NotificationService(hass, entry)
+
+        # Inject notification service into execution_service
+        self.execution_service.notification_service = self.notification_service
+
         self.ev_service = EVIntegrationService(
             hass,
             self.planning_service,
@@ -73,6 +80,8 @@ class NidiaBatteryManager:
             self.forecast_service,
             battery_capacity=self.battery_capacity,
         )
+        # Inject notification service into ev_service
+        self.ev_service.notification_service = self.notification_service
 
         # Current state (exposed for sensors)
         self.current_plan: ChargePlan | None = None
@@ -245,6 +254,12 @@ class NidiaBatteryManager:
 
         _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning)
 
+        # Send start notification
+        current_soc = self.planning_service._get_battery_soc()
+        await self.notification_service.send_start_notification(
+            self.current_plan, current_soc
+        )
+
         # Start charging if scheduled
         self.current_session = await self.execution_service.start_charge(self.current_plan)
 
@@ -267,8 +282,13 @@ class NidiaBatteryManager:
         else:
             self.last_run_charged_kwh = 0.0
 
-        # Send notification
-        await self.execution_service.send_notification(summary)
+        # Send notification using NotificationService
+        await self.notification_service.send_end_notification(
+            session=self.current_session,
+            plan=self.current_plan,
+            early_completion=False,
+            battery_capacity=self.battery_capacity,
+        )
 
         # Reset overrides
         self.planning_service.reset_overrides()

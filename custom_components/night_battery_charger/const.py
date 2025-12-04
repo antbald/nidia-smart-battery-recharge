@@ -11,6 +11,11 @@ CONF_SOLAR_FORECAST_SENSOR = "solar_forecast_sensor_entity_id"
 CONF_SOLAR_FORECAST_TODAY_SENSOR = "solar_forecast_today_sensor"
 CONF_NOTIFY_SERVICE = "notify_service"
 
+# Notification Flags
+CONF_NOTIFY_ON_START = "notify_on_start"
+CONF_NOTIFY_ON_UPDATE = "notify_on_update"
+CONF_NOTIFY_ON_END = "notify_on_end"
+
 # Tuning Parameters
 CONF_MIN_SOC_RESERVE = "min_soc_reserve_percent"
 CONF_SAFETY_SPREAD = "safety_spread_percent"
@@ -21,6 +26,9 @@ DEFAULT_NAME = "Nidia Smart Battery Recharge"
 DEFAULT_MIN_SOC_RESERVE = 15.0
 DEFAULT_SAFETY_SPREAD = 10.0
 DEFAULT_BATTERY_CAPACITY = 10.0
+DEFAULT_NOTIFY_ON_START = True
+DEFAULT_NOTIFY_ON_UPDATE = True
+DEFAULT_NOTIFY_ON_END = True
 
 # Storage
 STORAGE_KEY = f"{DOMAIN}.storage"

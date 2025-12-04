@@ -19,12 +19,18 @@ from .const import (
     CONF_INVERTER_SWITCH,
     CONF_MIN_SOC_RESERVE,
     CONF_NOTIFY_SERVICE,
+    CONF_NOTIFY_ON_START,
+    CONF_NOTIFY_ON_UPDATE,
+    CONF_NOTIFY_ON_END,
     CONF_SAFETY_SPREAD,
     CONF_SOLAR_FORECAST_SENSOR,
     CONF_SOLAR_FORECAST_TODAY_SENSOR,
     DEFAULT_BATTERY_CAPACITY,
     DEFAULT_MIN_SOC_RESERVE,
     DEFAULT_NAME,
+    DEFAULT_NOTIFY_ON_START,
+    DEFAULT_NOTIFY_ON_UPDATE,
+    DEFAULT_NOTIFY_ON_END,
     DEFAULT_SAFETY_SPREAD,
     DOMAIN,
 )
@@ -274,6 +280,27 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             self.config_entry.data.get(CONF_NOTIFY_SERVICE, ""),
                         ),
                     ): selector.TextSelector(),
+                    vol.Optional(
+                        CONF_NOTIFY_ON_START,
+                        default=self.config_entry.options.get(
+                            CONF_NOTIFY_ON_START,
+                            self.config_entry.data.get(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
+                        ),
+                    ): selector.BooleanSelector(),
+                    vol.Optional(
+                        CONF_NOTIFY_ON_UPDATE,
+                        default=self.config_entry.options.get(
+                            CONF_NOTIFY_ON_UPDATE,
+                            self.config_entry.data.get(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
+                        ),
+                    ): selector.BooleanSelector(),
+                    vol.Optional(
+                        CONF_NOTIFY_ON_END,
+                        default=self.config_entry.options.get(
+                            CONF_NOTIFY_ON_END,
+                            self.config_entry.data.get(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
+                        ),
+                    ): selector.BooleanSelector(),
                 }
             ),
         )

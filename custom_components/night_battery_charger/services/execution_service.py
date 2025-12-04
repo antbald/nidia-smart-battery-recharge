@@ -47,6 +47,9 @@ class ExecutionService:
         self._bypass_switch_active = False
         self._current_session: ChargeSession | None = None
 
+        # Will be injected by coordinator
+        self.notification_service = None
+
     async def start_charge(self, plan: ChargePlan) -> ChargeSession | None:
         """Start charging based on the plan.
 
@@ -147,6 +150,23 @@ class ExecutionService:
             )
             await self._set_inverter_charge(False)
             self._is_charging_active = False
+
+            # Update session with end data
+            if self._current_session:
+                self._current_session.end_time = dt_util.now()
+                self._current_session.end_soc = current_soc
+                charged_percent = max(0, current_soc - self._current_session.start_soc)
+                self._current_session.charged_kwh = (charged_percent / 100.0) * self.battery_capacity
+
+            # Send early completion notification
+            if self.notification_service and self._current_session:
+                await self.notification_service.send_end_notification(
+                    session=self._current_session,
+                    plan=None,  # Plan not available here, will be passed from coordinator if needed
+                    early_completion=True,
+                    battery_capacity=self.battery_capacity,
+                )
+
             return True
 
         return False

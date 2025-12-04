@@ -218,3 +218,206 @@ async def test_charging_execution(hass: HomeAssistant, mock_config_entry):
     assert turn_off_calls[0].data["entity_id"] == "switch.inverter"
 
     manager.async_unload()
+
+
+@pytest.mark.asyncio
+async def test_notifications_during_charge_cycle(hass: HomeAssistant, mock_config_entry):
+    """Test that all 3 notifications are sent during a charge cycle."""
+    # Add notification configuration to mock config
+    mock_config_entry.data["notify_service"] = "notify.mobile_app_test"
+    mock_config_entry.options = {
+        "notify_on_start": True,
+        "notify_on_update": True,
+        "notify_on_end": True,
+    }
+
+    manager = NidiaBatteryManager(hass, mock_config_entry)
+    await manager.async_init()
+
+    # Track notification calls
+    notify_calls = []
+
+    async def mock_notify(domain, service, data):
+        notify_calls.append({"domain": domain, "service": service, "message": data.get("message")})
+
+    hass.services.async_register("notify", "mobile_app_test", mock_notify)
+
+    # Setup forecasts
+    with patch.object(manager.forecast_service, 'get_forecast_data') as mock_forecast:
+        from custom_components.night_battery_charger.models import ForecastData
+        mock_forecast.return_value = ForecastData(
+            solar_kwh=5.0,
+            consumption_kwh=12.0,
+            timestamp=dt_util.now()
+        )
+
+        # 1. Start notification (00:01)
+        with patch.object(manager.planning_service, '_get_battery_soc', return_value=45.0):
+            now = dt_util.now().replace(hour=0, minute=1, second=0)
+            with patch("homeassistant.util.dt.now", return_value=now):
+                await manager._start_night_charge_window(now)
+
+        # Verify start notification was sent
+        assert len(notify_calls) == 1
+        assert "Carica Notturna Avviata" in notify_calls[0]["message"] or "Nessuna Carica Necessaria" in notify_calls[0]["message"]
+
+        # 2. Update notification (EV energy change)
+        with patch.object(manager.planning_service, '_get_battery_soc', return_value=45.0):
+            # Simulate during charging window
+            now_during = dt_util.now().replace(hour=2, minute=30, second=0)
+            with patch("homeassistant.util.dt.now", return_value=now_during):
+                await manager.ev_service.handle_ev_energy_change(15.0)
+
+        # Verify update notification was sent
+        assert len(notify_calls) == 2
+        assert "Piano Aggiornato per Ricarica EV" in notify_calls[1]["message"]
+
+        # 3. End notification (07:00)
+        manager.current_session = MagicMock()
+        manager.current_session.start_soc = 45.0
+        manager.current_session.end_soc = 80.0
+        manager.current_session.start_time = now
+        manager.current_session.end_time = now.replace(hour=7, minute=0)
+        manager.current_session.charged_kwh = 3.5
+
+        now_end = dt_util.now().replace(hour=7, minute=0, second=0)
+        with patch("homeassistant.util.dt.now", return_value=now_end):
+            await manager._end_night_charge_window(now_end)
+
+        # Verify end notification was sent
+        assert len(notify_calls) == 3
+        assert "Carica Notturna Completata" in notify_calls[2]["message"]
+
+    manager.async_unload()
+
+
+@pytest.mark.asyncio
+async def test_notifications_respect_flags(hass: HomeAssistant, mock_config_entry):
+    """Test that notifications respect enable/disable flags."""
+    # Add notification configuration with flags disabled
+    mock_config_entry.data["notify_service"] = "notify.mobile_app_test"
+    mock_config_entry.options = {
+        "notify_on_start": False,
+        "notify_on_update": False,
+        "notify_on_end": False,
+    }
+
+    manager = NidiaBatteryManager(hass, mock_config_entry)
+    await manager.async_init()
+
+    # Track notification calls
+    notify_calls = []
+
+    async def mock_notify(domain, service, data):
+        notify_calls.append({"domain": domain, "service": service, "message": data.get("message")})
+
+    hass.services.async_register("notify", "mobile_app_test", mock_notify)
+
+    # Setup forecasts
+    with patch.object(manager.forecast_service, 'get_forecast_data') as mock_forecast:
+        from custom_components.night_battery_charger.models import ForecastData
+        mock_forecast.return_value = ForecastData(
+            solar_kwh=5.0,
+            consumption_kwh=12.0,
+            timestamp=dt_util.now()
+        )
+
+        # 1. Start (should NOT send notification)
+        with patch.object(manager.planning_service, '_get_battery_soc', return_value=45.0):
+            now = dt_util.now().replace(hour=0, minute=1, second=0)
+            with patch("homeassistant.util.dt.now", return_value=now):
+                await manager._start_night_charge_window(now)
+
+        assert len(notify_calls) == 0
+
+        # 2. Update (should NOT send notification)
+        with patch.object(manager.planning_service, '_get_battery_soc', return_value=45.0):
+            now_during = dt_util.now().replace(hour=2, minute=30, second=0)
+            with patch("homeassistant.util.dt.now", return_value=now_during):
+                await manager.ev_service.handle_ev_energy_change(15.0)
+
+        assert len(notify_calls) == 0
+
+        # 3. End (should NOT send notification)
+        manager.current_session = MagicMock()
+        manager.current_session.start_soc = 45.0
+        manager.current_session.end_soc = 80.0
+        manager.current_session.charged_kwh = 3.5
+
+        now_end = dt_util.now().replace(hour=7, minute=0, second=0)
+        with patch("homeassistant.util.dt.now", return_value=now_end):
+            await manager._end_night_charge_window(now_end)
+
+        assert len(notify_calls) == 0
+
+    manager.async_unload()
+
+
+@pytest.mark.asyncio
+async def test_early_completion_notification(hass: HomeAssistant, mock_config_entry):
+    """Test early completion notification when target reached before 07:00."""
+    # Add notification configuration
+    mock_config_entry.data["notify_service"] = "notify.mobile_app_test"
+    mock_config_entry.options = {
+        "notify_on_end": True,
+    }
+
+    manager = NidiaBatteryManager(hass, mock_config_entry)
+    await manager.async_init()
+
+    # Track notification calls
+    notify_calls = []
+
+    async def mock_notify(domain, service, data):
+        notify_calls.append({"domain": domain, "service": service, "message": data.get("message")})
+
+    hass.services.async_register("notify", "mobile_app_test", mock_notify)
+
+    # Start charge session
+    from custom_components.night_battery_charger.models import ChargePlan
+    manager.current_plan = ChargePlan(
+        target_soc_percent=80.0,
+        planned_charge_kwh=3.0,
+        is_charging_scheduled=True,
+        reasoning="Test plan",
+        load_forecast_kwh=10.0,
+        solar_forecast_kwh=5.0
+    )
+
+    # Start charging
+    with patch.object(manager.execution_service, '_get_battery_soc', return_value=50.0):
+        session = await manager.execution_service.start_charge(manager.current_plan)
+
+    # Simulate target reached early (04:23)
+    now_early = dt_util.now().replace(hour=4, minute=23, second=0)
+    with patch("homeassistant.util.dt.now", return_value=now_early):
+        with patch.object(manager.execution_service, '_get_battery_soc', return_value=80.0):
+            target_reached = await manager.execution_service.monitor_charge(80.0)
+
+    # Verify early completion notification was sent
+    assert target_reached is True
+    assert len(notify_calls) == 1
+    assert "Target Raggiunto in Anticipo" in notify_calls[0]["message"]
+    assert "in anticipo" in notify_calls[0]["message"]
+
+    manager.async_unload()
+
+
+@pytest.mark.asyncio
+async def test_notification_service_integration(hass: HomeAssistant, mock_config_entry):
+    """Test that NotificationService is properly integrated in coordinator."""
+    manager = NidiaBatteryManager(hass, mock_config_entry)
+    await manager.async_init()
+
+    # Check that NotificationService is initialized
+    assert manager.notification_service is not None
+
+    # Check that NotificationService is injected into execution_service
+    assert manager.execution_service.notification_service is not None
+    assert manager.execution_service.notification_service == manager.notification_service
+
+    # Check that NotificationService is injected into ev_service
+    assert manager.ev_service.notification_service is not None
+    assert manager.ev_service.notification_service == manager.notification_service
+
+    manager.async_unload()
