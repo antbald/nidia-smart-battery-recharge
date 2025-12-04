@@ -286,21 +286,27 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_NOTIFY_ON_START,
                             self.config_entry.data.get(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
                         ),
-                    ): selector.BooleanSelector(),
+                    ): selector.BooleanSelector(
+                        selector.BooleanSelectorConfig()
+                    ),
                     vol.Optional(
                         CONF_NOTIFY_ON_UPDATE,
                         default=self.config_entry.options.get(
                             CONF_NOTIFY_ON_UPDATE,
                             self.config_entry.data.get(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
                         ),
-                    ): selector.BooleanSelector(),
+                    ): selector.BooleanSelector(
+                        selector.BooleanSelectorConfig()
+                    ),
                     vol.Optional(
                         CONF_NOTIFY_ON_END,
                         default=self.config_entry.options.get(
                             CONF_NOTIFY_ON_END,
                             self.config_entry.data.get(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
                         ),
-                    ): selector.BooleanSelector(),
+                    ): selector.BooleanSelector(
+                        selector.BooleanSelectorConfig()
+                    ),
                 }
             ),
         )
