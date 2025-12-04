@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8.3 - 2025-12-04
+
+### Fixed
+
+- **CRITICAL**: Fixed 500 Internal Server Error and missing UI toggles in config flow (final fix)
+  - Changed from `bool` to `cv.boolean` for notification flags
+  - `cv.boolean` is Home Assistant's standard config validation type that creates proper UI toggle switches
+  - Config flow now loads correctly with visible notification toggles
+
+- **Simplified End Notification**: Removed complex early/normal completion distinction
+  - Now shows single unified summary: energy charged, SOC change, duration
+  - Removed "Target Raggiunto in Anticipo!" and time saved messages
+  - User requested simple summary instead of separate messages per completion type
+
+- **No Notification When No Session**: Skip notification entirely if no charging occurred
+  - Removed "Finestra di Carica Terminata" message for no-session cases
+  - Notifications only sent after actual charging activity
+
 ## 0.8.2 - 2025-12-04
 
 ### Fixed
