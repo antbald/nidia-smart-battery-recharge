@@ -278,16 +278,27 @@ class NidiaBatteryManager:
         # Check if EV energy was already set (e.g., before 00:01)
         current_ev_energy = self._get_current_ev_energy()
         if current_ev_energy > 0:
-            _LOGGER.info("EV energy already set: %.2f kWh - including in initial plan", current_ev_energy)
+            _LOGGER.info("EV energy already set: %.2f kWh - triggering full EV workflow", current_ev_energy)
             # Sync the value to ev_service internal state
             self.ev_service._ev_energy_kwh = current_ev_energy
 
-        # Calculate plan (always for today since we're at 00:01)
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=(current_ev_energy > 0),
-            ev_energy_kwh=current_ev_energy,
-            for_preview=False
-        )
+            # Trigger full EV recalculation workflow
+            # This handles: bypass evaluation, old→new plan comparison, UPDATE notification
+            await self.ev_service._recalculate_with_ev()
+
+            # Get the final plan (already calculated by _recalculate_with_ev)
+            self.current_plan = await self.planning_service.calculate_plan(
+                include_ev=True,
+                ev_energy_kwh=current_ev_energy,
+                for_preview=False
+            )
+        else:
+            # No EV - normal planning
+            self.current_plan = await self.planning_service.calculate_plan(
+                include_ev=False,
+                ev_energy_kwh=0.0,
+                for_preview=False
+            )
 
         _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning)
 

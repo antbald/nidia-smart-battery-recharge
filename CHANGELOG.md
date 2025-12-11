@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.1 - 2025-12-11
+
+### Fixed
+
+- **CRITICAL**: Fixed bypass evaluation and UPDATE notification when EV set before midnight
+  - **Issue**: When EV energy was set before 00:01 (e.g., 23:50), v0.9.0 included it in planning but:
+    - ❌ Bypass was NOT evaluated → could fail to activate when energy insufficient
+    - ❌ UPDATE notification was NOT sent → user didn't see EV details, bypass status, energy balance
+  - **Solution**: When EV detected at 00:01, now triggers full `_recalculate_with_ev()` workflow
+  - **Result**: User receives both UPDATE notification (detailed EV info) + START notification (plan summary)
+  - **Backward Compatible**: Existing behavior for EV set after 00:01 unchanged
+
+**What You Get Now** (when EV set before 00:01):
+- ✅ Bypass correctly evaluated (activates if energy available < energy needed)
+- ✅ UPDATE notification with: EV kWh requested, bypass status, energy available/needed, plan comparison
+- ✅ START notification with final plan summary
+- ✅ Consistent behavior whether EV set at 23:50 or 02:30
+
+**Files Modified**:
+- `coordinator.py`: Modified `_start_night_charge_window()` to call `_recalculate_with_ev()` when EV pre-set
+
 ## 0.9.0 - 2025-12-11
 
 ### Added
