@@ -49,7 +49,7 @@ class EVIntegrationService:
     async def handle_ev_energy_change(self, new_value: float) -> None:
         """Handle EV energy value change during charging window.
 
-        Since we now plan at 00:01, the charging window is 00:01-07:00.
+        Since we now plan at 00:01, the charging window is 00:00-07:00.
         We no longer need the use_today logic as we're always in the target day.
 
         Args:
@@ -58,7 +58,7 @@ class EVIntegrationService:
         now = dt_util.now()
         current_time = now.time()
 
-        # Only recalculate during charging window (00:01-07:00)
+        # Only recalculate during charging window (00:00-07:00)
         if not self.is_in_charging_window(current_time):
             _LOGGER.debug(
                 "EV energy changed to %.2f kWh outside charging window (current time: %s), ignoring",
@@ -148,7 +148,7 @@ class EVIntegrationService:
     def is_in_charging_window(self, current_time: time) -> bool:
         """Check if current time is within charging window.
 
-        Charging window is 00:01-07:00 (after we switched from 23:59 start).
+        Charging window is 00:00-07:00 (includes midnight minute).
 
         Args:
             current_time: Time to check
@@ -156,8 +156,8 @@ class EVIntegrationService:
         Returns:
             True if within charging window
         """
-        # Window: 00:01:00 to 06:59:59
-        return time(0, 1) <= current_time < time(7, 0)
+        # Window: 00:00:00 to 06:59:59
+        return time(0, 0) <= current_time < time(7, 0)
 
     def set_ev_energy(self, value: float) -> None:
         """Set EV energy requirement.

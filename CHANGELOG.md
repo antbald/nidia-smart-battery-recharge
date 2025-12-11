@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.9.0 - 2025-12-11
+
+### Added
+
+- **EV Energy Pre-Planning Support**: System now includes EV energy in initial plan if set before 00:01
+  - Added `_get_current_ev_energy()` helper method to read persisted EV entity state
+  - Modified `_start_night_charge_window()` to check for existing EV value before planning
+  - EV energy values set at 23:50 or any time before midnight are now properly included in the 00:01 plan
+
+- **EV Energy State Restoration**: EV energy value now restored after Home Assistant restart
+  - Added restoration logic in `async_init()` to recover persisted EV value
+  - Prevents loss of EV planning after HA restarts during the night
+
+### Changed
+
+- **Extended Charging Window**: Charging window extended from 00:01-07:00 to 00:00-07:00
+  - Eliminates 59-second gap (00:00:01 to 00:00:59) where EV changes were ignored
+  - Modified `is_in_charging_window()` to include midnight minute
+  - Updated all related comments and docstrings
+
+### Fixed
+
+- **CRITICAL**: Fixed EV energy not being included when set before midnight
+  - **Root Cause**: Coordinator always planned with `include_ev=False` at 00:01, ignoring pre-set values
+  - **Impact**: Users setting EV energy before midnight (common automation pattern) had values completely ignored
+  - **Solution**: System now proactively reads EV entity state at planning time and after HA restart
+  - **Backward Compatible**: No breaking changes - existing behavior for EV set after 00:01 unchanged
+
+### Technical Details
+
+**Files Modified**:
+- `coordinator.py`: Added STATE_UNKNOWN/STATE_UNAVAILABLE imports, `_get_current_ev_energy()` method, modified `_start_night_charge_window()` and `async_init()`
+- `services/ev_integration_service.py`: Extended charging window to 00:00-07:00
+
+**Test Coverage**:
+- Added 9 new unit tests in `tests/test_ev_midnight_fix.py`
+- Tests cover: valid/invalid/missing EV states, midnight gap, pre-set EV planning, state restoration
+
 ## 0.8.3 - 2025-12-04
 
 ### Fixed

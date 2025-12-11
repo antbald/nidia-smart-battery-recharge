@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.event import (
     async_track_state_change_event,
@@ -174,6 +175,12 @@ class NidiaBatteryManager:
         # Initialize learning service (loads historical data)
         await self.learning_service.async_init()
 
+        # Restore EV energy value if exists (after HA restart)
+        restored_ev_energy = self._get_current_ev_energy()
+        if restored_ev_energy > 0.0:
+            self.ev_service._ev_energy_kwh = restored_ev_energy
+            _LOGGER.info("Restored EV energy to %.2f kWh after HA restart", restored_ev_energy)
+
         # Track house load for consumption learning
         self._listeners.append(
             async_track_state_change_event(
@@ -233,6 +240,27 @@ class NidiaBatteryManager:
         self.hass.services.async_remove(DOMAIN, "force_charge_tonight")
         self.hass.services.async_remove(DOMAIN, "disable_tonight")
 
+    def _get_current_ev_energy(self) -> float:
+        """Get current EV energy from number entity.
+
+        Returns:
+            Current EV energy in kWh, or 0.0 if unavailable
+        """
+        entity_id = f"number.{DOMAIN}_ev_energy"
+        state = self.hass.states.get(entity_id)
+
+        if state and state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+            try:
+                ev_energy = float(state.state)
+                _LOGGER.debug("Current EV energy: %.1f kWh", ev_energy)
+                return ev_energy
+            except (ValueError, TypeError):
+                _LOGGER.error("Invalid EV energy value: %s", state.state)
+                return 0.0
+
+        _LOGGER.debug("EV energy not available")
+        return 0.0
+
     async def _handle_midnight(self, now):
         """Close the current day's consumption and store it."""
         _LOGGER.info("Midnight: Closing day and saving consumption")
@@ -247,9 +275,18 @@ class NidiaBatteryManager:
         """
         _LOGGER.info("00:01 - Planning and starting night charge window")
 
+        # Check if EV energy was already set (e.g., before 00:01)
+        current_ev_energy = self._get_current_ev_energy()
+        if current_ev_energy > 0:
+            _LOGGER.info("EV energy already set: %.2f kWh - including in initial plan", current_ev_energy)
+            # Sync the value to ev_service internal state
+            self.ev_service._ev_energy_kwh = current_ev_energy
+
         # Calculate plan (always for today since we're at 00:01)
         self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=False
+            include_ev=(current_ev_energy > 0),
+            ev_energy_kwh=current_ev_energy,
+            for_preview=False
         )
 
         _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning)
