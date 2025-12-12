@@ -385,13 +385,15 @@ class NidiaBatteryManager:
     async def async_handle_ev_energy_change(self, new_value: float):
         """Handle EV energy sensor value change during night window.
 
-        Delegates to EV integration service.
+        Delegates to EV integration service and updates current plan.
         """
-        await self.ev_service.handle_ev_energy_change(new_value)
-        # Update plan state (for_preview=False since this happens during charging window)
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=True, ev_energy_kwh=self.ev_service.ev_energy_kwh, for_preview=False
-        )
+        # EV service handles recalculation and returns new plan
+        new_plan = await self.ev_service.handle_ev_energy_change(new_value)
+
+        # Update plan only if within charging window (new_plan not None)
+        if new_plan:
+            self.current_plan = new_plan
+
         self._update_sensors()
 
     def set_minimum_consumption_fallback(self, value: float):

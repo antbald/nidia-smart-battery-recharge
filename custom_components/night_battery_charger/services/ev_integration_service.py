@@ -8,6 +8,7 @@ from datetime import time
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
 
+from ..models import ChargePlan
 from .execution_service import ExecutionService
 from .forecast_service import ForecastService
 from .planning_service import PlanningService
@@ -46,7 +47,7 @@ class EVIntegrationService:
         # Will be injected by coordinator
         self.notification_service = None
 
-    async def handle_ev_energy_change(self, new_value: float) -> None:
+    async def handle_ev_energy_change(self, new_value: float) -> ChargePlan | None:
         """Handle EV energy value change during charging window.
 
         Since we now plan at 00:01, the charging window is 00:00-07:00.
@@ -54,6 +55,9 @@ class EVIntegrationService:
 
         Args:
             new_value: New EV energy requirement in kWh
+
+        Returns:
+            ChargePlan with EV included if within window, None otherwise
         """
         now = dt_util.now()
         current_time = now.time()
@@ -64,7 +68,7 @@ class EVIntegrationService:
                 "EV energy changed to %.2f kWh outside charging window (current time: %s), ignoring",
                 new_value, current_time
             )
-            return
+            return None
 
         self._ev_energy_kwh = new_value
         _LOGGER.info(
@@ -73,12 +77,16 @@ class EVIntegrationService:
         )
 
         # Recalculate plan with EV energy
-        await self._recalculate_with_ev()
+        new_plan = await self._recalculate_with_ev()
+        return new_plan
 
-    async def _recalculate_with_ev(self) -> None:
+    async def _recalculate_with_ev(self) -> ChargePlan:
         """Recalculate charging plan including EV energy.
 
         Determines if bypass is needed based on available vs needed energy.
+
+        Returns:
+            ChargePlan with EV energy included
         """
         # Save old plan for notification comparison
         old_plan = await self.planning_service.calculate_plan(
@@ -144,6 +152,8 @@ class EVIntegrationService:
                 bypass_activated=bypass_activated,
                 energy_balance=energy_balance,
             )
+
+        return new_plan
 
     def is_in_charging_window(self, current_time: time) -> bool:
         """Check if current time is within charging window.
