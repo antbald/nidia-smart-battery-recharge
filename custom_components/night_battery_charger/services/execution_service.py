@@ -50,6 +50,29 @@ class ExecutionService:
         # Will be injected by coordinator
         self.notification_service = None
 
+        # P2: Sync bypass state from actual switch on startup
+        self._sync_bypass_state_from_switch()
+
+    def _sync_bypass_state_from_switch(self) -> None:
+        """Sync internal bypass state with actual switch state.
+
+        This prevents inconsistencies after HA restart where internal state
+        might be False but switch is actually ON.
+        """
+        bypass_switch = self.entry.data.get(CONF_BATTERY_BYPASS_SWITCH)
+        if not bypass_switch:
+            return
+
+        state = self.hass.states.get(bypass_switch)
+        if state and state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+            actual_state = state.state == "on"
+            if actual_state != self._bypass_switch_active:
+                _LOGGER.info(
+                    "Syncing bypass state: internal=%s, actual=%s → setting to %s",
+                    self._bypass_switch_active, actual_state, actual_state
+                )
+                self._bypass_switch_active = actual_state
+
     async def start_charge(self, plan: ChargePlan) -> ChargeSession | None:
         """Start charging based on the plan.
 

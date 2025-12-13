@@ -282,16 +282,10 @@ class NidiaBatteryManager:
             # Sync the value to ev_service internal state
             self.ev_service._ev_energy_kwh = current_ev_energy
 
-            # Trigger full EV recalculation workflow
+            # P1: Trigger full EV recalculation workflow and USE the returned plan
             # This handles: bypass evaluation, old→new plan comparison, UPDATE notification
-            await self.ev_service._recalculate_with_ev()
-
-            # Get the final plan (already calculated by _recalculate_with_ev)
-            self.current_plan = await self.planning_service.calculate_plan(
-                include_ev=True,
-                ev_energy_kwh=current_ev_energy,
-                for_preview=False
-            )
+            # The returned plan IS the final plan - no need to calculate again
+            self.current_plan = await self.ev_service._recalculate_with_ev()
         else:
             # No EV - normal planning
             self.current_plan = await self.planning_service.calculate_plan(

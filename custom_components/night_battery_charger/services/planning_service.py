@@ -87,6 +87,14 @@ class PlanningService:
             total_load += ev_energy_kwh
             _LOGGER.info("Including EV energy in planning: %.2f kWh", ev_energy_kwh)
 
+        # P3: Warning if consumption exceeds battery capacity
+        if load_forecast_kwh > self.battery_capacity:
+            _LOGGER.warning(
+                "Daily consumption forecast (%.2f kWh) exceeds battery capacity (%.2f kWh). "
+                "Consider adjusting consumption patterns or battery settings.",
+                load_forecast_kwh, self.battery_capacity
+            )
+
         # 4. Calculate net energy needed from battery
         net_load_on_battery = total_load - solar_forecast_kwh
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import time
+from datetime import time, datetime, timedelta
 
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
@@ -14,6 +14,12 @@ from .forecast_service import ForecastService
 from .planning_service import PlanningService
 
 _LOGGER = logging.getLogger(__name__)
+
+# P0: EV charge timeout - bypass should not stay ON forever
+EV_CHARGE_TIMEOUT_HOURS = 6
+
+# P2: Safety margin for bypass decisions - 15% buffer for forecast uncertainty
+BYPASS_SAFETY_MARGIN = 1.15
 
 
 class EVIntegrationService:
@@ -43,6 +49,7 @@ class EVIntegrationService:
         self.battery_capacity = battery_capacity
 
         self._ev_energy_kwh = 0.0
+        self._ev_charge_start_time: datetime | None = None  # P0: Track when EV charge started
 
         # Will be injected by coordinator
         self.notification_service = None
@@ -71,6 +78,15 @@ class EVIntegrationService:
             return None
 
         self._ev_energy_kwh = new_value
+
+        # P0: Track when EV charge started for timeout
+        if new_value > 0 and self._ev_charge_start_time is None:
+            self._ev_charge_start_time = dt_util.now()
+            _LOGGER.info("EV charge started at %s", self._ev_charge_start_time)
+        elif new_value == 0:
+            self._ev_charge_start_time = None
+            _LOGGER.info("EV energy reset, clearing charge start time")
+
         _LOGGER.info(
             "EV energy changed to %.2f kWh during charging window, triggering recalculation",
             new_value
@@ -106,22 +122,43 @@ class EVIntegrationService:
         energy_available = current_energy + solar_forecast
         energy_needed = consumption_forecast + self._ev_energy_kwh
 
+        # P2: Apply safety margin to energy needed for bypass decision
+        energy_needed_with_margin = energy_needed * BYPASS_SAFETY_MARGIN
+
         _LOGGER.info(
             "EV Recalculation: available=%.2f kWh (battery=%.2f + solar=%.2f), "
-            "needed=%.2f kWh (consumption=%.2f + EV=%.2f)",
+            "needed=%.2f kWh (consumption=%.2f + EV=%.2f), with %.0f%% margin=%.2f kWh",
             energy_available, current_energy, solar_forecast,
-            energy_needed, consumption_forecast, self._ev_energy_kwh
+            energy_needed, consumption_forecast, self._ev_energy_kwh,
+            (BYPASS_SAFETY_MARGIN - 1) * 100, energy_needed_with_margin
         )
 
-        # Determine if bypass needed
+        # P0: Check for EV charge timeout
+        bypass_timed_out = False
+        if self._ev_charge_start_time:
+            elapsed = dt_util.now() - self._ev_charge_start_time
+            if elapsed >= timedelta(hours=EV_CHARGE_TIMEOUT_HOURS):
+                bypass_timed_out = True
+                _LOGGER.warning(
+                    "EV charge timeout reached (%.1f hours elapsed). Disabling bypass.",
+                    elapsed.total_seconds() / 3600
+                )
+
+        # Determine if bypass needed (with safety margin)
         bypass_activated = False
-        if energy_available >= energy_needed:
-            # Sufficient energy - disable bypass
-            _LOGGER.info("Sufficient energy available, disabling bypass if active")
+        if bypass_timed_out:
+            # P0: Timeout - force disable bypass
+            _LOGGER.info("Bypass disabled due to timeout")
+            await self.execution_service.disable_bypass()
+        elif energy_available >= energy_needed_with_margin:
+            # Sufficient energy (with margin) - disable bypass
+            _LOGGER.info("Sufficient energy available (with %.0f%% margin), disabling bypass if active",
+                        (BYPASS_SAFETY_MARGIN - 1) * 100)
             await self.execution_service.disable_bypass()
         else:
             # Insufficient energy - enable bypass
-            _LOGGER.info("Insufficient energy, enabling bypass")
+            _LOGGER.info("Insufficient energy (need %.2f kWh with margin, have %.2f kWh), enabling bypass",
+                        energy_needed_with_margin, energy_available)
             await self.execution_service.enable_bypass()
             bypass_activated = True
 
@@ -179,9 +216,10 @@ class EVIntegrationService:
         _LOGGER.debug("EV energy set to %.2f kWh", value)
 
     def reset_ev_energy(self) -> None:
-        """Reset EV energy to zero."""
+        """Reset EV energy to zero and clear charge tracking."""
         self._ev_energy_kwh = 0.0
-        _LOGGER.info("EV energy reset to 0 kWh")
+        self._ev_charge_start_time = None  # P0: Clear timeout tracking
+        _LOGGER.info("EV energy reset to 0 kWh, charge tracking cleared")
 
     @property
     def ev_energy_kwh(self) -> float:
