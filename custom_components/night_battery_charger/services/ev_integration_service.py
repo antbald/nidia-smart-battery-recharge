@@ -53,6 +53,7 @@ class EVIntegrationService:
 
         # Will be injected by coordinator
         self.notification_service = None
+        self.debug_logger = None  # Will be injected
 
     async def handle_ev_energy_change(self, new_value: float) -> ChargePlan | None:
         """Handle EV energy value change during charging window.
@@ -69,12 +70,35 @@ class EVIntegrationService:
         now = dt_util.now()
         current_time = now.time()
 
+        if self.debug_logger:
+            self.debug_logger.log_ev_event(
+                "EV_CHANGE_SERVICE",
+                new_value,
+                time=current_time.strftime("%H:%M:%S"),
+                old_value=f"{self._ev_energy_kwh:.2f}"
+            )
+
         # Only recalculate during charging window (00:00-07:00)
-        if not self.is_in_charging_window(current_time):
+        in_window = self.is_in_charging_window(current_time)
+
+        if self.debug_logger:
+            self.debug_logger.debug(
+                "Checking charging window",
+                current_time=current_time.strftime("%H:%M:%S"),
+                in_window=in_window
+            )
+
+        if not in_window:
             _LOGGER.debug(
                 "EV energy changed to %.2f kWh outside charging window (current time: %s), ignoring",
                 new_value, current_time
             )
+            if self.debug_logger:
+                self.debug_logger.warning(
+                    "EV change OUTSIDE charging window - IGNORED",
+                    time=current_time.strftime("%H:%M:%S"),
+                    ev_value=f"{new_value:.2f}"
+                )
             return None
 
         self._ev_energy_kwh = new_value
@@ -83,9 +107,19 @@ class EVIntegrationService:
         if new_value > 0 and self._ev_charge_start_time is None:
             self._ev_charge_start_time = dt_util.now()
             _LOGGER.info("EV charge started at %s", self._ev_charge_start_time)
+
+            if self.debug_logger:
+                self.debug_logger.log_ev_event(
+                    "EV_TIMER_STARTED",
+                    new_value,
+                    start_time=self._ev_charge_start_time.isoformat()
+                )
         elif new_value == 0:
             self._ev_charge_start_time = None
             _LOGGER.info("EV energy reset, clearing charge start time")
+
+            if self.debug_logger:
+                self.debug_logger.log_ev_event("EV_TIMER_CLEARED", 0.0)
 
         _LOGGER.info(
             "EV energy changed to %.2f kWh during charging window, triggering recalculation",
@@ -93,7 +127,17 @@ class EVIntegrationService:
         )
 
         # Recalculate plan with EV energy
+        if self.debug_logger:
+            self.debug_logger.debug("Starting _recalculate_with_ev")
+
         new_plan = await self._recalculate_with_ev()
+
+        if self.debug_logger:
+            self.debug_logger.debug(
+                "_recalculate_with_ev completed",
+                plan_exists=new_plan is not None
+            )
+
         return new_plan
 
     async def _recalculate_with_ev(self) -> ChargePlan:
@@ -143,6 +187,12 @@ class EVIntegrationService:
                     "EV charge timeout reached (%.1f hours elapsed). Disabling bypass.",
                     elapsed.total_seconds() / 3600
                 )
+                if self.debug_logger:
+                    self.debug_logger.warning(
+                        "EV TIMEOUT REACHED",
+                        hours_elapsed=f"{elapsed.total_seconds() / 3600:.1f}",
+                        timeout_hours=EV_CHARGE_TIMEOUT_HOURS
+                    )
 
         # Determine if bypass needed (with safety margin)
         bypass_activated = False
@@ -150,17 +200,37 @@ class EVIntegrationService:
             # P0: Timeout - force disable bypass
             _LOGGER.info("Bypass disabled due to timeout")
             await self.execution_service.disable_bypass()
+
+            if self.debug_logger:
+                self.debug_logger.log_bypass_event("BYPASS_DISABLED_TIMEOUT", False)
         elif energy_available >= energy_needed_with_margin:
             # Sufficient energy (with margin) - disable bypass
             _LOGGER.info("Sufficient energy available (with %.0f%% margin), disabling bypass if active",
                         (BYPASS_SAFETY_MARGIN - 1) * 100)
             await self.execution_service.disable_bypass()
+
+            if self.debug_logger:
+                self.debug_logger.log_bypass_event(
+                    "BYPASS_DISABLED_SUFFICIENT",
+                    False,
+                    available_kwh=f"{energy_available:.2f}",
+                    needed_kwh=f"{energy_needed_with_margin:.2f}"
+                )
         else:
             # Insufficient energy - enable bypass
             _LOGGER.info("Insufficient energy (need %.2f kWh with margin, have %.2f kWh), enabling bypass",
                         energy_needed_with_margin, energy_available)
             await self.execution_service.enable_bypass()
             bypass_activated = True
+
+            if self.debug_logger:
+                self.debug_logger.log_bypass_event(
+                    "BYPASS_ENABLED_INSUFFICIENT",
+                    True,
+                    available_kwh=f"{energy_available:.2f}",
+                    needed_kwh=f"{energy_needed_with_margin:.2f}",
+                    deficit_kwh=f"{energy_needed_with_margin - energy_available:.2f}"
+                )
 
         # Always replan with EV included to update targets
         new_plan = await self.planning_service.calculate_plan(
