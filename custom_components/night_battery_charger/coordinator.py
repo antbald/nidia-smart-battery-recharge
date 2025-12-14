@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
@@ -14,6 +15,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_BATTERY_CAPACITY,
+    CONF_BATTERY_SOC_SENSOR,
     CONF_HOUSE_LOAD_SENSOR,
     CONF_MIN_SOC_RESERVE,
     CONF_SAFETY_SPREAD,
@@ -22,16 +24,18 @@ from .const import (
     DEFAULT_SAFETY_SPREAD,
     DOMAIN,
 )
-from .debug_logger import NidiaDebugLogger
 from .models import ChargePlan, ChargeSession
 from .services import (
-    EVIntegrationService,
     ExecutionService,
     ForecastService,
     LearningService,
     NotificationService,
     PlanningService,
 )
+
+# New EV module imports
+from .ev.logger import EVDebugLogger
+from .ev.service import EVService
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,11 +53,14 @@ class NidiaBatteryManager:
         self.entry = entry
         self._listeners = []
 
-        # Initialize debug logger FIRST
-        self.debug_logger = NidiaDebugLogger(hass)
-        self.debug_logger.info("=" * 80)
-        self.debug_logger.info("NidiaBatteryManager Initializing")
-        self.debug_logger.info("=" * 80)
+        # Create log directory for EV debug logs
+        self.log_dir = Path(__file__).parent / "log"
+        self.log_dir.mkdir(exist_ok=True)
+
+        # Initialize NEW EV debug logger (controlled by switch)
+        self.ev_logger = EVDebugLogger(hass, self.log_dir)
+
+        _LOGGER.info("NidiaBatteryManager Initializing (v0.10.0 - New EV System)")
 
         # Initialize services (dependency injection)
         self.learning_service = LearningService(hass, entry)
@@ -81,16 +88,22 @@ class NidiaBatteryManager:
         # Inject notification service into execution_service
         self.execution_service.notification_service = self.notification_service
 
-        self.ev_service = EVIntegrationService(
-            hass,
-            self.planning_service,
-            self.execution_service,
-            self.forecast_service,
+        # NEW: Create EVService with logger
+        soc_sensor = entry.data.get(CONF_BATTERY_SOC_SENSOR, "")
+        self.ev_service = EVService(
+            hass=hass,
+            logger=self.ev_logger,
             battery_capacity=self.battery_capacity,
+            soc_sensor_entity=soc_sensor,
         )
-        # Inject notification service and debug logger into ev_service
-        self.ev_service.notification_service = self.notification_service
-        self.ev_service.debug_logger = self.debug_logger
+
+        # Inject service dependencies into EVService
+        self.ev_service.inject_services(
+            planning_service=self.planning_service,
+            execution_service=self.execution_service,
+            forecast_service=self.forecast_service,
+            notification_service=self.notification_service,
+        )
 
         # Current state (exposed for sensors)
         self.current_plan: ChargePlan | None = None
@@ -183,11 +196,8 @@ class NidiaBatteryManager:
         # Initialize learning service (loads historical data)
         await self.learning_service.async_init()
 
-        # Restore EV energy value if exists (after HA restart)
-        restored_ev_energy = self._get_current_ev_energy()
-        if restored_ev_energy > 0.0:
-            self.ev_service._ev_energy_kwh = restored_ev_energy
-            _LOGGER.info("Restored EV energy to %.2f kWh after HA restart", restored_ev_energy)
+        # Note: EV energy restoration is now handled by EVEnergyNumber entity via RestoreEntity
+        # The entity will call ev_service.restore_state() when added to HA
 
         # Track house load for consumption learning
         self._listeners.append(
@@ -236,7 +246,7 @@ class NidiaBatteryManager:
             DOMAIN, "disable_tonight", self._service_disable_charge
         )
 
-        _LOGGER.info("Nidia Smart Battery Recharge initialized (v0.7.0 - Refactored)")
+        _LOGGER.info("Nidia Smart Battery Recharge initialized (v0.10.0 - New EV System)")
 
     def async_unload(self):
         """Unload listeners."""
@@ -281,39 +291,41 @@ class NidiaBatteryManager:
         This now combines planning and starting, since we plan at 00:01
         (already in the target day).
         """
-        self.debug_logger.log_timing_event("START_WINDOW_00_01")
+        self.ev_logger.log_separator("CHARGING WINDOW START 00:01")
         _LOGGER.info("00:01 - Planning and starting night charge window")
 
         # Check if EV energy was already set (e.g., before 00:01)
-        current_ev_energy = self._get_current_ev_energy()
+        current_ev_energy = self.ev_service.ev_energy_kwh
 
-        self.debug_logger.debug(
-            "Checking for pre-set EV energy",
-            entity_ev_value=f"{current_ev_energy:.2f}",
-            service_ev_value=f"{self.ev_service._ev_energy_kwh:.2f}",
-            has_timer=self.ev_service._ev_charge_start_time is not None
+        self.ev_logger.log(
+            "WINDOW_START_CHECK",
+            ev_energy=current_ev_energy,
+            has_timer=self.ev_service.is_timer_active
         )
 
         if current_ev_energy > 0:
             _LOGGER.info("EV energy already set: %.2f kWh - triggering full EV workflow", current_ev_energy)
 
-            self.debug_logger.log_ev_event(
+            self.ev_logger.log(
                 "EV_PRE_SET_AT_00_01",
-                current_ev_energy,
-                service_value=f"{self.ev_service._ev_energy_kwh:.2f}"
+                ev_value=current_ev_energy
             )
 
-            # Sync the value to ev_service internal state
-            self.ev_service._ev_energy_kwh = current_ev_energy
+            # NEW: Use EVService.set_ev_energy for consistent flow
+            # This handles: validation, timer, energy calc, bypass, plan, notification
+            result = await self.ev_service.set_ev_energy(current_ev_energy)
 
-            # P1: Trigger full EV recalculation workflow and USE the returned plan
-            # This handles: bypass evaluation, old→new plan comparison, UPDATE notification
-            # The returned plan IS the final plan - no need to calculate again
-            self.debug_logger.debug("Calling _recalculate_with_ev() for pre-set EV")
-            self.current_plan = await self.ev_service._recalculate_with_ev()
-            self.debug_logger.debug("_recalculate_with_ev() completed")
+            # Get plan from result
+            self.current_plan = result.get("plan")
+
+            self.ev_logger.log(
+                "EV_PRE_SET_PROCESSED",
+                status=result.get("status"),
+                bypass=result.get("bypass_activated"),
+                plan_exists=self.current_plan is not None
+            )
         else:
-            self.debug_logger.debug("No EV pre-set, calculating normal plan")
+            self.ev_logger.log("NO_EV_PRESET", message="Calculating normal plan")
             # No EV - normal planning
             self.current_plan = await self.planning_service.calculate_plan(
                 include_ev=False,
@@ -321,14 +333,15 @@ class NidiaBatteryManager:
                 for_preview=False
             )
 
-        _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning)
+        _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning if self.current_plan else "No plan")
 
         if self.current_plan:
-            self.debug_logger.log_plan_event("PLAN_FINAL_AT_00_01", {
-                'target_soc': self.current_plan.target_soc_percent,
-                'charge_kwh': self.current_plan.planned_charge_kwh,
-                'ev_kwh': current_ev_energy
-            })
+            self.ev_logger.log(
+                "PLAN_FINAL_AT_00_01",
+                target_soc=self.current_plan.target_soc_percent,
+                charge_kwh=self.current_plan.planned_charge_kwh,
+                ev_kwh=current_ev_energy
+            )
 
         # Send start notification
         current_soc = self.planning_service._get_battery_soc()
@@ -343,6 +356,7 @@ class NidiaBatteryManager:
 
     async def _end_night_charge_window(self, now):
         """End the charging window at 07:00."""
+        self.ev_logger.log_separator("CHARGING WINDOW END 07:00")
         _LOGGER.info("07:00 - Ending night charge window")
 
         # Stop charging and get summary
@@ -369,19 +383,20 @@ class NidiaBatteryManager:
         # Reset overrides
         self.planning_service.reset_overrides()
 
-        # EV integration cleanup
-        await self.execution_service.disable_bypass()
+        # NEW: Reset EV using EVService.reset() - handles everything
+        await self.ev_service.reset()
 
-        # Reset EV energy number entity to 0
+        # Also reset the number entity to 0 via HA service
         ev_number_entity = f"number.{DOMAIN}_ev_energy"
         try:
             await self.hass.services.async_call(
                 "number", "set_value", {"entity_id": ev_number_entity, "value": 0.0}
             )
-            self.ev_service.reset_ev_energy()
-            _LOGGER.info("Reset EV energy to 0 at end of charging window")
+            _LOGGER.info("Reset EV energy entity to 0 at end of charging window")
         except Exception as ex:
-            _LOGGER.error("Failed to reset EV energy: %s", ex)
+            _LOGGER.error("Failed to reset EV energy entity: %s", ex)
+
+        self.ev_logger.log("WINDOW_END_COMPLETE", summary=summary[:100] if summary else "N/A")
 
         # Clear session
         self.current_session = None
@@ -408,41 +423,21 @@ class NidiaBatteryManager:
 
         async_dispatcher_send(self.hass, f"{DOMAIN}_update")
 
-    # EV Integration
+    # EV Integration - Now handled by EVService with linear flow
+    # Note: The primary flow is: EVEnergyNumber → EVService → callback → coordinator
+    # This method is kept for backward compatibility and logging purposes
 
     async def async_handle_ev_energy_change(self, new_value: float):
-        """Handle EV energy sensor value change during night window.
+        """Handle EV energy value change (legacy compatibility method).
 
-        Delegates to EV integration service and updates current plan.
+        In v0.10.0, the primary flow goes through the callback in number.py.
+        This method just updates sensors for any remaining calls.
         """
-        self.debug_logger.log_ev_event(
-            "EV_CHANGE_COORDINATOR",
-            new_value,
-            current_plan_exists=self.current_plan is not None
+        self.ev_logger.log(
+            "EV_CHANGE_COORDINATOR_CALLED",
+            new_value=new_value,
+            note="Called via legacy path"
         )
-
-        # EV service handles recalculation and returns new plan
-        self.debug_logger.debug("Calling ev_service.handle_ev_energy_change")
-        new_plan = await self.ev_service.handle_ev_energy_change(new_value)
-        self.debug_logger.debug(
-            "ev_service.handle_ev_energy_change completed",
-            returned_plan=new_plan is not None
-        )
-
-        # Update plan only if within charging window (new_plan not None)
-        if new_plan:
-            self.current_plan = new_plan
-            self.debug_logger.log_plan_event("PLAN_UPDATED_BY_EV", {
-                'target_soc': new_plan.target_soc_percent,
-                'charge_kwh': new_plan.planned_charge_kwh,
-                'ev_kwh': new_value
-            })
-        else:
-            self.debug_logger.warning(
-                "No plan returned from handle_ev_energy_change",
-                ev_value=f"{new_value:.2f}"
-            )
-
         self._update_sensors()
 
     def set_minimum_consumption_fallback(self, value: float):
