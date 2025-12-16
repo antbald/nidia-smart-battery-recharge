@@ -210,7 +210,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -225,9 +225,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 {
                     vol.Required(
                         CONF_BATTERY_CAPACITY,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_BATTERY_CAPACITY,
-                            self.config_entry.data.get(
+                            self._config_entry.data.get(
                                 CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY
                             ),
                         ),
@@ -242,9 +242,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                     vol.Required(
                         CONF_MIN_SOC_RESERVE,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_MIN_SOC_RESERVE,
-                            self.config_entry.data.get(
+                            self._config_entry.data.get(
                                 CONF_MIN_SOC_RESERVE, DEFAULT_MIN_SOC_RESERVE
                             ),
                         ),
@@ -259,9 +259,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                     vol.Required(
                         CONF_SAFETY_SPREAD,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_SAFETY_SPREAD,
-                            self.config_entry.data.get(
+                            self._config_entry.data.get(
                                 CONF_SAFETY_SPREAD, DEFAULT_SAFETY_SPREAD
                             ),
                         ),
@@ -276,30 +276,30 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                     vol.Optional(
                         CONF_NOTIFY_SERVICE,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_NOTIFY_SERVICE,
-                            self.config_entry.data.get(CONF_NOTIFY_SERVICE, ""),
+                            self._config_entry.data.get(CONF_NOTIFY_SERVICE, ""),
                         ),
                     ): selector.TextSelector(),
                     vol.Optional(
                         CONF_NOTIFY_ON_START,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_NOTIFY_ON_START,
-                            self.config_entry.data.get(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
+                            self._config_entry.data.get(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
                         ),
                     ): cv.boolean,
                     vol.Optional(
                         CONF_NOTIFY_ON_UPDATE,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_NOTIFY_ON_UPDATE,
-                            self.config_entry.data.get(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
+                            self._config_entry.data.get(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
                         ),
                     ): cv.boolean,
                     vol.Optional(
                         CONF_NOTIFY_ON_END,
-                        default=self.config_entry.options.get(
+                        default=self._config_entry.options.get(
                             CONF_NOTIFY_ON_END,
-                            self.config_entry.data.get(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
+                            self._config_entry.data.get(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
                         ),
                     ): cv.boolean,
                 }
