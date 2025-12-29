@@ -107,18 +107,35 @@ class EVDebugSwitch(SwitchEntity, RestoreEntity):
     @property
     def extra_state_attributes(self) -> dict:
         """Return extra state attributes."""
-        from pathlib import Path
+        attrs = {}
 
-        log_dir = Path(__file__).parent / "log"
-        log_file = log_dir / "ev_debug.log"
+        # Get logger from manager if available
+        if hasattr(self._manager, 'ev_logger') and self._manager.ev_logger:
+            logger = self._manager.ev_logger
 
-        attrs = {
-            "log_file_path": str(log_file),
-        }
+            # Current day's log file
+            current_log_file = logger.log_file
+            attrs["log_file_path"] = str(current_log_file)
+            attrs["log_base_dir"] = str(logger.base_log_dir)
 
-        # Add log file size if exists
-        if log_file.exists():
-            size_kb = log_file.stat().st_size / 1024
-            attrs["log_file_size_kb"] = round(size_kb, 2)
+            # Current log file size if exists
+            if current_log_file.exists():
+                size_kb = current_log_file.stat().st_size / 1024
+                attrs["log_file_size_kb"] = round(size_kb, 2)
+            else:
+                attrs["log_file_size_kb"] = 0
+
+            # Total size of all logs
+            attrs["total_log_size_kb"] = logger.get_total_log_size_kb()
+
+            # Available log dates
+            available_dates = logger.get_available_log_dates()
+            attrs["available_log_days"] = len(available_dates)
+
+            # List of available dates (formatted)
+            if available_dates:
+                attrs["log_dates"] = [
+                    dt.strftime("%Y-%m-%d") for dt in available_dates
+                ]
 
         return attrs
