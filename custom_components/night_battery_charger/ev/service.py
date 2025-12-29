@@ -142,22 +142,72 @@ class EVService:
                            value_saved=value,
                            reason="Value saved, will process when window opens")
             _LOGGER.info("EV energy %.2f kWh set outside window, saved for later", value)
+
+            # Calculate preview plan so sensors get updated
+            preview_plan = None
+            if self.planning_service and value > 0:
+                preview_plan = await self.planning_service.calculate_plan(
+                    include_ev=True, ev_energy_kwh=value, for_preview=True
+                )
+                self.logger.log("EV_PREVIEW_CALCULATED",
+                               target_soc=preview_plan.target_soc_percent if preview_plan else 0,
+                               charge_kwh=preview_plan.planned_charge_kwh if preview_plan else 0,
+                               note="Preview calculated outside charging window")
+                _LOGGER.info(
+                    "EV preview plan: target_soc=%.1f%%, charge=%.2f kWh",
+                    preview_plan.target_soc_percent if preview_plan else 0,
+                    preview_plan.planned_charge_kwh if preview_plan else 0
+                )
+
+            # Send update notification even outside window (if configured)
+            if self.notification_service and preview_plan and value > 0:
+                # Calculate energy preview for notification
+                energy_preview = await self._calculate_energy_balance()
+                old_plan = await self.planning_service.calculate_plan(
+                    include_ev=False, ev_energy_kwh=0.0, for_preview=True
+                )
+                await self._send_update_notification(
+                    old_plan, preview_plan,
+                    {"activated": False, "reason": "outside_window_preview"},
+                    energy_preview
+                )
+                self.logger.log("EV_NOTIFICATION_SENT",
+                               ev_kwh=value,
+                               note="Preview notification sent outside window")
+
             return {
                 "status": "saved",
                 "reason": "outside_charging_window",
                 "value": value,
+                "plan": preview_plan,  # Include preview plan for sensor updates
             }
 
         # Step 3: Manage charge timer
         self._manage_timer(value, now)
 
-        # Step 4: If value is 0, just reset and return
+        # Step 4: If value is 0, reset and recalculate plan without EV
         if value == 0:
-            self.logger.log("EV_RESET_ZERO", reason="EV value set to 0")
+            # Disable bypass when EV is reset
+            await self._set_bypass(False)
+
+            # Recalculate plan without EV
+            reset_plan = None
+            if self.planning_service:
+                reset_plan = await self.planning_service.calculate_plan(
+                    include_ev=False, ev_energy_kwh=0.0, for_preview=False
+                )
+
+            self.logger.log("EV_RESET_ZERO",
+                           reason="EV value set to 0",
+                           bypass_disabled=True,
+                           new_target_soc=reset_plan.target_soc_percent if reset_plan else 0)
+            _LOGGER.info("EV reset to 0, bypass disabled, plan recalculated")
+
             return {
                 "status": "reset",
                 "reason": "ev_set_to_zero",
                 "value": 0,
+                "plan": reset_plan,  # Include plan for sensor updates
             }
 
         # Step 5: Calculate energy balance
@@ -206,6 +256,12 @@ class EVService:
             self.logger.log("EV_NOTIFICATION_SENT",
                            ev_kwh=value,
                            bypass=bypass_result["activated"])
+
+        self.logger.log("EV_SET_COMPLETE",
+                       value=value,
+                       bypass=bypass_result["activated"],
+                       target_soc=new_plan.target_soc_percent if new_plan else 0,
+                       charge_kwh=new_plan.planned_charge_kwh if new_plan else 0)
 
         self.logger.log_separator("EV SET ENERGY COMPLETE")
 

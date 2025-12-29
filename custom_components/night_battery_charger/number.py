@@ -27,10 +27,28 @@ async def async_setup_entry(
 
     # Callback to update coordinator when EV changes
     async def on_ev_change(value: float, result: dict) -> None:
-        """Handle EV energy change - update coordinator state."""
-        if result.get("status") == "processed" and result.get("plan"):
-            manager.current_plan = result["plan"]
+        """Handle EV energy change - update coordinator state.
+
+        This callback is invoked for all statuses:
+        - "processed": In charging window, full processing done
+        - "saved": Outside window, preview plan calculated
+        - "reset": EV set to 0, plan recalculated without EV
+        """
+        plan = result.get("plan")
+        status = result.get("status", "unknown")
+
+        if plan:
+            manager.current_plan = plan
+            _LOGGER.info(
+                "EV change callback: value=%.1f kWh, status=%s, target_soc=%.1f%%",
+                value, status, plan.target_soc_percent
+            )
             manager._update_sensors()
+        else:
+            _LOGGER.warning(
+                "EV change callback: no plan returned, status=%s, value=%.1f",
+                status, value
+            )
 
     # Create EV entity using new ev module with callback
     ev_entity = EVEnergyNumber(entry, manager.ev_service, on_change_callback=on_ev_change)

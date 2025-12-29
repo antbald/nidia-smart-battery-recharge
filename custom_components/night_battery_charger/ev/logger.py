@@ -57,8 +57,34 @@ class EVDebugLogger:
             event: Event name (e.g., "EV_SET_START", "EV_BYPASS_DECISION")
             **data: Additional context data to log
         """
-        # ALWAYS log critical events to HA log, regardless of switch state
-        if event in ("EV_SET_START", "EV_ENTITY_SET_VALUE_CALLED", "EV_PRE_SET_AT_00_01"):
+        # Critical events that ALWAYS go to HA logs, regardless of switch state
+        # These are the key decision points that users need to see
+        critical_events = (
+            # Entry points
+            "EV_SET_START",
+            "EV_ENTITY_SET_VALUE_CALLED",
+            "EV_PRE_SET_AT_00_01",
+            # Window and timing
+            "EV_WINDOW_CHECK",
+            "EV_OUTSIDE_WINDOW",
+            # Energy calculations and decisions
+            "EV_ENERGY_CALCULATED",
+            "EV_BYPASS_EVALUATED",
+            "EV_BYPASS_SET",
+            # Plan calculations
+            "EV_PLAN_CALCULATED",
+            "EV_PREVIEW_CALCULATED",
+            # Notifications
+            "EV_NOTIFICATION_SENT",
+            # Completion and reset
+            "EV_SET_COMPLETE",
+            "EV_RESET_COMPLETE",
+            "EV_RESET_ZERO",
+            # Errors and warnings
+            "EV_TIMEOUT_REACHED",
+        )
+
+        if event in critical_events:
             _LOGGER.info("EV Event: %s - %s", event, data)
 
         if not self.enabled:
