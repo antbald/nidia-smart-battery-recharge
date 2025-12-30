@@ -47,10 +47,8 @@ from .const import (
     CONF_NOTIFY_ON_END,
     CONF_MIN_SOC_RESERVE,
     CONF_SAFETY_SPREAD,
-    CONF_CHARGING_WINDOW_START_HOUR,
-    CONF_CHARGING_WINDOW_START_MINUTE,
-    CONF_CHARGING_WINDOW_END_HOUR,
-    CONF_CHARGING_WINDOW_END_MINUTE,
+    CONF_CHARGING_WINDOW_START,
+    CONF_CHARGING_WINDOW_END,
     CONF_EV_TIMEOUT_HOURS,
     CONF_PRICE_PEAK,
     CONF_PRICE_OFFPEAK,
@@ -61,10 +59,8 @@ from .const import (
     DEFAULT_NOTIFY_ON_START,
     DEFAULT_NOTIFY_ON_UPDATE,
     DEFAULT_NOTIFY_ON_END,
-    DEFAULT_CHARGING_WINDOW_START_HOUR,
-    DEFAULT_CHARGING_WINDOW_START_MINUTE,
-    DEFAULT_CHARGING_WINDOW_END_HOUR,
-    DEFAULT_CHARGING_WINDOW_END_MINUTE,
+    DEFAULT_CHARGING_WINDOW_START,
+    DEFAULT_CHARGING_WINDOW_END,
     DEFAULT_EV_TIMEOUT_HOURS,
     DEFAULT_PRICE_PEAK,
     DEFAULT_PRICE_OFFPEAK,
@@ -139,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.1.0")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.0")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -183,6 +179,29 @@ class NidiaCoordinator:
         def get_config(key, default):
             return options.get(key, data.get(key, default))
 
+        def parse_time_value(time_val: dict, default: dict) -> tuple[int, int]:
+            """Parse time value from TimeSelector dict format.
+
+            Args:
+                time_val: Time value dict with hour, minute, second keys
+                default: Default dict if time_val is invalid
+
+            Returns:
+                Tuple of (hour, minute)
+            """
+            if not isinstance(time_val, dict):
+                time_val = default
+            return (
+                int(time_val.get("hour", default.get("hour", 0))),
+                int(time_val.get("minute", default.get("minute", 0))),
+            )
+
+        # Parse charging window times (TimeSelector returns dict)
+        window_start = get_config(CONF_CHARGING_WINDOW_START, DEFAULT_CHARGING_WINDOW_START)
+        window_end = get_config(CONF_CHARGING_WINDOW_END, DEFAULT_CHARGING_WINDOW_END)
+        start_hour, start_minute = parse_time_value(window_start, DEFAULT_CHARGING_WINDOW_START)
+        end_hour, end_minute = parse_time_value(window_end, DEFAULT_CHARGING_WINDOW_END)
+
         return NidiaState(
             # Battery config
             battery_capacity_kwh=get_config(CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY),
@@ -203,11 +222,11 @@ class NidiaCoordinator:
             notify_on_update=get_config(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
             notify_on_end=get_config(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
 
-            # Configurable window times
-            window_start_hour=int(get_config(CONF_CHARGING_WINDOW_START_HOUR, DEFAULT_CHARGING_WINDOW_START_HOUR)),
-            window_start_minute=int(get_config(CONF_CHARGING_WINDOW_START_MINUTE, DEFAULT_CHARGING_WINDOW_START_MINUTE)),
-            window_end_hour=int(get_config(CONF_CHARGING_WINDOW_END_HOUR, DEFAULT_CHARGING_WINDOW_END_HOUR)),
-            window_end_minute=int(get_config(CONF_CHARGING_WINDOW_END_MINUTE, DEFAULT_CHARGING_WINDOW_END_MINUTE)),
+            # Configurable window times (parsed from TimeSelector dict)
+            window_start_hour=start_hour,
+            window_start_minute=start_minute,
+            window_end_hour=end_hour,
+            window_end_minute=end_minute,
 
             # Configurable EV timeout
             ev_timeout_hours=float(get_config(CONF_EV_TIMEOUT_HOURS, DEFAULT_EV_TIMEOUT_HOURS)),
