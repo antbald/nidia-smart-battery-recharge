@@ -1,7 +1,7 @@
 # Nidia Smart Battery Recharge
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.1.0-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.1.1-blue?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/github/license/antoniobaldassarre/nidia-smart-battery-recharge?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/HACS-Custom-orange?style=for-the-badge" alt="HACS">
   <img src="https://img.shields.io/badge/Home%20Assistant-2024.1+-blue?style=for-the-badge" alt="HA Version">
@@ -191,9 +191,9 @@ Every morning:
 | `sensor.nidia_smart_battery_recharge_total_savings` | Total money saved by night charging | EUR |
 | `sensor.nidia_smart_battery_recharge_monthly_savings` | Current month savings | EUR |
 | `sensor.nidia_smart_battery_recharge_lifetime_savings` | All-time savings | EUR |
-| `sensor.nidia_smart_battery_recharge_total_charged_kwh` | Total energy charged from grid | kWh |
-| `sensor.nidia_smart_battery_recharge_price_peak` | Configured peak electricity rate | EUR/kWh |
-| `sensor.nidia_smart_battery_recharge_price_offpeak` | Configured off-peak electricity rate | EUR/kWh |
+| `sensor.nidia_smart_battery_recharge_total_energy_charged` | Total energy charged from grid | kWh |
+| `sensor.nidia_smart_battery_recharge_peak_price` | Configured peak electricity rate | EUR/kWh |
+| `sensor.nidia_smart_battery_recharge_off_peak_price` | Configured off-peak electricity rate | EUR/kWh |
 | `sensor.nidia_smart_battery_recharge_charging_window` | Current charging window times | - |
 
 ### Binary Sensors
@@ -366,7 +366,7 @@ cards:
         layout: vertical
 
       - type: custom:mushroom-template-card
-        primary: "{{ states('sensor.nidia_smart_battery_recharge_total_charged_kwh') }} kWh"
+        primary: "{{ states('sensor.nidia_smart_battery_recharge_total_energy_charged') }} kWh"
         secondary: Total Charged
         icon: mdi:battery-charging
         icon_color: blue
@@ -376,13 +376,13 @@ cards:
   - type: horizontal-stack
     cards:
       - type: custom:mushroom-entity-card
-        entity: sensor.nidia_smart_battery_recharge_price_peak
+        entity: sensor.nidia_smart_battery_recharge_peak_price
         name: Peak Rate
         icon: mdi:currency-eur
         icon_color: red
 
       - type: custom:mushroom-entity-card
-        entity: sensor.nidia_smart_battery_recharge_price_offpeak
+        entity: sensor.nidia_smart_battery_recharge_off_peak_price
         name: Off-Peak Rate
         icon: mdi:currency-eur
         icon_color: green
@@ -504,16 +504,16 @@ cards:
         name: Month
       - entity: sensor.nidia_smart_battery_recharge_lifetime_savings
         name: Lifetime
-      - entity: sensor.nidia_smart_battery_recharge_total_charged_kwh
+      - entity: sensor.nidia_smart_battery_recharge_total_energy_charged
         name: Charged
 
   - type: entities
     title: Pricing Configuration
     entities:
-      - entity: sensor.nidia_smart_battery_recharge_price_peak
+      - entity: sensor.nidia_smart_battery_recharge_peak_price
         name: Peak Rate (€/kWh)
         icon: mdi:currency-eur
-      - entity: sensor.nidia_smart_battery_recharge_price_offpeak
+      - entity: sensor.nidia_smart_battery_recharge_off_peak_price
         name: Off-Peak Rate (€/kWh)
         icon: mdi:currency-eur
       - entity: sensor.nidia_smart_battery_recharge_charging_window
@@ -658,11 +658,11 @@ entities:
     label: Savings
   - entity: sensor.nidia_smart_battery_recharge_monthly_savings
   - entity: sensor.nidia_smart_battery_recharge_lifetime_savings
-  - entity: sensor.nidia_smart_battery_recharge_total_charged_kwh
+  - entity: sensor.nidia_smart_battery_recharge_total_energy_charged
   - type: section
     label: Pricing
-  - entity: sensor.nidia_smart_battery_recharge_price_peak
-  - entity: sensor.nidia_smart_battery_recharge_price_offpeak
+  - entity: sensor.nidia_smart_battery_recharge_peak_price
+  - entity: sensor.nidia_smart_battery_recharge_off_peak_price
   - type: section
     label: Controls
   - entity: button.nidia_smart_battery_recharge_recalculate_plan
