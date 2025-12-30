@@ -1,14 +1,15 @@
-# 🔋 Nidia Smart Battery Recharge
+# Nidia Smart Battery Recharge
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/antoniobaldassarre/nidia-smart-battery-recharge?style=for-the-badge" alt="Release">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/github/license/antoniobaldassarre/nidia-smart-battery-recharge?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/HACS-Custom-orange?style=for-the-badge" alt="HACS">
+  <img src="https://img.shields.io/badge/Home%20Assistant-2024.1+-blue?style=for-the-badge" alt="HA Version">
 </p>
 
 **Nidia Smart Battery Recharge** is an intelligent Home Assistant integration that optimizes your home battery charging strategy. It learns your household's consumption patterns, considers solar production forecasts, and automatically decides when and how much to charge from the grid during off-peak hours.
 
-## 🎯 Why Nidia?
+## Why Nidia?
 
 If you have a home battery system with solar panels, you face a daily challenge: **how much should I charge from the grid tonight?**
 
@@ -18,42 +19,51 @@ If you have a home battery system with solar panels, you face a daily challenge:
 
 **Nidia solves this** by intelligently analyzing your consumption patterns and solar forecasts to charge exactly what you need, when you need it.
 
-## ✨ Key Features
+## Key Features
 
-### 🧠 **Adaptive Learning**
+### Adaptive Learning
 - Learns your household's consumption patterns over a 3-week rolling window
 - Tracks consumption by day of the week (Mondays vs. Sundays have different patterns!)
 - Automatically adapts to changing habits and seasonal variations
+- Uses trapezoidal integration for accurate energy tracking
 
-### ☀️ **Solar-Aware Planning**
+### Solar-Aware Planning
 - Integrates today's solar production forecast
 - Avoids unnecessary charging when solar will cover your needs
 - Calculates the exact energy deficit to charge overnight
 
-### 🎯 **Smart Decision Making**
+### Smart Decision Making
 - Decides **IF** charging is needed (not blindly charging every night)
 - Calculates **HOW MUCH** to charge based on forecasted needs
 - Respects battery reserves and safety margins
 - Prevents overcharging and battery degradation
 
-### 🔒 **Safe & Configurable**
+### EV Integration (New in v2.0)
+- Input EV energy needs for overnight charging
+- Automatic bypass control when battery energy is insufficient
+- 6-hour timeout protection
+- Visual feedback on EV charging status
+
+### Safe & Configurable
 - Minimum SOC reserve to protect battery health
 - Safety spread buffer for unexpected consumption
 - Automatic shutoff at target SOC or morning cutoff time
 - Manual override options for special situations
 
-### 📊 **Complete Visibility**
+### Complete Visibility
 - Real-time sensors for all metrics
 - Detailed reasoning explanations for every decision
 - Weekday-specific consumption averages
 - Last run summaries and notifications
+- **Full diagnostic logging** that always works
 
-### 🔘 **One-Click Testing**
+### One-Click Controls
 - Recalculate plan button to preview tonight's strategy
-- Test the algorithm without waiting for 00:01
-- Understand decisions before they happen
+- Force charge tonight button
+- Disable charge tonight button
+- Debug logging toggle
 
-## 📥 Installation
+## Installation
 
 ### HACS (Recommended)
 
@@ -73,7 +83,7 @@ If you have a home battery system with solar panels, you face a daily challenge:
 3. Restart Home Assistant
 4. Add the integration via **Settings** → **Devices & Services**
 
-## ⚙️ Configuration
+## Configuration
 
 The integration uses a friendly **3-step configuration wizard**:
 
@@ -91,21 +101,24 @@ The integration uses a friendly **3-step configuration wizard**:
 - **Safety Spread** (default: 10%): Extra buffer percentage added to calculated charging need
 - **Notification Service** (optional): Service to receive morning summaries (e.g., `notify.mobile_app_your_phone`)
 
-## 🔧 How It Works
+### Optional: EV Integration
+- **Bypass Switch Entity**: Switch that enables direct grid-to-EV charging when battery is insufficient
 
-### 1. 📚 **Learning Phase** (Continuous)
+## How It Works
+
+### 1. Learning Phase (Continuous)
 The integration monitors your **House Load Power Sensor** throughout the day:
-- Calculates total daily energy consumption (kWh)
+- Uses trapezoidal integration for accurate energy calculation
 - Stores consumption data by weekday (Monday, Tuesday, etc.)
 - Maintains a 3-week rolling history
 - Automatically learns your weekly patterns
 
-### 2. 🔮 **Planning & Forecasting Phase** (00:01 daily)
+### 2. Planning & Forecasting Phase (00:01 daily)
 Every night at 00:01, the system forecasts today's needs:
 - Retrieves historical consumption for today's weekday
 - Calculates average consumption from similar past days
 - Reads today's solar production forecast from your sensor
-- Estimates the energy deficit: `Deficit = Consumption - Solar`
+- Adds any EV energy requirements
 - Calculates the optimal charging strategy:
 
 ```
@@ -113,265 +126,314 @@ Current Battery Energy = (Current SOC / 100) × Battery Capacity
 Reserve Energy = (Min SOC Reserve / 100) × Battery Capacity
 Available Energy = Current Battery Energy - Reserve Energy
 
-Net Load from Battery = Consumption Forecast - Solar Forecast
-Required Energy = Reserve Energy + max(0, Net Load from Battery)
+Net Load = Consumption Forecast + EV Energy - Solar Forecast
+Required Energy = Reserve Energy + max(0, Net Load)
 Target Energy = Required Energy × (1 + Safety Spread / 100)
 
 Target SOC = min(100%, max(Min SOC Reserve, Target Energy / Battery Capacity × 100))
 Charge Needed = max(0, Target Energy - Current Battery Energy)
 ```
 
-### 3. ⚡ **Execution Phase** (00:01 - 07:00)
+### 3. Execution Phase (00:01 - 07:00)
 If charging is needed:
 - **00:01**: Turns ON the inverter grid charge switch
 - **Monitoring**: Checks battery SOC every minute
 - **Auto-shutoff**: Turns OFF when Target SOC is reached OR at 07:00 (whichever comes first)
-- **Recording**: Saves the actual energy charged for next day's learning
+- **EV Bypass**: If EV energy is requested and battery can't cover it, bypass is activated
 
-### 4. 📝 **Reporting Phase** (07:00)
+### 4. Reporting Phase (07:00)
 Every morning:
 - Generates a summary of the night's activity
 - Updates the "Last Run Summary" sensor
 - Sends an optional notification if configured
-- Resets for the next cycle
+- Resets EV energy and bypass state
+- Starts new consumption tracking day
 
-## 📊 Entities Created
+## Entities Created
 
 ### Sensors
 
-| Entity ID | Description | Unit |
-|-----------|-------------|------|
-| `sensor.night_charge_planned_grid_energy_kwh` | Energy planned to charge from grid tonight | kWh |
-| `sensor.night_charge_target_soc_percent` | Target battery SOC to reach | % |
-| `sensor.night_charge_load_forecast_today_kwh` | Forecasted consumption for today | kWh |
-| `sensor.night_charge_solar_forecast_today_kwh` | Forecasted solar production for today | kWh |
-| `sensor.night_charge_last_run_charged_energy_kwh` | Actual energy charged in last run | kWh |
-| `sensor.night_charge_last_run_summary` | Text summary of last charging session | - |
-| `sensor.night_charge_plan_reasoning` | Detailed explanation of current plan | - |
-| `sensor.night_charge_min_soc_reserve_percent` | Configured minimum SOC reserve | % |
-| `sensor.night_charge_safety_spread_percent` | Configured safety spread | % |
-| `sensor.night_charge_avg_consumption_monday` | Average consumption on Mondays | kWh |
-| `sensor.night_charge_avg_consumption_tuesday` | Average consumption on Tuesdays | kWh |
-| `sensor.night_charge_avg_consumption_wednesday` | Average consumption on Wednesdays | kWh |
-| `sensor.night_charge_avg_consumption_thursday` | Average consumption on Thursdays | kWh |
-| `sensor.night_charge_avg_consumption_friday` | Average consumption on Fridays | kWh |
-| `sensor.night_charge_avg_consumption_saturday` | Average consumption on Saturdays | kWh |
-| `sensor.night_charge_avg_consumption_sunday` | Average consumption on Sundays | kWh |
+| Entity | Description | Unit |
+|--------|-------------|------|
+| `sensor.nidia_smart_battery_recharge_planned_grid_charge` | Energy planned to charge from grid tonight | kWh |
+| `sensor.nidia_smart_battery_recharge_target_soc` | Target battery SOC to reach | % |
+| `sensor.nidia_smart_battery_recharge_load_forecast_today` | Forecasted consumption for today | kWh |
+| `sensor.nidia_smart_battery_recharge_solar_forecast_today` | Forecasted solar production for today | kWh |
+| `sensor.nidia_smart_battery_recharge_last_run_charged_energy` | Actual energy charged in last run | kWh |
+| `sensor.nidia_smart_battery_recharge_last_run_summary` | Text summary of last charging session | - |
+| `sensor.nidia_smart_battery_recharge_plan_reasoning` | Detailed explanation of current plan | - |
+| `sensor.nidia_smart_battery_recharge_min_soc_reserve` | Configured minimum SOC reserve | % |
+| `sensor.nidia_smart_battery_recharge_safety_spread` | Configured safety spread | % |
+| `sensor.nidia_smart_battery_recharge_current_day_consumption` | Today's tracked consumption so far | kWh |
+| `sensor.nidia_smart_battery_recharge_ev_energy_requested` | EV energy requested for tonight | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_monday` | Average consumption on Mondays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_tuesday` | Average consumption on Tuesdays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_wednesday` | Average consumption on Wednesdays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_thursday` | Average consumption on Thursdays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_friday` | Average consumption on Fridays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_saturday` | Average consumption on Saturdays | kWh |
+| `sensor.nidia_smart_battery_recharge_average_consumption_sunday` | Average consumption on Sundays | kWh |
 
 ### Binary Sensors
 
-| Entity ID | Description |
-|-----------|-------------|
-| `binary_sensor.night_charge_scheduled_tonight` | Is charging scheduled for tonight? |
-| `binary_sensor.night_charge_active` | Is charging currently active? |
+| Entity | Description |
+|--------|-------------|
+| `binary_sensor.nidia_smart_battery_recharge_charging_scheduled` | Is charging scheduled for tonight? |
+| `binary_sensor.nidia_smart_battery_recharge_charging_active` | Is charging currently active? |
+| `binary_sensor.nidia_smart_battery_recharge_bypass_active` | Is EV bypass active? |
+| `binary_sensor.nidia_smart_battery_recharge_in_charging_window` | Is it currently within 00:00-07:00 window? |
+| `binary_sensor.nidia_smart_battery_recharge_ev_timer_active` | Is EV timeout timer running? |
+
+### Number Inputs
+
+| Entity | Description | Range |
+|--------|-------------|-------|
+| `number.nidia_smart_battery_recharge_ev_energy` | Set EV energy needed tonight | 0-200 kWh |
+| `number.nidia_smart_battery_recharge_minimum_consumption_fallback` | Fallback consumption if no history | 0-50 kWh |
+
+### Switches
+
+| Entity | Description |
+|--------|-------------|
+| `switch.nidia_smart_battery_recharge_debug_logging` | Enable/disable detailed file logging |
 
 ### Buttons
 
-| Entity ID | Description |
-|-----------|-------------|
-| `button.night_charge_recalculate_plan` | Manually trigger plan recalculation (preview tonight's plan now) |
+| Entity | Description |
+|--------|-------------|
+| `button.nidia_smart_battery_recharge_recalculate_plan` | Manually trigger plan recalculation |
+| `button.nidia_smart_battery_recharge_force_charge_tonight` | Force charge to 100% tonight |
+| `button.nidia_smart_battery_recharge_disable_charge_tonight` | Prevent any charging tonight |
 
-## 🎨 Lovelace Dashboard Example
+## Dashboard Examples
 
-Here's a beautiful, modern vertical dashboard showcasing all the integration's features:
+### Modern Dashboard (Mushroom Cards)
+
+A clean, modern dashboard using Mushroom cards:
 
 ```yaml
 type: vertical-stack
 cards:
-  # Header Card with Status
+  # Header with Status
   - type: custom:mushroom-template-card
     primary: Nidia Smart Battery
     secondary: >
-      {% if is_state('binary_sensor.night_charge_active', 'on') %}
-        🔌 Charging Active
-      {% elif is_state('binary_sensor.night_charge_scheduled_tonight', 'on') %}
-        ⏰ Charging Scheduled Tonight
+      {% if is_state('binary_sensor.nidia_smart_battery_recharge_charging_active', 'on') %}
+        Charging Active
+      {% elif is_state('binary_sensor.nidia_smart_battery_recharge_charging_scheduled', 'on') %}
+        Charging Scheduled Tonight
       {% else %}
-        ✓ No Charge Needed
+        No Charge Needed
       {% endif %}
     icon: mdi:battery-charging-100
     icon_color: >
-      {% if is_state('binary_sensor.night_charge_active', 'on') %}
+      {% if is_state('binary_sensor.nidia_smart_battery_recharge_charging_active', 'on') %}
         green
-      {% elif is_state('binary_sensor.night_charge_scheduled_tonight', 'on') %}
+      {% elif is_state('binary_sensor.nidia_smart_battery_recharge_charging_scheduled', 'on') %}
         amber
       {% else %}
         blue
       {% endif %}
-    tap_action:
-      action: more-info
 
-  # Quick Action Button
-  - type: custom:mushroom-template-card
-    primary: Recalculate Plan
-    secondary: Preview tonight's charging strategy
-    icon: mdi:calculator
-    icon_color: purple
-    tap_action:
-      action: call-service
-      service: button.press
-      service_data:
-        entity_id: button.night_charge_recalculate_plan
+  # Action Buttons
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-template-card
+        primary: Recalculate
+        icon: mdi:refresh
+        icon_color: purple
+        layout: vertical
+        tap_action:
+          action: call-service
+          service: button.press
+          target:
+            entity_id: button.nidia_smart_battery_recharge_recalculate_plan
+
+      - type: custom:mushroom-template-card
+        primary: Force Charge
+        icon: mdi:battery-charging-100
+        icon_color: green
+        layout: vertical
+        tap_action:
+          action: call-service
+          service: button.press
+          target:
+            entity_id: button.nidia_smart_battery_recharge_force_charge_tonight
+
+      - type: custom:mushroom-template-card
+        primary: Disable
+        icon: mdi:battery-off
+        icon_color: red
+        layout: vertical
+        tap_action:
+          action: call-service
+          service: button.press
+          target:
+            entity_id: button.nidia_smart_battery_recharge_disable_charge_tonight
 
   # Tonight's Plan
   - type: custom:mushroom-title-card
     title: Tonight's Plan
-    subtitle: What will happen at 00:01
 
   - type: horizontal-stack
     cards:
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_planned_grid_energy_kwh
-        name: Planned Charge
-        icon: mdi:battery-arrow-up
+        entity: sensor.nidia_smart_battery_recharge_planned_grid_charge
+        name: Planned
         icon_color: green
 
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_target_soc_percent
+        entity: sensor.nidia_smart_battery_recharge_target_soc
         name: Target SOC
-        icon: mdi:battery-check
         icon_color: blue
 
   # Today's Forecast
   - type: custom:mushroom-title-card
     title: Today's Forecast
-    subtitle: Predicted consumption and solar for today
 
   - type: horizontal-stack
     cards:
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_load_forecast_today_kwh
+        entity: sensor.nidia_smart_battery_recharge_load_forecast_today
         name: Consumption
         icon: mdi:home-lightning-bolt
         icon_color: orange
 
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_solar_forecast_today_kwh
+        entity: sensor.nidia_smart_battery_recharge_solar_forecast_today
         name: Solar
         icon: mdi:solar-power
         icon_color: amber
 
-  # Plan Reasoning
-  - type: markdown
-    title: 🧠 Algorithm Reasoning
-    content: |
-      {{ states('sensor.night_charge_plan_reasoning') }}
-    card_mod:
-      style: |
-        ha-card {
-          border-radius: 12px;
-          border: 2px solid rgba(var(--rgb-primary-color), 0.2);
-        }
-
-  # Weekly Consumption Pattern
+  # EV Section
   - type: custom:mushroom-title-card
-    title: Weekly Consumption Pattern
-    subtitle: Average consumption by day of the week
-
-  - type: custom:apexcharts-card
-    graph_span: 7d
-    span:
-      start: day
-    header:
-      show: false
-    series:
-      - entity: sensor.night_charge_avg_consumption_monday
-        name: Mon
-        type: column
-        color: '#1976d2'
-      - entity: sensor.night_charge_avg_consumption_tuesday
-        name: Tue
-        type: column
-        color: '#388e3c'
-      - entity: sensor.night_charge_avg_consumption_wednesday
-        name: Wed
-        type: column
-        color: '#f57c00'
-      - entity: sensor.night_charge_avg_consumption_thursday
-        name: Thu
-        type: column
-        color: '#7b1fa2'
-      - entity: sensor.night_charge_avg_consumption_friday
-        name: Fri
-        type: column
-        color: '#c62828'
-      - entity: sensor.night_charge_avg_consumption_saturday
-        name: Sat
-        type: column
-        color: '#00796b'
-      - entity: sensor.night_charge_avg_consumption_sunday
-        name: Sun
-        type: column
-        color: '#0097a7'
-
-  # Last Run Summary
-  - type: markdown
-    title: 📝 Last Run Summary
-    content: |
-      {{ states('sensor.night_charge_last_run_summary') }}
-    card_mod:
-      style: |
-        ha-card {
-          border-radius: 12px;
-          background: rgba(var(--rgb-primary-color), 0.05);
-        }
-
-  # Configuration
-  - type: custom:mushroom-title-card
-    title: Configuration
-    subtitle: Current algorithm settings
+    title: EV Charging
 
   - type: horizontal-stack
     cards:
-      - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_min_soc_reserve_percent
-        name: Min Reserve
-        icon: mdi:battery-lock
-        icon_color: red
+      - type: custom:mushroom-number-card
+        entity: number.nidia_smart_battery_recharge_ev_energy
+        name: EV Energy
+        icon_color: cyan
+        display_mode: buttons
 
       - type: custom:mushroom-entity-card
-        entity: sensor.night_charge_safety_spread_percent
-        name: Safety Buffer
-        icon: mdi:shield-check
-        icon_color: green
+        entity: binary_sensor.nidia_smart_battery_recharge_bypass_active
+        name: Bypass
+        icon_color: >
+          {{ 'red' if is_state(entity, 'on') else 'grey' }}
+
+  # Plan Reasoning
+  - type: markdown
+    title: Algorithm Reasoning
+    content: |
+      {{ states('sensor.nidia_smart_battery_recharge_plan_reasoning') }}
+
+  # Weekly Consumption - Using bar-card
+  - type: custom:mushroom-title-card
+    title: Weekly Consumption Pattern
+
+  - type: custom:bar-card
+    entities:
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_monday
+        name: Mon
+        color: '#2196F3'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_tuesday
+        name: Tue
+        color: '#4CAF50'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_wednesday
+        name: Wed
+        color: '#FF9800'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_thursday
+        name: Thu
+        color: '#9C27B0'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_friday
+        name: Fri
+        color: '#F44336'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_saturday
+        name: Sat
+        color: '#009688'
+      - entity: sensor.nidia_smart_battery_recharge_average_consumption_sunday
+        name: Sun
+        color: '#00BCD4'
+    max: 30
+    height: 30px
+    positions:
+      name: outside
+      value: inside
+      indicator: 'off'
+    unit_of_measurement: kWh
+
+  # Last Run Summary
+  - type: markdown
+    title: Last Run Summary
+    content: |
+      {{ states('sensor.nidia_smart_battery_recharge_last_run_summary') }}
 ```
 
-### Alternative: Simple Dashboard (No Custom Cards Required)
+### Simple Dashboard (No Custom Cards)
 
-If you don't have custom cards installed, here's a clean alternative using only built-in Home Assistant cards:
+A functional dashboard using only built-in Home Assistant cards:
 
 ```yaml
 type: vertical-stack
 cards:
   # Status Overview
   - type: glance
-    title: Night Charge Status
+    title: Nidia Smart Battery Status
     entities:
-      - entity: binary_sensor.night_charge_scheduled_tonight
+      - entity: binary_sensor.nidia_smart_battery_recharge_charging_scheduled
         name: Scheduled
-      - entity: binary_sensor.night_charge_active
+      - entity: binary_sensor.nidia_smart_battery_recharge_charging_active
         name: Active
-      - entity: sensor.night_charge_planned_grid_energy_kwh
+      - entity: sensor.nidia_smart_battery_recharge_planned_grid_charge
         name: Planned
-      - entity: sensor.night_charge_target_soc_percent
-        name: Target SOC
+      - entity: sensor.nidia_smart_battery_recharge_target_soc
+        name: Target
 
-  # Recalculate Button
-  - type: button
-    entity: button.night_charge_recalculate_plan
-    name: Recalculate Plan Now
-    icon: mdi:calculator
-    tap_action:
-      action: toggle
+  # Control Buttons
+  - type: horizontal-stack
+    cards:
+      - type: button
+        entity: button.nidia_smart_battery_recharge_recalculate_plan
+        name: Recalculate
+        icon: mdi:refresh
+        tap_action:
+          action: toggle
+
+      - type: button
+        entity: button.nidia_smart_battery_recharge_force_charge_tonight
+        name: Force
+        icon: mdi:battery-charging-100
+        tap_action:
+          action: toggle
+
+      - type: button
+        entity: button.nidia_smart_battery_recharge_disable_charge_tonight
+        name: Disable
+        icon: mdi:battery-off
+        tap_action:
+          action: toggle
+
+  # EV Energy Input
+  - type: entities
+    title: EV Charging
+    entities:
+      - entity: number.nidia_smart_battery_recharge_ev_energy
+        name: EV Energy Needed
+      - entity: binary_sensor.nidia_smart_battery_recharge_bypass_active
+        name: Bypass Active
+      - entity: binary_sensor.nidia_smart_battery_recharge_ev_timer_active
+        name: EV Timer Active
 
   # Forecasts
   - type: entities
     title: Today's Forecast
     entities:
-      - entity: sensor.night_charge_load_forecast_today_kwh
+      - entity: sensor.nidia_smart_battery_recharge_load_forecast_today
         name: Load Forecast
         icon: mdi:home-lightning-bolt
-      - entity: sensor.night_charge_solar_forecast_today_kwh
+      - entity: sensor.nidia_smart_battery_recharge_solar_forecast_today
         name: Solar Forecast
         icon: mdi:solar-power
 
@@ -379,75 +441,141 @@ cards:
   - type: markdown
     title: Plan Reasoning
     content: >
-      {{ states('sensor.night_charge_plan_reasoning') }}
+      {{ states('sensor.nidia_smart_battery_recharge_plan_reasoning') }}
 
-  # Weekly Pattern
-  - type: entities
-    title: Weekly Consumption Averages
-    entities:
-      - sensor.night_charge_avg_consumption_monday
-      - sensor.night_charge_avg_consumption_tuesday
-      - sensor.night_charge_avg_consumption_wednesday
-      - sensor.night_charge_avg_consumption_thursday
-      - sensor.night_charge_avg_consumption_friday
-      - sensor.night_charge_avg_consumption_saturday
-      - sensor.night_charge_avg_consumption_sunday
+  # Weekly Pattern - Using gauge cards for visual representation
+  - type: horizontal-stack
+    cards:
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_monday
+        name: Mon
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_tuesday
+        name: Tue
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_wednesday
+        name: Wed
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_thursday
+        name: Thu
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+
+  - type: horizontal-stack
+    cards:
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_friday
+        name: Fri
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_saturday
+        name: Sat
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
+      - type: gauge
+        entity: sensor.nidia_smart_battery_recharge_average_consumption_sunday
+        name: Sun
+        min: 0
+        max: 30
+        severity:
+          green: 0
+          yellow: 15
+          red: 25
 
   # Last Run
   - type: markdown
     title: Last Run Summary
     content: >
-      {{ states('sensor.night_charge_last_run_summary') }}
+      {{ states('sensor.nidia_smart_battery_recharge_last_run_summary') }}
 
   # Settings
   - type: entities
     title: Configuration
     entities:
-      - sensor.night_charge_min_soc_reserve_percent
-      - sensor.night_charge_safety_spread_percent
+      - entity: sensor.nidia_smart_battery_recharge_min_soc_reserve
+        name: Min SOC Reserve
+      - entity: sensor.nidia_smart_battery_recharge_safety_spread
+        name: Safety Spread
+      - entity: number.nidia_smart_battery_recharge_minimum_consumption_fallback
+        name: Min Consumption Fallback
+      - entity: switch.nidia_smart_battery_recharge_debug_logging
+        name: Debug Logging
 ```
 
-### Required Custom Cards (for advanced dashboard)
+### Compact Card (Single Entity Card)
 
-To use the advanced dashboard example, install these custom cards via HACS:
+For users who want a minimal footprint:
+
+```yaml
+type: entities
+title: Nidia Smart Battery
+show_header_toggle: false
+entities:
+  - type: section
+    label: Status
+  - entity: binary_sensor.nidia_smart_battery_recharge_charging_scheduled
+  - entity: binary_sensor.nidia_smart_battery_recharge_charging_active
+  - entity: binary_sensor.nidia_smart_battery_recharge_in_charging_window
+  - type: section
+    label: Tonight's Plan
+  - entity: sensor.nidia_smart_battery_recharge_planned_grid_charge
+  - entity: sensor.nidia_smart_battery_recharge_target_soc
+  - type: section
+    label: Forecast
+  - entity: sensor.nidia_smart_battery_recharge_load_forecast_today
+  - entity: sensor.nidia_smart_battery_recharge_solar_forecast_today
+  - type: section
+    label: EV
+  - entity: number.nidia_smart_battery_recharge_ev_energy
+  - entity: binary_sensor.nidia_smart_battery_recharge_bypass_active
+  - type: section
+    label: Controls
+  - entity: button.nidia_smart_battery_recharge_recalculate_plan
+  - entity: button.nidia_smart_battery_recharge_force_charge_tonight
+  - entity: button.nidia_smart_battery_recharge_disable_charge_tonight
+```
+
+### Required Custom Cards
+
+For the advanced Mushroom dashboard, install via HACS:
 
 - [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) - Beautiful, modern card designs
-- [ApexCharts Card](https://github.com/RomRider/apexcharts-card) - For the weekly consumption chart
-- [Card Mod](https://github.com/thomasloven/lovelace-card-mod) - For styling enhancements (optional)
+- [Bar Card](https://github.com/custom-cards/bar-card) - For the weekly consumption visualization
 
-## 🛠️ Services
+## Understanding the Plan Reasoning
 
-### `night_battery_charger.recalculate_plan_now`
-Immediately recalculate the charging plan using current data. Useful for testing or after changing settings.
-
-**Example:**
-```yaml
-service: night_battery_charger.recalculate_plan_now
-```
-
-### `night_battery_charger.force_charge_tonight`
-Override the algorithm and force charging tonight to 100% SOC, regardless of forecasts.
-
-**Example:**
-```yaml
-service: night_battery_charger.force_charge_tonight
-```
-
-**Use case:** You know today will be cloudy or you'll have higher than usual consumption.
-
-### `night_battery_charger.disable_tonight`
-Prevent any charging tonight, even if the algorithm recommends it.
-
-**Example:**
-```yaml
-service: night_battery_charger.disable_tonight
-```
-
-**Use case:** You want to use all battery capacity for self-consumption or grid export.
-
-## 🔍 Understanding the Plan Reasoning
-
-The `sensor.night_charge_plan_reasoning` provides a human-readable explanation of every decision. Here's how to interpret it:
+The `sensor.nidia_smart_battery_recharge_plan_reasoning` provides a human-readable explanation of every decision:
 
 ### Example 1: No Charging Needed
 ```
@@ -459,7 +587,6 @@ with 15.51 kWh solar forecast. Target SOC: 16.5%.
 - Solar production (15.51 kWh) exceeds consumption (10.00 kWh)
 - No grid charging needed
 - Battery will be recharged by solar during the day
-- Target SOC is minimum reserve (16.5% ≈ your configured 15% + small safety margin)
 
 ### Example 2: Charging Required
 ```
@@ -470,36 +597,71 @@ with 12.00 kWh solar forecast. Target SOC: 85.3%.
 **Interpretation:**
 - Consumption (25 kWh) exceeds solar (12 kWh) by 13 kWh
 - Need to charge 8.50 kWh from grid tonight
-- This will bring battery to 85.3% SOC
 - Accounts for reserve (15%) + safety spread (10%)
 
-### Example 3: Force Charged
+### Example 3: With EV Energy
 ```
-[FORCED BY USER] Planned 15.00 kWh grid charge. Today's estimated load is 20.00 kWh,
-with 18.00 kWh solar forecast. Target SOC: 100.0%.
+Planned 15.00 kWh grid charge (includes 10.00 kWh EV).
+Today's estimated load is 20.00 kWh, with 18.00 kWh solar forecast.
+Target SOC: 95.0%. Bypass: OFF (battery sufficient).
 ```
 
 **Interpretation:**
-- User manually forced charging via service
-- Will charge to 100% regardless of forecasts
-- Overrides normal algorithm logic
+- EV needs 10 kWh
+- Battery has enough capacity to cover EV + consumption
+- No bypass needed
 
-## ❓ FAQ
+### Example 4: EV with Bypass
+```
+Planned 5.00 kWh grid charge (includes 30.00 kWh EV - BYPASS ACTIVE).
+Today's estimated load is 15.00 kWh, with 10.00 kWh solar forecast.
+Target SOC: 100.0%. Bypass: ON (battery insufficient for EV).
+```
+
+**Interpretation:**
+- EV needs 30 kWh but battery can only provide ~5 kWh
+- Bypass activated - EV charges directly from grid
+
+## EV Charging Feature
+
+The EV integration allows you to specify energy needs for overnight vehicle charging:
+
+### How to Use
+
+1. **Set EV Energy**: Use `number.nidia_smart_battery_recharge_ev_energy` to specify how much energy your EV needs
+2. **Automatic Processing**:
+   - During charging window (00:00-07:00): Plan is immediately recalculated
+   - Outside window: Value is saved for the next charging window
+3. **Bypass Logic**: If battery cannot provide enough energy for consumption + EV, the bypass switch activates
+4. **Timeout Protection**: A 6-hour timeout ensures the EV value is cleared if not manually reset
+
+### Energy Balance Calculation
+
+The system calculates whether bypass is needed:
+
+```
+Available = Battery Capacity × (Current SOC - Reserve SOC) / 100
+Net Load = Consumption Forecast - Solar Forecast
+Remaining After Load = Available - Net Load
+Sufficient for EV = Remaining After Load >= EV Energy × 1.15 (15% margin)
+```
+
+## FAQ
 
 ### How long does it take to learn my patterns?
 The integration starts learning immediately but needs **at least 3-7 days** of data for each weekday to make accurate forecasts. After 3 weeks, it has comprehensive data for all days of the week.
 
 ### What if I don't have a solar forecast sensor?
-You can use a static helper sensor with a fixed value (e.g., 0 kWh if you don't have solar, or your average production). The integration will still optimize based on consumption patterns.
+You can use a static helper sensor with a fixed value (e.g., 0 kWh if you don't have solar). The integration will still optimize based on consumption patterns.
 
 ### Can I change settings after initial setup?
 Yes! Go to **Settings** → **Devices & Services** → **Nidia Smart Battery Recharge** → **Configure** to modify any parameter.
 
 ### What happens during the learning phase?
-The integration operates conservatively, using the average of all available history. As more data accumulates, forecasts become more accurate and weekday-specific.
+The integration uses the `Minimum Consumption Fallback` value (default: 10 kWh) until enough history is collected.
 
 ### Will it damage my battery?
-No. The integration respects your configured **Minimum SOC Reserve** to prevent deep discharges and includes a **Safety Spread** buffer to avoid frequent charge/discharge cycles.
+No. The integration respects your configured **Minimum SOC Reserve** to prevent deep discharges and includes a **Safety Spread** buffer.
 
 ### Can I use it with time-of-use tariffs?
 Yes! The integration is designed for this use case. It charges during off-peak hours (00:01-07:00) and minimizes expensive daytime grid usage.
@@ -512,9 +674,14 @@ Yes, as long as your inverter exposes:
 
 The integration is **inverter-agnostic**.
 
-## 🐛 Troubleshooting
+### How do I check the logs?
+1. Enable **Debug Logging** switch
+2. Logs are stored in `config/nidia_logs/YYYY/MM/DD/` with daily rotation
+3. Check Home Assistant logs for important events (always logged)
 
-### The plan shows "No plan calculated yet"
+## Troubleshooting
+
+### The plan shows "No plan yet"
 - Press the **Recalculate Plan** button to trigger an immediate calculation
 - Wait until 00:01 for the automatic nightly calculation
 - Check that all required sensors are available and have valid values
@@ -523,40 +690,69 @@ The integration is **inverter-agnostic**.
 - Verify the **Inverter Grid Charge Switch** entity is correct
 - Check Home Assistant logs for errors
 - Ensure the switch is not controlled by other automations
-- Verify `binary_sensor.night_charge_scheduled_tonight` is `on`
+- Verify `binary_sensor.nidia_smart_battery_recharge_charging_scheduled` is `on`
 
 ### Forecasts seem inaccurate
 - Ensure at least 7-14 days of learning data
 - Check that the **House Load Power Sensor** is measuring correctly (should be in Watts)
 - Verify the sensor measures **house load only**, not including solar production
-- Review weekly averages in `sensor.night_charge_avg_consumption_*` sensors
+- Review weekly averages in the dashboard
 
-### Battery charges to wrong SOC
-- Check **Safety Spread** percentage (higher = more charging)
-- Review **Minimum SOC Reserve** setting
-- Verify **Battery Capacity** is configured correctly
-- Read `sensor.night_charge_plan_reasoning` for calculation details
+### EV bypass not activating
+- Check that **Bypass Switch Entity** is configured
+- Verify `number.nidia_smart_battery_recharge_ev_energy` has a value > 0
+- Check `binary_sensor.nidia_smart_battery_recharge_in_charging_window` is `on`
 
-## 🤝 Contributing
+### Nothing in the logs
+- Enable **Debug Logging** switch
+- Important events are **always** logged to Home Assistant logs regardless of switch
+- Check `config/nidia_logs/` directory for detailed file logs
+
+## Architecture (v2.0)
+
+The v2.0 release features a complete architecture refactoring:
+
+```
+custom_components/night_battery_charger/
+├── core/
+│   ├── state.py      # Single Source of Truth for all state
+│   ├── events.py     # Event bus for traceable communication
+│   └── hardware.py   # Hardware abstraction with retry logic
+├── domain/
+│   ├── planner.py    # Pure planning logic (100% testable)
+│   ├── ev_manager.py # Pure EV decision logic
+│   └── forecaster.py # Consumption learning with trapezoidal integration
+├── entities/         # Factory-based entity definitions
+├── logging/          # Unified logging (always works)
+└── coordinator.py    # Thin orchestration layer
+```
+
+Key improvements:
+- **Single Source of Truth**: All state in one place
+- **Event-driven**: All state changes are logged and traceable
+- **Pure domain logic**: Business logic has no Home Assistant dependencies
+- **Hardware abstraction**: Retry logic for reliable inverter control
+- **Factory-based entities**: Add new sensors with one line of code
+
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by the need for smarter home energy management
-- Built with ❤️ for the Home Assistant community
+- Built for the Home Assistant community
 - Thanks to all contributors and testers
 
-## 📞 Support
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/antoniobaldassarre/nidia-smart-battery-recharge/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/antoniobaldassarre/nidia-smart-battery-recharge/discussions)
-- **Documentation**: [Full Documentation](https://github.com/antoniobaldassarre/nidia-smart-battery-recharge)
 
 ---
 
-**Made with ☀️ and 🔋 by the Home Assistant community**
+**Made for the Home Assistant community**
