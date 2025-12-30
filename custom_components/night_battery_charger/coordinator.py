@@ -12,7 +12,8 @@ It does NOT contain any business logic.
 
 from __future__ import annotations
 
-from datetime import datetime, time
+import time as time_module
+from datetime import datetime, time, date
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -46,21 +47,41 @@ from .const import (
     CONF_NOTIFY_ON_END,
     CONF_MIN_SOC_RESERVE,
     CONF_SAFETY_SPREAD,
+    CONF_CHARGING_WINDOW_START_HOUR,
+    CONF_CHARGING_WINDOW_START_MINUTE,
+    CONF_CHARGING_WINDOW_END_HOUR,
+    CONF_CHARGING_WINDOW_END_MINUTE,
+    CONF_EV_TIMEOUT_HOURS,
+    CONF_PRICE_PEAK,
+    CONF_PRICE_OFFPEAK,
+    CONF_PRICING_MODE,
     DEFAULT_BATTERY_CAPACITY,
     DEFAULT_MIN_SOC_RESERVE,
     DEFAULT_SAFETY_SPREAD,
     DEFAULT_NOTIFY_ON_START,
     DEFAULT_NOTIFY_ON_UPDATE,
     DEFAULT_NOTIFY_ON_END,
+    DEFAULT_CHARGING_WINDOW_START_HOUR,
+    DEFAULT_CHARGING_WINDOW_START_MINUTE,
+    DEFAULT_CHARGING_WINDOW_END_HOUR,
+    DEFAULT_CHARGING_WINDOW_END_MINUTE,
+    DEFAULT_EV_TIMEOUT_HOURS,
+    DEFAULT_PRICE_PEAK,
+    DEFAULT_PRICE_OFFPEAK,
+    DEFAULT_PRICING_MODE,
+    SERVICE_COOLDOWN_SECONDS,
+    POWER_DEBOUNCE_SECONDS,
+    POWER_CHANGE_THRESHOLD,
 )
 
 from .logging import get_logger
-from .core.state import NidiaState, ChargePlan, ChargeSession
+from .core.state import NidiaState, ChargePlan, ChargeSession, PricingConfig
 from .core.events import NidiaEventBus, NidiaEvent
 from .core.hardware import HardwareController
 from .domain.planner import ChargePlanner, PlanningInput
 from .domain.ev_manager import EVManager, EVSetResult
 from .domain.forecaster import ConsumptionForecaster
+from .domain.savings_calculator import SavingsCalculator
 from .infra.notifier import Notifier
 
 
@@ -69,9 +90,10 @@ class NidiaCoordinator:
 
     This class:
     - Initializes all components
-    - Handles scheduled events (midnight, 00:01, 07:00)
+    - Handles scheduled events (midnight, window start, window end)
     - Delegates logic to domain modules
     - Manages state updates and notifications
+    - Implements rate limiting and debouncing
     """
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -81,7 +103,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.0.0")
+        self._logger.info("COORDINATOR_INIT_START", version="2.1.0")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -98,8 +120,22 @@ class NidiaCoordinator:
         # Initialize forecaster (will be loaded from storage)
         self.forecaster = ConsumptionForecaster()
 
+        # Initialize savings calculator
+        self.savings = SavingsCalculator(
+            price_peak=self.state.pricing.price_peak,
+            price_offpeak=self.state.pricing.price_offpeak,
+            pricing_mode=self.state.pricing.pricing_mode,
+        )
+
         # Storage for persistence
         self._store = storage.Store(hass, STORAGE_VERSION, STORAGE_KEY)
+
+        # Rate limiting - track last service call times
+        self._last_service_call: dict[str, float] = {}
+
+        # Power debouncing
+        self._last_power_value: float = 0.0
+        self._last_power_update_time: float = 0.0
 
         self._logger.info("COORDINATOR_INIT_COMPLETE")
 
@@ -130,6 +166,22 @@ class NidiaCoordinator:
             notify_on_start=get_config(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
             notify_on_update=get_config(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
             notify_on_end=get_config(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
+
+            # Configurable window times
+            window_start_hour=int(get_config(CONF_CHARGING_WINDOW_START_HOUR, DEFAULT_CHARGING_WINDOW_START_HOUR)),
+            window_start_minute=int(get_config(CONF_CHARGING_WINDOW_START_MINUTE, DEFAULT_CHARGING_WINDOW_START_MINUTE)),
+            window_end_hour=int(get_config(CONF_CHARGING_WINDOW_END_HOUR, DEFAULT_CHARGING_WINDOW_END_HOUR)),
+            window_end_minute=int(get_config(CONF_CHARGING_WINDOW_END_MINUTE, DEFAULT_CHARGING_WINDOW_END_MINUTE)),
+
+            # Configurable EV timeout
+            ev_timeout_hours=float(get_config(CONF_EV_TIMEOUT_HOURS, DEFAULT_EV_TIMEOUT_HOURS)),
+
+            # Pricing config
+            pricing=PricingConfig(
+                price_peak=float(get_config(CONF_PRICE_PEAK, DEFAULT_PRICE_PEAK)),
+                price_offpeak=float(get_config(CONF_PRICE_OFFPEAK, DEFAULT_PRICE_OFFPEAK)),
+                pricing_mode=get_config(CONF_PRICING_MODE, DEFAULT_PRICING_MODE),
+            ),
         )
 
     async def async_init(self) -> None:
@@ -165,9 +217,26 @@ class NidiaCoordinator:
                     records=self.forecaster.history_count
                 )
 
+            # Load savings data
+            if "savings" in data:
+                self.savings = SavingsCalculator.from_dict(data["savings"])
+                self._logger.info(
+                    "SAVINGS_LOADED",
+                    lifetime_savings=self.savings.state.lifetime_savings_eur
+                )
+
+                # Update state with loaded savings
+                self.state.savings.total_savings_eur = self.savings.state.total_savings_eur
+                self.state.savings.monthly_savings_eur = self.savings.state.monthly_savings_eur
+                self.state.savings.lifetime_savings_eur = self.savings.state.lifetime_savings_eur
+                self.state.savings.total_charged_kwh = self.savings.state.total_charged_kwh
+
     async def _save_data(self) -> None:
         """Save data to storage."""
-        await self._store.async_save(self.forecaster.to_dict())
+        await self._store.async_save({
+            **self.forecaster.to_dict(),
+            "savings": self.savings.to_dict(),
+        })
         self._logger.debug("DATA_SAVED")
 
     def _setup_scheduled_events(self) -> None:
@@ -180,19 +249,23 @@ class NidiaCoordinator:
             )
         )
 
-        # 00:01 - Start charging window
+        # Window start - Start charging window (configurable)
         self._listeners.append(
             async_track_time_change(
                 self.hass, self._handle_window_start,
-                hour=0, minute=1, second=0
+                hour=self.state.window_start_hour,
+                minute=self.state.window_start_minute,
+                second=0
             )
         )
 
-        # 07:00 - End charging window
+        # Window end - End charging window (configurable)
         self._listeners.append(
             async_track_time_change(
                 self.hass, self._handle_window_end,
-                hour=7, minute=0, second=0
+                hour=self.state.window_end_hour,
+                minute=self.state.window_end_minute,
+                second=0
             )
         )
 
@@ -204,7 +277,11 @@ class NidiaCoordinator:
             )
         )
 
-        self._logger.debug("SCHEDULED_EVENTS_REGISTERED")
+        self._logger.debug(
+            "SCHEDULED_EVENTS_REGISTERED",
+            window_start=f"{self.state.window_start_hour:02d}:{self.state.window_start_minute:02d}",
+            window_end=f"{self.state.window_end_hour:02d}:{self.state.window_end_minute:02d}"
+        )
 
     def _setup_power_tracking(self) -> None:
         """Set up power sensor state tracking."""
@@ -222,20 +299,58 @@ class NidiaCoordinator:
             )
 
     def _register_services(self) -> None:
-        """Register HA services."""
+        """Register HA services with rate limiting."""
         self.hass.services.async_register(
             DOMAIN, "recalculate_plan_now",
-            lambda _: self.recalculate_plan(for_preview=True)
+            self._rate_limited_recalculate
         )
         self.hass.services.async_register(
             DOMAIN, "force_charge_tonight",
-            lambda _: self.set_force_charge(True)
+            self._rate_limited_force_charge
         )
         self.hass.services.async_register(
             DOMAIN, "disable_tonight",
-            lambda _: self.set_disable_charge(True)
+            self._rate_limited_disable_charge
         )
         self._logger.debug("SERVICES_REGISTERED")
+
+    def _check_rate_limit(self, service_name: str) -> bool:
+        """Check if service call is rate limited.
+
+        Args:
+            service_name: Name of the service
+
+        Returns:
+            True if call is allowed, False if rate limited
+        """
+        now = time_module.time()
+        last_call = self._last_service_call.get(service_name, 0)
+
+        if now - last_call < SERVICE_COOLDOWN_SECONDS:
+            self._logger.warning(
+                "SERVICE_RATE_LIMITED",
+                service=service_name,
+                cooldown_remaining=SERVICE_COOLDOWN_SECONDS - (now - last_call)
+            )
+            return False
+
+        self._last_service_call[service_name] = now
+        return True
+
+    async def _rate_limited_recalculate(self, call) -> None:
+        """Rate-limited recalculate plan service."""
+        if self._check_rate_limit("recalculate"):
+            await self.recalculate_plan(for_preview=True)
+
+    async def _rate_limited_force_charge(self, call) -> None:
+        """Rate-limited force charge service."""
+        if self._check_rate_limit("force_charge"):
+            await self.set_force_charge(True)
+
+    async def _rate_limited_disable_charge(self, call) -> None:
+        """Rate-limited disable charge service."""
+        if self._check_rate_limit("disable_charge"):
+            await self.set_disable_charge(True)
 
     def async_unload(self) -> None:
         """Unload the coordinator."""
@@ -272,7 +387,7 @@ class NidiaCoordinator:
         await self.events.emit(NidiaEvent.MIDNIGHT, date=record.date)
 
     async def _handle_window_start(self, now: datetime) -> None:
-        """Handle 00:01 - Start charging window."""
+        """Handle window start - Start charging window."""
         self._logger.separator("CHARGING WINDOW START")
         self._logger.info("WINDOW_START_HANDLER")
 
@@ -304,7 +419,7 @@ class NidiaCoordinator:
         await self.events.emit(NidiaEvent.WINDOW_OPENED)
 
     async def _handle_window_end(self, now: datetime) -> None:
-        """Handle 07:00 - End charging window."""
+        """Handle window end - End charging window."""
         self._logger.separator("CHARGING WINDOW END")
         self._logger.info("WINDOW_END_HANDLER")
 
@@ -356,17 +471,37 @@ class NidiaCoordinator:
             self._update_sensors()
 
     def _handle_power_change(self, event) -> None:
-        """Handle power sensor change for consumption tracking."""
+        """Handle power sensor change for consumption tracking with debouncing."""
         new_state = event.data.get("new_state")
         if new_state is None or new_state.state in (STATE_UNKNOWN, STATE_UNAVAILABLE):
             return
 
         try:
             power_watts = float(new_state.state)
-            now = dt_util.now()
-            self.forecaster.add_power_reading(power_watts, now)
+            now_time = time_module.time()
+            now_dt = dt_util.now()
+
+            # Apply debouncing
+            time_since_last = now_time - self._last_power_update_time
+
+            # Check if enough time has passed OR if change is significant
+            if time_since_last < POWER_DEBOUNCE_SECONDS:
+                if self._last_power_value > 0:
+                    change_ratio = abs(power_watts - self._last_power_value) / self._last_power_value
+                    if change_ratio < POWER_CHANGE_THRESHOLD:
+                        # Skip this update - not significant enough
+                        return
+
+            # Update tracking
+            self._last_power_value = power_watts
+            self._last_power_update_time = now_time
+
+            # Add to forecaster
+            self.forecaster.add_power_reading(power_watts, now_dt)
+
             # Update state
             self.state.consumption.current_day_kwh = self.forecaster.current_day_consumption
+
         except (ValueError, TypeError):
             pass
 
@@ -415,8 +550,29 @@ class NidiaCoordinator:
         self.state.last_run_charged_kwh = session.charged_kwh
         self.state.last_run_summary = (
             f"Charged {session.charged_kwh:.2f} kWh. "
-            f"SOC: {session.start_soc:.0f}% → {session.end_soc:.0f}%"
+            f"SOC: {session.start_soc:.0f}% -> {session.end_soc:.0f}%"
         )
+
+        # Record savings
+        if session.charged_kwh > 0:
+            savings_record = self.savings.record_charge_session(
+                charged_kwh=session.charged_kwh,
+                charge_date=date.today(),
+            )
+            self._logger.info(
+                "SAVINGS_RECORDED",
+                charged_kwh=session.charged_kwh,
+                savings_eur=savings_record.savings
+            )
+
+            # Update state with savings
+            self.state.savings.total_savings_eur = self.savings.state.total_savings_eur
+            self.state.savings.monthly_savings_eur = self.savings.state.monthly_savings_eur
+            self.state.savings.lifetime_savings_eur = self.savings.state.lifetime_savings_eur
+            self.state.savings.total_charged_kwh = self.savings.state.total_charged_kwh
+
+            # Save to storage
+            await self._save_data()
 
         await self.events.emit_charging_stopped(
             session.end_soc, session.charged_kwh, early
@@ -509,7 +665,7 @@ class NidiaCoordinator:
             ev_energy_kwh=value,
         )
 
-        # Evaluate using EVManager (pure logic)
+        # Evaluate using EVManager (pure logic) with configurable parameters
         decision = EVManager.evaluate(
             new_value=value,
             old_value=old_value,
@@ -517,6 +673,9 @@ class NidiaCoordinator:
             now=now,
             timer_start=self.state.ev.timer_start,
             energy_balance=energy_balance,
+            timeout_hours=self.state.ev_timeout_hours,
+            window_start=self.state.window_start_time,
+            window_end=self.state.window_end_time,
         )
 
         # Apply decision
@@ -611,3 +770,7 @@ class NidiaCoordinator:
     def _update_sensors(self) -> None:
         """Notify all sensors to update."""
         async_dispatcher_send(self.hass, "night_battery_charger_update")
+
+    def get_savings_summary(self) -> dict:
+        """Get savings summary for sensors."""
+        return self.savings.get_savings_summary()

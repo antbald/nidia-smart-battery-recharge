@@ -39,11 +39,9 @@ class EVDecision:
     is_timeout: bool = False
 
 
-# Constants
-EV_CHARGE_TIMEOUT_HOURS = 6
+# Default Constants (can be overridden via config)
+DEFAULT_EV_CHARGE_TIMEOUT_HOURS = 6
 BYPASS_SAFETY_MARGIN = 1.15
-CHARGING_WINDOW_START = time(0, 0)
-CHARGING_WINDOW_END = time(7, 0)
 
 
 class EVManager:
@@ -63,41 +61,57 @@ class EVManager:
     """
 
     @staticmethod
-    def validate_value(value: float) -> float:
+    def validate_value(value: float, max_value: float = 200.0) -> float:
         """Validate and clamp EV energy value.
 
         Args:
             value: Raw input value
+            max_value: Maximum allowed value (configurable)
 
         Returns:
-            Clamped value between 0.0 and 200.0
+            Clamped value between 0.0 and max_value
         """
-        return max(0.0, min(200.0, value))
+        import math
+        # Handle NaN and infinite values
+        if not math.isfinite(value):
+            return 0.0
+        return max(0.0, min(max_value, value))
 
     @staticmethod
-    def is_in_charging_window(current_time: time) -> bool:
-        """Check if current time is within charging window (00:00-07:00).
+    def is_in_charging_window(
+        current_time: time,
+        window_start: time | None = None,
+        window_end: time | None = None,
+    ) -> bool:
+        """Check if current time is within charging window.
 
         Args:
             current_time: Time to check
+            window_start: Window start time (default 00:00)
+            window_end: Window end time (default 07:00)
 
         Returns:
             True if within window
         """
-        return CHARGING_WINDOW_START <= current_time < CHARGING_WINDOW_END
+        if window_start is None:
+            window_start = time(0, 0)
+        if window_end is None:
+            window_end = time(7, 0)
+
+        return window_start <= current_time < window_end
 
     @staticmethod
     def is_timeout_reached(
         timer_start: datetime | None,
         now: datetime,
-        timeout_hours: float = EV_CHARGE_TIMEOUT_HOURS,
+        timeout_hours: float = DEFAULT_EV_CHARGE_TIMEOUT_HOURS,
     ) -> bool:
         """Check if EV charge timeout has been reached.
 
         Args:
             timer_start: When timer was started
             now: Current datetime
-            timeout_hours: Timeout in hours
+            timeout_hours: Timeout in hours (configurable)
 
         Returns:
             True if timeout reached
@@ -153,6 +167,10 @@ class EVManager:
         now: datetime,
         timer_start: datetime | None,
         energy_balance: dict,
+        timeout_hours: float = DEFAULT_EV_CHARGE_TIMEOUT_HOURS,
+        window_start: time | None = None,
+        window_end: time | None = None,
+        max_ev_value: float = 200.0,
     ) -> EVDecision:
         """Evaluate EV energy change and make decision.
 
@@ -165,15 +183,21 @@ class EVManager:
             now: Current datetime (for timeout check)
             timer_start: Timer start time (if active)
             energy_balance: Energy balance dict
+            timeout_hours: EV timeout in hours (configurable)
+            window_start: Charging window start time (configurable)
+            window_end: Charging window end time (configurable)
+            max_ev_value: Maximum EV energy value (configurable)
 
         Returns:
             EVDecision with all decision info
         """
         # Validate
-        value = EVManager.validate_value(new_value)
+        value = EVManager.validate_value(new_value, max_ev_value)
 
         # Check window
-        in_window = EVManager.is_in_charging_window(current_time)
+        in_window = EVManager.is_in_charging_window(
+            current_time, window_start, window_end
+        )
 
         if not in_window:
             # Outside window - just save for later
@@ -196,7 +220,7 @@ class EVManager:
             )
 
         # Check timeout
-        is_timeout = EVManager.is_timeout_reached(timer_start, now)
+        is_timeout = EVManager.is_timeout_reached(timer_start, now, timeout_hours)
 
         # Decide bypass
         bypass_activate, bypass_reason = EVManager.should_activate_bypass(
@@ -217,14 +241,14 @@ class EVManager:
     def get_remaining_timeout_minutes(
         timer_start: datetime | None,
         now: datetime,
-        timeout_hours: float = EV_CHARGE_TIMEOUT_HOURS,
+        timeout_hours: float = DEFAULT_EV_CHARGE_TIMEOUT_HOURS,
     ) -> int:
         """Get remaining minutes before timeout.
 
         Args:
             timer_start: Timer start time
             now: Current datetime
-            timeout_hours: Timeout in hours
+            timeout_hours: Timeout in hours (configurable)
 
         Returns:
             Remaining minutes, or 0 if expired/no timer

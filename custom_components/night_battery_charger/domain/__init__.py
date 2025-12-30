@@ -10,5 +10,6 @@ All modules in this package contain pure functions that:
 from .planner import ChargePlanner
 from .ev_manager import EVManager
 from .forecaster import ConsumptionForecaster
+from .savings_calculator import SavingsCalculator
 
-__all__ = ["ChargePlanner", "EVManager", "ConsumptionForecaster"]
+__all__ = ["ChargePlanner", "EVManager", "ConsumptionForecaster", "SavingsCalculator"]
