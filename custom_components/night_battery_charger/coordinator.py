@@ -1,481 +1,613 @@
-"""Core logic for Nidia Smart Battery Recharge - Refactored with Services."""
+"""Nidia Coordinator - Thin orchestrator for all components.
+
+This is a COMPLETE REWRITE of the coordinator.
+It's a thin orchestrator that:
+- Initializes all components
+- Handles scheduled events
+- Delegates all logic to domain modules
+- Emits events for state changes
+
+It does NOT contain any business logic.
+"""
+
 from __future__ import annotations
 
-import logging
+from datetime import datetime, time
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_change,
 )
+from homeassistant.helpers import storage
 from homeassistant.util import dt as dt_util
 
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
+
 from .const import (
+    DOMAIN,
+    STORAGE_KEY,
+    STORAGE_VERSION,
     CONF_BATTERY_CAPACITY,
     CONF_BATTERY_SOC_SENSOR,
+    CONF_INVERTER_SWITCH,
+    CONF_BATTERY_BYPASS_SWITCH,
     CONF_HOUSE_LOAD_SENSOR,
+    CONF_SOLAR_FORECAST_SENSOR,
+    CONF_SOLAR_FORECAST_TODAY_SENSOR,
+    CONF_NOTIFY_SERVICE,
+    CONF_NOTIFY_ON_START,
+    CONF_NOTIFY_ON_UPDATE,
+    CONF_NOTIFY_ON_END,
     CONF_MIN_SOC_RESERVE,
     CONF_SAFETY_SPREAD,
     DEFAULT_BATTERY_CAPACITY,
     DEFAULT_MIN_SOC_RESERVE,
     DEFAULT_SAFETY_SPREAD,
-    DOMAIN,
-)
-from .models import ChargePlan, ChargeSession
-from .services import (
-    ExecutionService,
-    ForecastService,
-    LearningService,
-    NotificationService,
-    PlanningService,
+    DEFAULT_NOTIFY_ON_START,
+    DEFAULT_NOTIFY_ON_UPDATE,
+    DEFAULT_NOTIFY_ON_END,
 )
 
-# New EV module imports
-from .ev.logger import EVDebugLogger
-from .ev.service import EVService
+from .logging import get_logger
+from .core.state import NidiaState, ChargePlan, ChargeSession
+from .core.events import NidiaEventBus, NidiaEvent
+from .core.hardware import HardwareController
+from .domain.planner import ChargePlanner, PlanningInput
+from .domain.ev_manager import EVManager, EVSetResult
+from .domain.forecaster import ConsumptionForecaster
+from .infra.notifier import Notifier
 
-_LOGGER = logging.getLogger(__name__)
 
+class NidiaCoordinator:
+    """Thin orchestrator for Nidia Smart Battery Recharge.
 
-class NidiaBatteryManager:
-    """Manages the logic for Nidia Smart Battery Recharge.
-
-    Orchestrates specialized services for learning, forecasting, planning,
-    execution, and EV integration.
+    This class:
+    - Initializes all components
+    - Handles scheduled events (midnight, 00:01, 07:00)
+    - Delegates logic to domain modules
+    - Manages state updates and notifications
     """
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
-        """Initialize the manager."""
+        """Initialize the coordinator."""
         self.hass = hass
         self.entry = entry
         self._listeners = []
+        self._logger = get_logger()
 
-        # Create log directory for EV debug logs
-        self.log_dir = Path(__file__).parent / "log"
-        self.log_dir.mkdir(exist_ok=True)
+        self._logger.info("COORDINATOR_INIT_START", version="2.0.0")
 
-        # Initialize NEW EV debug logger (controlled by switch)
-        self.ev_logger = EVDebugLogger(hass, self.log_dir)
+        # Initialize state from config
+        self.state = self._create_state_from_config()
 
-        _LOGGER.info("NidiaBatteryManager Initializing (v0.10.0 - New EV System)")
+        # Initialize event bus
+        self.events = NidiaEventBus(hass)
 
-        # Initialize services (dependency injection)
-        self.learning_service = LearningService(hass, entry)
+        # Initialize hardware controller
+        self.hardware = HardwareController(hass, self.state, self.events)
 
-        self.forecast_service = ForecastService(
-            hass, entry, self.learning_service, minimum_consumption_fallback=10.0
+        # Initialize notifier
+        self.notifier = Notifier(self.state, self.hardware)
+
+        # Initialize forecaster (will be loaded from storage)
+        self.forecaster = ConsumptionForecaster()
+
+        # Storage for persistence
+        self._store = storage.Store(hass, STORAGE_VERSION, STORAGE_KEY)
+
+        self._logger.info("COORDINATOR_INIT_COMPLETE")
+
+    def _create_state_from_config(self) -> NidiaState:
+        """Create state object from config entry."""
+        data = self.entry.data
+        options = self.entry.options
+
+        def get_config(key, default):
+            return options.get(key, data.get(key, default))
+
+        return NidiaState(
+            # Battery config
+            battery_capacity_kwh=get_config(CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY),
+            min_soc_reserve_percent=get_config(CONF_MIN_SOC_RESERVE, DEFAULT_MIN_SOC_RESERVE),
+            safety_spread_percent=get_config(CONF_SAFETY_SPREAD, DEFAULT_SAFETY_SPREAD),
+
+            # Entity IDs
+            soc_sensor_entity=data.get(CONF_BATTERY_SOC_SENSOR, ""),
+            inverter_switch_entity=data.get(CONF_INVERTER_SWITCH, ""),
+            bypass_switch_entity=data.get(CONF_BATTERY_BYPASS_SWITCH, ""),
+            load_sensor_entity=data.get(CONF_HOUSE_LOAD_SENSOR, ""),
+            solar_forecast_entity=data.get(CONF_SOLAR_FORECAST_SENSOR, ""),
+            solar_forecast_today_entity=data.get(CONF_SOLAR_FORECAST_TODAY_SENSOR, ""),
+            notify_service=get_config(CONF_NOTIFY_SERVICE, ""),
+
+            # Notification flags
+            notify_on_start=get_config(CONF_NOTIFY_ON_START, DEFAULT_NOTIFY_ON_START),
+            notify_on_update=get_config(CONF_NOTIFY_ON_UPDATE, DEFAULT_NOTIFY_ON_UPDATE),
+            notify_on_end=get_config(CONF_NOTIFY_ON_END, DEFAULT_NOTIFY_ON_END),
         )
 
-        self.planning_service = PlanningService(
-            hass,
-            entry,
-            self.forecast_service,
-            battery_capacity=self.battery_capacity,
-            min_soc_reserve=self.min_soc_reserve,
-            safety_spread=self.safety_spread,
-        )
+    async def async_init(self) -> None:
+        """Initialize async components."""
+        self._logger.info("COORDINATOR_ASYNC_INIT_START")
 
-        self.execution_service = ExecutionService(
-            hass, entry, battery_capacity=self.battery_capacity
-        )
+        # Load historical data
+        await self._load_data()
 
-        # Initialize notification service
-        self.notification_service = NotificationService(hass, entry)
+        # Sync hardware state
+        self.hardware.sync_bypass_state()
 
-        # Inject notification service into execution_service
-        self.execution_service.notification_service = self.notification_service
+        # Set up scheduled events
+        self._setup_scheduled_events()
 
-        # NEW: Create EVService with logger
-        soc_sensor = entry.data.get(CONF_BATTERY_SOC_SENSOR, "")
-        self.ev_service = EVService(
-            hass=hass,
-            logger=self.ev_logger,
-            battery_capacity=self.battery_capacity,
-            soc_sensor_entity=soc_sensor,
-        )
-
-        # Inject service dependencies into EVService
-        self.ev_service.inject_services(
-            planning_service=self.planning_service,
-            execution_service=self.execution_service,
-            forecast_service=self.forecast_service,
-            notification_service=self.notification_service,
-        )
-
-        # Current state (exposed for sensors)
-        self.current_plan: ChargePlan | None = None
-        self.current_session: ChargeSession | None = None
-        self.last_run_summary = "Not run yet"
-        self.last_run_charged_kwh = 0.0
-
-    @property
-    def battery_capacity(self) -> float:
-        """Return configured battery capacity."""
-        return self.entry.options.get(
-            CONF_BATTERY_CAPACITY,
-            self.entry.data.get(CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY),
-        )
-
-    @property
-    def min_soc_reserve(self) -> float:
-        """Return configured min SOC reserve."""
-        return self.entry.options.get(
-            CONF_MIN_SOC_RESERVE,
-            self.entry.data.get(CONF_MIN_SOC_RESERVE, DEFAULT_MIN_SOC_RESERVE),
-        )
-
-    @property
-    def safety_spread(self) -> float:
-        """Return configured safety spread."""
-        return self.entry.options.get(
-            CONF_SAFETY_SPREAD,
-            self.entry.data.get(CONF_SAFETY_SPREAD, DEFAULT_SAFETY_SPREAD),
-        )
-
-    # Expose state for sensors (backward compatibility)
-    @property
-    def planned_grid_charge_kwh(self) -> float:
-        """Get planned grid charge in kWh."""
-        return self.current_plan.planned_charge_kwh if self.current_plan else 0.0
-
-    @property
-    def target_soc_percent(self) -> float:
-        """Get target SOC percentage."""
-        return self.current_plan.target_soc_percent if self.current_plan else 0.0
-
-    @property
-    def load_forecast_kwh(self) -> float:
-        """Get load forecast in kWh."""
-        return self.current_plan.load_forecast_kwh if self.current_plan else 0.0
-
-    @property
-    def solar_forecast_kwh(self) -> float:
-        """Get solar forecast in kWh."""
-        return self.current_plan.solar_forecast_kwh if self.current_plan else 0.0
-
-    @property
-    def is_charging_scheduled(self) -> bool:
-        """Check if charging is scheduled."""
-        return self.current_plan.is_charging_scheduled if self.current_plan else False
-
-    @property
-    def is_charging_active(self) -> bool:
-        """Check if charging is currently active."""
-        return self.execution_service.is_charging_active
-
-    @property
-    def plan_reasoning(self) -> str:
-        """Get plan reasoning string."""
-        return self.current_plan.reasoning if self.current_plan else "No plan calculated yet."
-
-    @property
-    def current_day_consumption_kwh(self) -> float:
-        """Get current day's consumption so far."""
-        return self.learning_service.current_day_consumption
-
-    @property
-    def weekday_averages(self) -> dict[str, float]:
-        """Get all weekday averages."""
-        return self.learning_service.weekday_averages
-
-    @property
-    def min_soc_reserve_percent(self) -> float:
-        """Get min SOC reserve (alias for sensors)."""
-        return self.min_soc_reserve
-
-    @property
-    def safety_spread_percent(self) -> float:
-        """Get safety spread (alias for sensors)."""
-        return self.safety_spread
-
-    async def async_init(self):
-        """Initialize the manager, load data, and set up listeners."""
-        # Initialize learning service (loads historical data)
-        await self.learning_service.async_init()
-
-        # Note: EV energy restoration is now handled by EVEnergyNumber entity via RestoreEntity
-        # The entity will call ev_service.restore_state() when added to HA
-
-        # Track house load for consumption learning
-        self._listeners.append(
-            async_track_state_change_event(
-                self.hass,
-                [self.entry.data[CONF_HOUSE_LOAD_SENSOR]],
-                self.learning_service.handle_load_change,
-            )
-        )
-
-        # Schedule daily tasks with NEW TIMING (00:01 instead of 23:59)
-        # 1. End of day processing (midnight)
-        self._listeners.append(
-            async_track_time_change(
-                self.hass, self._handle_midnight, hour=0, minute=0, second=1
-            )
-        )
-
-        # 2. Planning + Start charging window (00:01) - COMBINED from separate 22:59 and 23:59 tasks
-        self._listeners.append(
-            async_track_time_change(
-                self.hass, self._start_night_charge_window, hour=0, minute=1, second=0
-            )
-        )
-
-        # 3. End charging window (07:00)
-        self._listeners.append(
-            async_track_time_change(
-                self.hass, self._end_night_charge_window, hour=7, minute=0, second=0
-            )
-        )
-
-        # 4. Monitor charging during window (every minute)
-        self._listeners.append(
-            async_track_time_change(self.hass, self._monitor_charging, second=0)
-        )
+        # Set up power sensor tracking
+        self._setup_power_tracking()
 
         # Register services
-        self.hass.services.async_register(
-            DOMAIN, "recalculate_plan_now", self._service_recalculate
-        )
-        self.hass.services.async_register(
-            DOMAIN, "force_charge_tonight", self._service_force_charge
-        )
-        self.hass.services.async_register(
-            DOMAIN, "disable_tonight", self._service_disable_charge
+        self._register_services()
+
+        self._logger.info("COORDINATOR_ASYNC_INIT_COMPLETE")
+
+    async def _load_data(self) -> None:
+        """Load persisted data from storage."""
+        data = await self._store.async_load()
+        if data:
+            # Load consumption history
+            if "history" in data:
+                self.forecaster = ConsumptionForecaster.from_dict(data)
+                self._logger.info(
+                    "HISTORY_LOADED",
+                    records=self.forecaster.history_count
+                )
+
+    async def _save_data(self) -> None:
+        """Save data to storage."""
+        await self._store.async_save(self.forecaster.to_dict())
+        self._logger.debug("DATA_SAVED")
+
+    def _setup_scheduled_events(self) -> None:
+        """Set up time-based scheduled events."""
+        # Midnight - close day
+        self._listeners.append(
+            async_track_time_change(
+                self.hass, self._handle_midnight,
+                hour=0, minute=0, second=1
+            )
         )
 
-        _LOGGER.info("Nidia Smart Battery Recharge initialized (v0.10.0 - New EV System)")
+        # 00:01 - Start charging window
+        self._listeners.append(
+            async_track_time_change(
+                self.hass, self._handle_window_start,
+                hour=0, minute=1, second=0
+            )
+        )
 
-    def async_unload(self):
-        """Unload listeners."""
-        for remove_listener in self._listeners:
-            remove_listener()
-        self._listeners = []
+        # 07:00 - End charging window
+        self._listeners.append(
+            async_track_time_change(
+                self.hass, self._handle_window_end,
+                hour=7, minute=0, second=0
+            )
+        )
+
+        # Every minute - monitor charging
+        self._listeners.append(
+            async_track_time_change(
+                self.hass, self._monitor_charging,
+                second=0
+            )
+        )
+
+        self._logger.debug("SCHEDULED_EVENTS_REGISTERED")
+
+    def _setup_power_tracking(self) -> None:
+        """Set up power sensor state tracking."""
+        if self.state.load_sensor_entity:
+            self._listeners.append(
+                async_track_state_change_event(
+                    self.hass,
+                    [self.state.load_sensor_entity],
+                    self._handle_power_change,
+                )
+            )
+            self._logger.debug(
+                "POWER_TRACKING_ENABLED",
+                sensor=self.state.load_sensor_entity
+            )
+
+    def _register_services(self) -> None:
+        """Register HA services."""
+        self.hass.services.async_register(
+            DOMAIN, "recalculate_plan_now",
+            lambda _: self.recalculate_plan(for_preview=True)
+        )
+        self.hass.services.async_register(
+            DOMAIN, "force_charge_tonight",
+            lambda _: self.set_force_charge(True)
+        )
+        self.hass.services.async_register(
+            DOMAIN, "disable_tonight",
+            lambda _: self.set_disable_charge(True)
+        )
+        self._logger.debug("SERVICES_REGISTERED")
+
+    def async_unload(self) -> None:
+        """Unload the coordinator."""
+        for remove in self._listeners:
+            remove()
+        self._listeners.clear()
 
         self.hass.services.async_remove(DOMAIN, "recalculate_plan_now")
         self.hass.services.async_remove(DOMAIN, "force_charge_tonight")
         self.hass.services.async_remove(DOMAIN, "disable_tonight")
 
-    def _get_current_ev_energy(self) -> float:
-        """Get current EV energy from number entity.
+        self._logger.info("COORDINATOR_UNLOADED")
 
-        Returns:
-            Current EV energy in kWh, or 0.0 if unavailable
-        """
-        entity_id = f"number.{DOMAIN}_ev_energy"
-        state = self.hass.states.get(entity_id)
+    # ========== Event Handlers ==========
 
-        if state and state.state not in (STATE_UNKNOWN, STATE_UNAVAILABLE):
-            try:
-                ev_energy = float(state.state)
-                _LOGGER.debug("Current EV energy: %.1f kWh", ev_energy)
-                return ev_energy
-            except (ValueError, TypeError):
-                _LOGGER.error("Invalid EV energy value: %s", state.state)
-                return 0.0
+    async def _handle_midnight(self, now: datetime) -> None:
+        """Handle midnight - close day and save consumption."""
+        self._logger.info("MIDNIGHT_HANDLER_START")
 
-        _LOGGER.debug("EV energy not available")
-        return 0.0
-
-    async def _handle_midnight(self, now):
-        """Close the current day's consumption and store it."""
-        _LOGGER.info("Midnight: Closing day and saving consumption")
-        await self.learning_service.close_day(now)
-        self._update_sensors()
-
-    async def _start_night_charge_window(self, now):
-        """Start the charging window at 00:01.
-
-        This now combines planning and starting, since we plan at 00:01
-        (already in the target day).
-        """
-        self.ev_logger.log_separator("CHARGING WINDOW START 00:01")
-        _LOGGER.info("00:01 - Planning and starting night charge window")
-
-        # Check if EV energy was already set (e.g., before 00:01)
-        current_ev_energy = self.ev_service.ev_energy_kwh
-
-        self.ev_logger.log(
-            "WINDOW_START_CHECK",
-            ev_energy=current_ev_energy,
-            has_timer=self.ev_service.is_timer_active
+        # Close day in forecaster
+        record = self.forecaster.close_day(now)
+        self._logger.info(
+            "DAY_CLOSED",
+            date=record.date,
+            consumption_kwh=record.consumption_kwh
         )
 
-        if current_ev_energy > 0:
-            _LOGGER.info("EV energy already set: %.2f kWh - triggering full EV workflow", current_ev_energy)
+        # Save to storage
+        await self._save_data()
 
-            self.ev_logger.log(
-                "EV_PRE_SET_AT_00_01",
-                ev_value=current_ev_energy
-            )
+        # Update sensors
+        self._update_sensors()
 
-            # NEW: Use EVService.set_ev_energy for consistent flow
-            # This handles: validation, timer, energy calc, bypass, plan, notification
-            result = await self.ev_service.set_ev_energy(current_ev_energy)
+        await self.events.emit(NidiaEvent.MIDNIGHT, date=record.date)
 
-            # Get plan from result
-            self.current_plan = result.get("plan")
+    async def _handle_window_start(self, now: datetime) -> None:
+        """Handle 00:01 - Start charging window."""
+        self._logger.separator("CHARGING WINDOW START")
+        self._logger.info("WINDOW_START_HANDLER")
 
-            self.ev_logger.log(
-                "EV_PRE_SET_PROCESSED",
-                status=result.get("status"),
-                bypass=result.get("bypass_activated"),
-                plan_exists=self.current_plan is not None
-            )
+        self.state.is_in_charging_window = True
+
+        # Check if EV was pre-set
+        ev_energy = self.state.ev.energy_kwh
+        if ev_energy > 0:
+            self._logger.info("EV_PRESET_DETECTED", energy_kwh=ev_energy)
+            # Process EV energy (this will calculate plan with EV)
+            await self.handle_ev_energy_change(ev_energy)
         else:
-            self.ev_logger.log("NO_EV_PRESET", message="Calculating normal plan")
-            # No EV - normal planning
-            self.current_plan = await self.planning_service.calculate_plan(
-                include_ev=False,
-                ev_energy_kwh=0.0,
-                for_preview=False
-            )
+            # Calculate normal plan
+            await self.recalculate_plan(for_preview=False)
 
-        _LOGGER.info("Plan calculated: %s", self.current_plan.reasoning if self.current_plan else "No plan")
-
-        if self.current_plan:
-            self.ev_logger.log(
-                "PLAN_FINAL_AT_00_01",
-                target_soc=self.current_plan.target_soc_percent,
-                charge_kwh=self.current_plan.planned_charge_kwh,
-                ev_kwh=current_ev_energy
-            )
+        # Get current SOC
+        current_soc = self.hardware.get_battery_soc()
 
         # Send start notification
-        current_soc = self.planning_service._get_battery_soc()
-        await self.notification_service.send_start_notification(
-            self.current_plan, current_soc
-        )
+        await self.notifier.send_start_notification(self.state.current_plan, current_soc)
 
         # Start charging if scheduled
-        self.current_session = await self.execution_service.start_charge(self.current_plan)
+        if self.state.current_plan.is_charging_scheduled:
+            await self._start_charging()
 
+        # Update sensors
         self._update_sensors()
 
-    async def _end_night_charge_window(self, now):
-        """End the charging window at 07:00."""
-        self.ev_logger.log_separator("CHARGING WINDOW END 07:00")
-        _LOGGER.info("07:00 - Ending night charge window")
+        await self.events.emit(NidiaEvent.WINDOW_OPENED)
 
-        # Stop charging and get summary
-        summary = await self.execution_service.stop_charge(
-            self.current_session, target_soc=self.target_soc_percent
-        )
+    async def _handle_window_end(self, now: datetime) -> None:
+        """Handle 07:00 - End charging window."""
+        self._logger.separator("CHARGING WINDOW END")
+        self._logger.info("WINDOW_END_HANDLER")
 
-        self.last_run_summary = summary
+        self.state.is_in_charging_window = False
 
-        # Calculate charged energy
-        if self.current_session and self.current_session.end_soc is not None:
-            self.last_run_charged_kwh = self.current_session.charged_kwh
-        else:
-            self.last_run_charged_kwh = 0.0
+        # Stop charging
+        await self._stop_charging()
 
-        # Send notification using NotificationService
-        await self.notification_service.send_end_notification(
-            session=self.current_session,
-            plan=self.current_plan,
-            early_completion=False,
-            battery_capacity=self.battery_capacity,
-        )
+        # Send end notification
+        await self.notifier.send_end_notification(self.state.current_session)
+
+        # Reset EV state
+        self.state.ev.reset()
+
+        # Disable bypass
+        await self.hardware.set_bypass(False)
 
         # Reset overrides
-        self.planning_service.reset_overrides()
-
-        # NEW: Reset EV using EVService.reset() - handles everything
-        await self.ev_service.reset()
-
-        # Also reset the number entity to 0 via HA service
-        ev_number_entity = f"number.{DOMAIN}_ev_energy"
-        try:
-            await self.hass.services.async_call(
-                "number", "set_value", {"entity_id": ev_number_entity, "value": 0.0}
-            )
-            _LOGGER.info("Reset EV energy entity to 0 at end of charging window")
-        except Exception as ex:
-            _LOGGER.error("Failed to reset EV energy entity: %s", ex)
-
-        self.ev_logger.log("WINDOW_END_COMPLETE", summary=summary[:100] if summary else "N/A")
+        self.state.reset_overrides()
 
         # Clear session
-        self.current_session = None
+        self.state.current_session = ChargeSession()
 
+        # Update sensors
         self._update_sensors()
 
-    async def _monitor_charging(self, now):
-        """Monitor SOC during charging window."""
-        # Only monitor if charging is active
-        if not self.execution_service.is_charging_active:
+        await self.events.emit(NidiaEvent.WINDOW_CLOSED)
+
+    async def _monitor_charging(self, now: datetime) -> None:
+        """Monitor charging progress every minute."""
+        if not self.state.is_charging_active:
             return
 
-        # Check if target reached
-        target_reached = await self.execution_service.monitor_charge(
-            self.target_soc_percent
-        )
+        current_soc = self.hardware.get_battery_soc()
+        target_soc = self.state.current_plan.target_soc_percent
 
-        if target_reached:
+        if current_soc >= target_soc or current_soc >= 99.0:
+            self._logger.info(
+                "TARGET_REACHED",
+                current_soc=current_soc,
+                target_soc=target_soc
+            )
+            await self._stop_charging(early=True)
+            await self.notifier.send_end_notification(
+                self.state.current_session,
+                early_completion=True
+            )
+            await self.events.emit(NidiaEvent.TARGET_REACHED, soc=current_soc)
             self._update_sensors()
 
-    def _update_sensors(self):
-        """Notify HA of state changes."""
-        from homeassistant.helpers.dispatcher import async_dispatcher_send
+    def _handle_power_change(self, event) -> None:
+        """Handle power sensor change for consumption tracking."""
+        new_state = event.data.get("new_state")
+        if new_state is None or new_state.state in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+            return
 
-        async_dispatcher_send(self.hass, f"{DOMAIN}_update")
+        try:
+            power_watts = float(new_state.state)
+            now = dt_util.now()
+            self.forecaster.add_power_reading(power_watts, now)
+            # Update state
+            self.state.consumption.current_day_kwh = self.forecaster.current_day_consumption
+        except (ValueError, TypeError):
+            pass
 
-    # EV Integration - Now handled by EVService with linear flow
-    # Note: The primary flow is: EVEnergyNumber → EVService → callback → coordinator
-    # This method is kept for backward compatibility and logging purposes
+    # ========== Charging Control ==========
 
-    async def async_handle_ev_energy_change(self, new_value: float):
-        """Handle EV energy value change (legacy compatibility method).
+    async def _start_charging(self) -> None:
+        """Start battery charging."""
+        self._logger.info("CHARGING_START")
 
-        In v0.10.0, the primary flow goes through the callback in number.py.
-        This method just updates sensors for any remaining calls.
+        current_soc = self.hardware.get_battery_soc()
+
+        # Turn on inverter
+        await self.hardware.set_inverter(True)
+
+        # Create session
+        self.state.current_session = ChargeSession(
+            start_time=dt_util.now(),
+            start_soc=current_soc,
+        )
+        self.state.is_charging_active = True
+
+        await self.events.emit_charging_started(
+            current_soc, self.state.current_plan.target_soc_percent
+        )
+
+    async def _stop_charging(self, early: bool = False) -> None:
+        """Stop battery charging."""
+        if not self.state.is_charging_active:
+            return
+
+        self._logger.info("CHARGING_STOP", early=early)
+
+        # Turn off inverter
+        await self.hardware.set_inverter(False)
+
+        # Update session
+        session = self.state.current_session
+        session.end_time = dt_util.now()
+        session.end_soc = self.hardware.get_battery_soc()
+        session.charged_kwh = (
+            (session.end_soc - session.start_soc)
+            * self.state.battery_capacity_kwh / 100.0
+        )
+
+        self.state.is_charging_active = False
+        self.state.last_run_charged_kwh = session.charged_kwh
+        self.state.last_run_summary = (
+            f"Charged {session.charged_kwh:.2f} kWh. "
+            f"SOC: {session.start_soc:.0f}% → {session.end_soc:.0f}%"
+        )
+
+        await self.events.emit_charging_stopped(
+            session.end_soc, session.charged_kwh, early
+        )
+
+    # ========== Plan Calculation ==========
+
+    async def recalculate_plan(self, for_preview: bool = True) -> None:
+        """Recalculate the charge plan."""
+        self._logger.info("RECALCULATE_PLAN", for_preview=for_preview)
+
+        # Gather inputs
+        current_soc = self.hardware.get_battery_soc()
+        solar_forecast = self.hardware.get_solar_forecast(for_tomorrow=for_preview)
+        consumption_forecast = self.forecaster.get_consumption_forecast(
+            for_tomorrow=for_preview,
+            now=dt_util.now(),
+            minimum_fallback=self.state.minimum_consumption_fallback,
+        )
+
+        # Create planning input
+        planning_input = PlanningInput(
+            current_soc_percent=current_soc,
+            battery_capacity_kwh=self.state.battery_capacity_kwh,
+            min_soc_reserve_percent=self.state.min_soc_reserve_percent,
+            safety_spread_percent=self.state.safety_spread_percent,
+            consumption_forecast_kwh=consumption_forecast,
+            solar_forecast_kwh=solar_forecast,
+            ev_energy_kwh=self.state.ev.energy_kwh,
+            force_charge=self.state.force_charge_enabled,
+            disable_charge=self.state.disable_charge_enabled,
+            is_preview=for_preview,
+        )
+
+        # Calculate plan
+        result = ChargePlanner.calculate(planning_input)
+
+        # Update state
+        self.state.current_plan = ChargePlan(
+            target_soc_percent=result.target_soc_percent,
+            planned_charge_kwh=result.planned_charge_kwh,
+            is_charging_scheduled=result.is_charging_scheduled,
+            reasoning=result.reasoning,
+            load_forecast_kwh=result.load_forecast_kwh,
+            solar_forecast_kwh=result.solar_forecast_kwh,
+        )
+
+        self._logger.info(
+            "PLAN_CALCULATED",
+            target_soc=result.target_soc_percent,
+            charge_kwh=result.planned_charge_kwh,
+            scheduled=result.is_charging_scheduled
+        )
+
+        # Update sensors
+        self._update_sensors()
+
+        await self.events.emit_plan_updated(
+            result.target_soc_percent,
+            result.planned_charge_kwh,
+            "recalculate"
+        )
+
+    # ========== EV Handling ==========
+
+    async def handle_ev_energy_change(self, value: float) -> None:
+        """Handle EV energy value change.
+
+        This is the SINGLE ENTRY POINT for all EV changes.
         """
-        self.ev_logger.log(
-            "EV_CHANGE_COORDINATOR_CALLED",
-            new_value=new_value,
-            note="Called via legacy path"
+        self._logger.separator("EV ENERGY CHANGE")
+        self._logger.info("EV_CHANGE_START", value=value)
+
+        old_value = self.state.ev.energy_kwh
+        now = dt_util.now()
+
+        # Get energy balance for decision
+        battery_energy = self.hardware.get_battery_energy_kwh()
+        solar_forecast = self.hardware.get_solar_forecast(for_tomorrow=False)
+        consumption_forecast = self.forecaster.get_consumption_forecast(
+            for_tomorrow=False,
+            now=now,
+            minimum_fallback=self.state.minimum_consumption_fallback,
         )
-        self._update_sensors()
 
-    def set_minimum_consumption_fallback(self, value: float):
-        """Set the minimum consumption fallback value."""
-        self.forecast_service.set_minimum_consumption_fallback(value)
-        _LOGGER.info("Minimum consumption fallback updated to %.2f kWh", value)
-
-    # Service Handlers
-
-    async def _service_recalculate(self, call):
-        """Service: Recalculate plan now."""
-        _LOGGER.info("Service called: recalculate_plan_now")
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=True
+        energy_balance = ChargePlanner.calculate_energy_balance(
+            battery_energy_kwh=battery_energy,
+            solar_forecast_kwh=solar_forecast,
+            consumption_forecast_kwh=consumption_forecast,
+            ev_energy_kwh=value,
         )
-        self._update_sensors()
 
-    async def _service_force_charge(self, call):
-        """Service: Force charge tonight."""
-        _LOGGER.info("Service called: force_charge_tonight")
-        self.planning_service.set_force_charge(True)
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=True
+        # Evaluate using EVManager (pure logic)
+        decision = EVManager.evaluate(
+            new_value=value,
+            old_value=old_value,
+            current_time=now.time(),
+            now=now,
+            timer_start=self.state.ev.timer_start,
+            energy_balance=energy_balance,
         )
-        self._update_sensors()
 
-    async def _service_disable_charge(self, call):
-        """Service: Disable charge tonight."""
-        _LOGGER.info("Service called: disable_tonight")
-        self.planning_service.set_disable_charge(True)
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=True
-        )
-        self._update_sensors()
+        # Apply decision
+        self.state.ev.energy_kwh = decision.value
 
-    async def async_recalculate_plan(self):
-        """Public method to recalculate plan (used by button entity)."""
-        self.current_plan = await self.planning_service.calculate_plan(
-            include_ev=False, ev_energy_kwh=0.0, for_preview=True
+        if decision.result == EVSetResult.SAVED:
+            # Outside window - just save
+            self._logger.info("EV_SAVED_FOR_LATER", value=decision.value)
+
+        elif decision.result == EVSetResult.RESET:
+            # Reset to 0
+            self._logger.info("EV_RESET")
+            self.state.ev.reset()
+            await self.hardware.set_bypass(False)
+
+        elif decision.result == EVSetResult.PROCESSED:
+            # In window - full processing
+            self._logger.info(
+                "EV_PROCESSED",
+                value=decision.value,
+                bypass=decision.bypass_should_activate
+            )
+
+            # Start timer if needed
+            if decision.value > 0 and self.state.ev.timer_start is None:
+                self.state.ev.timer_start = now
+                self._logger.info("EV_TIMER_STARTED")
+
+            # Control bypass
+            if decision.bypass_should_activate:
+                await self.hardware.set_bypass(True)
+                self.state.ev.bypass_active = True
+            else:
+                await self.hardware.set_bypass(False)
+                self.state.ev.bypass_active = False
+
+            # Handle timeout notification
+            if decision.is_timeout:
+                elapsed = EVManager.get_elapsed_hours(self.state.ev.timer_start, now)
+                await self.notifier.send_ev_timeout_notification(decision.value, elapsed)
+
+        # Recalculate plan with EV
+        await self.recalculate_plan(for_preview=not self.state.is_in_charging_window)
+
+        # Send update notification if in window
+        if self.state.is_in_charging_window and decision.result == EVSetResult.PROCESSED:
+            # Calculate old plan for comparison
+            old_plan = self.state.current_plan  # Before recalculation
+            await self.notifier.send_update_notification(
+                ev_energy_kwh=decision.value,
+                old_plan=ChargePlan(),  # Empty as baseline
+                new_plan=self.state.current_plan,
+                bypass_activated=decision.bypass_should_activate,
+                energy_balance=energy_balance,
+            )
+
+        # Emit event
+        await self.events.emit_ev_set(
+            decision.value,
+            decision.bypass_should_activate
         )
-        self._update_sensors()
+
+        self._logger.info("EV_CHANGE_COMPLETE", result=decision.result.value)
+
+    async def handle_ev_restored(self, value: float) -> None:
+        """Handle EV value restored from HA storage."""
+        self._logger.info("EV_RESTORED", value=value)
+        self.state.ev.energy_kwh = value
+        if value > 0:
+            self.state.ev.timer_start = dt_util.now()
+
+    # ========== Override Handlers ==========
+
+    async def set_force_charge(self, enabled: bool) -> None:
+        """Set force charge override."""
+        self.state.force_charge_enabled = enabled
+        if enabled:
+            self.state.disable_charge_enabled = False
+        self._logger.info("FORCE_CHARGE_SET", enabled=enabled)
+        await self.recalculate_plan(for_preview=True)
+
+    async def set_disable_charge(self, enabled: bool) -> None:
+        """Set disable charge override."""
+        self.state.disable_charge_enabled = enabled
+        if enabled:
+            self.state.force_charge_enabled = False
+        self._logger.info("DISABLE_CHARGE_SET", enabled=enabled)
+        await self.recalculate_plan(for_preview=True)
+
+    # ========== Utility ==========
+
+    def _update_sensors(self) -> None:
+        """Notify all sensors to update."""
+        async_dispatcher_send(self.hass, "night_battery_charger_update")
