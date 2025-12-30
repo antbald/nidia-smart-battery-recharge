@@ -23,7 +23,7 @@ from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_change,
 )
-from homeassistant.helpers import storage
+from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 if TYPE_CHECKING:
@@ -85,6 +85,42 @@ from .domain.savings_calculator import SavingsCalculator
 from .infra.notifier import Notifier
 
 
+class NidiaStore(Store):
+    """Custom storage with migration support."""
+
+    async def _async_migrate_func(
+        self, old_major_version: int, old_minor_version: int, old_data: dict
+    ) -> dict:
+        """Migrate data from old versions.
+
+        Args:
+            old_major_version: Previous major version
+            old_minor_version: Previous minor version
+            old_data: Data from previous version
+
+        Returns:
+            Migrated data compatible with current version
+        """
+        # Migration from version 1 to 2
+        if old_major_version == 1:
+            # Version 1 had: history, weekday_averages
+            # Version 2 adds: savings
+            migrated = dict(old_data)
+            if "savings" not in migrated:
+                migrated["savings"] = {
+                    "total_savings_eur": 0.0,
+                    "monthly_savings_eur": 0.0,
+                    "lifetime_savings_eur": 0.0,
+                    "total_charged_kwh": 0.0,
+                    "monthly_charges": [],
+                    "current_month": None,
+                }
+            return migrated
+
+        # If version is already current or unknown, return as-is
+        return old_data
+
+
 class NidiaCoordinator:
     """Thin orchestrator for Nidia Smart Battery Recharge.
 
@@ -127,8 +163,8 @@ class NidiaCoordinator:
             pricing_mode=self.state.pricing.pricing_mode,
         )
 
-        # Storage for persistence
-        self._store = storage.Store(hass, STORAGE_VERSION, STORAGE_KEY)
+        # Storage for persistence (with migration support)
+        self._store = NidiaStore(hass, STORAGE_VERSION, STORAGE_KEY)
 
         # Rate limiting - track last service call times
         self._last_service_call: dict[str, float] = {}
