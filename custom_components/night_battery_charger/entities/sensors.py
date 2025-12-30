@@ -136,6 +136,68 @@ SENSOR_DEFINITIONS: list[SensorDefinition] = [
         device_class=SensorDeviceClass.ENERGY,
         icon="mdi:ev-station",
     ),
+
+    # Charging window info
+    SensorDefinition(
+        key="charging_window",
+        name="Charging Window",
+        value_fn=lambda s: f"{s.window_start_hour:02d}:{s.window_start_minute:02d} - {s.window_end_hour:02d}:{s.window_end_minute:02d}",
+        icon="mdi:clock-time-four-outline",
+    ),
+
+    # Economic Savings Sensors
+    SensorDefinition(
+        key="total_savings",
+        name="Total Savings",
+        value_fn=lambda s: round(s.savings.total_savings_eur, 2),
+        unit="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:piggy-bank",
+    ),
+    SensorDefinition(
+        key="monthly_savings",
+        name="Monthly Savings",
+        value_fn=lambda s: round(s.savings.monthly_savings_eur, 2),
+        unit="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        icon="mdi:calendar-month",
+    ),
+    SensorDefinition(
+        key="lifetime_savings",
+        name="Lifetime Savings",
+        value_fn=lambda s: round(s.savings.lifetime_savings_eur, 2),
+        unit="EUR",
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:trophy",
+    ),
+    SensorDefinition(
+        key="total_charged_kwh",
+        name="Total Energy Charged",
+        value_fn=lambda s: round(s.savings.total_charged_kwh, 2),
+        unit=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        icon="mdi:battery-charging",
+    ),
+
+    # Pricing info
+    SensorDefinition(
+        key="price_peak",
+        name="Peak Price",
+        value_fn=lambda s: s.pricing.price_peak,
+        unit="EUR/kWh",
+        icon="mdi:currency-eur",
+    ),
+    SensorDefinition(
+        key="price_offpeak",
+        name="Off-Peak Price",
+        value_fn=lambda s: s.pricing.price_offpeak,
+        unit="EUR/kWh",
+        icon="mdi:currency-eur",
+    ),
 ]
 
 # Add weekday average sensors
@@ -206,7 +268,8 @@ class NidiaSensor(SensorEntity):
         """Handle state update."""
         try:
             self._attr_native_value = self._definition.value_fn(self._state)
-        except Exception:
+        except (ValueError, TypeError, AttributeError, KeyError):
+            # Specific exceptions for data access issues
             self._attr_native_value = None
         self.async_write_ha_state()
 

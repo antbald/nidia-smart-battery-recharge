@@ -4,6 +4,7 @@ This module contains:
 - Consumption pattern learning
 - Weekday-based forecasting
 - Trapezoidal integration for energy calculation
+- Cached weekday averages for performance
 """
 
 from __future__ import annotations
@@ -46,7 +47,8 @@ class ConsumptionForecaster:
     Features:
     - Tracks daily consumption via trapezoidal integration
     - Maintains rolling history (21 days)
-    - Calculates weekday-specific averages
+    - Calculates weekday-specific averages with caching
+    - Validates power readings
     """
 
     def __init__(self, history: list[dict] | None = None) -> None:
@@ -60,6 +62,10 @@ class ConsumptionForecaster:
         self._last_reading_time: datetime | None = None
         self._last_reading_value: float | None = None
 
+        # Cache for weekday averages
+        self._weekday_cache: dict[int, float] | None = None
+        self._cache_valid: bool = False
+
     def add_power_reading(self, power_watts: float, now: datetime) -> float:
         """Add a power reading and update daily consumption.
 
@@ -72,6 +78,15 @@ class ConsumptionForecaster:
         Returns:
             Updated current day consumption in kWh
         """
+        import math
+
+        # Validate power reading
+        if not math.isfinite(power_watts):
+            return self._current_day_kwh
+
+        # Clamp to reasonable range (0 to 100kW)
+        power_watts = max(0.0, min(100000.0, power_watts))
+
         if self._last_reading_time is None:
             # First reading - just record it
             self._last_reading_time = now
@@ -80,6 +95,12 @@ class ConsumptionForecaster:
 
         # Calculate time difference in hours
         time_diff_hours = (now - self._last_reading_time).total_seconds() / 3600.0
+
+        # Skip if time difference is too large (> 1 hour) or negative
+        if time_diff_hours <= 0 or time_diff_hours > 1.0:
+            self._last_reading_time = now
+            self._last_reading_value = power_watts
+            return self._current_day_kwh
 
         # Trapezoidal integration: average power * time
         avg_power = (self._last_reading_value + power_watts) / 2.0
@@ -125,6 +146,9 @@ class ConsumptionForecaster:
             self._history.sort(key=lambda x: x["date"])
             self._history = self._history[-HISTORY_DAYS:]
 
+        # Invalidate cache
+        self._invalidate_cache()
+
         # Reset for new day
         self._current_day_kwh = 0.0
         self._last_reading_time = None
@@ -132,8 +156,34 @@ class ConsumptionForecaster:
 
         return record
 
+    def _invalidate_cache(self) -> None:
+        """Invalidate the weekday averages cache."""
+        self._weekday_cache = None
+        self._cache_valid = False
+
+    def _ensure_cache(self) -> None:
+        """Ensure cache is populated."""
+        if self._cache_valid and self._weekday_cache is not None:
+            return
+
+        self._weekday_cache = {}
+        for weekday in range(7):
+            values = [
+                entry["consumption_kwh"]
+                for entry in self._history
+                if entry["weekday"] == weekday
+            ]
+            if values:
+                self._weekday_cache[weekday] = sum(values) / len(values)
+            else:
+                self._weekday_cache[weekday] = 0.0
+
+        self._cache_valid = True
+
     def get_weekday_average(self, weekday: int) -> float:
         """Get average consumption for a specific weekday.
+
+        Uses cached values for performance.
 
         Args:
             weekday: Day of week (0=Monday, 6=Sunday)
@@ -141,25 +191,20 @@ class ConsumptionForecaster:
         Returns:
             Average consumption in kWh, or 0 if no data
         """
-        values = [
-            entry["consumption_kwh"]
-            for entry in self._history
-            if entry["weekday"] == weekday
-        ]
-
-        if not values:
-            return 0.0
-
-        return sum(values) / len(values)
+        self._ensure_cache()
+        return self._weekday_cache.get(weekday, 0.0)
 
     def get_all_weekday_averages(self) -> dict[str, float]:
         """Get averages for all weekdays.
 
+        Uses cached values for performance.
+
         Returns:
             Dictionary mapping weekday names to average consumption
         """
+        self._ensure_cache()
         return {
-            name: self.get_weekday_average(i)
+            name: self._weekday_cache.get(i, 0.0)
             for i, name in enumerate(WEEKDAY_NAMES)
         }
 

@@ -13,7 +13,7 @@ Benefits:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, time
 from typing import Any
 
 from ..logging import get_logger
@@ -120,6 +120,63 @@ class ConsumptionState:
 
 
 @dataclass
+class SavingsState:
+    """Economic savings state."""
+
+    # Current totals
+    total_charged_kwh: float = 0.0
+    total_savings_eur: float = 0.0
+    total_cost_eur: float = 0.0
+    theoretical_cost_eur: float = 0.0
+
+    # Monthly stats
+    monthly_charged_kwh: float = 0.0
+    monthly_savings_eur: float = 0.0
+    current_month: str = ""
+
+    # Lifetime stats
+    lifetime_charged_kwh: float = 0.0
+    lifetime_savings_eur: float = 0.0
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "total_charged_kwh": self.total_charged_kwh,
+            "total_savings_eur": self.total_savings_eur,
+            "total_cost_eur": self.total_cost_eur,
+            "theoretical_cost_eur": self.theoretical_cost_eur,
+            "monthly_charged_kwh": self.monthly_charged_kwh,
+            "monthly_savings_eur": self.monthly_savings_eur,
+            "current_month": self.current_month,
+            "lifetime_charged_kwh": self.lifetime_charged_kwh,
+            "lifetime_savings_eur": self.lifetime_savings_eur,
+        }
+
+
+@dataclass
+class PricingConfig:
+    """Energy pricing configuration."""
+
+    price_peak: float = 0.25
+    price_offpeak: float = 0.12
+    price_f1: float = 0.25
+    price_f2: float = 0.20
+    price_f3: float = 0.12
+    pricing_mode: str = "two_tier"  # "two_tier" or "three_tier"
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "price_peak": self.price_peak,
+            "price_offpeak": self.price_offpeak,
+            "price_f1": self.price_f1,
+            "price_f2": self.price_f2,
+            "price_f3": self.price_f3,
+            "pricing_mode": self.pricing_mode,
+        }
+
+
+@dataclass
 class NidiaState:
     """Single Source of Truth - ALL state lives here.
 
@@ -160,21 +217,36 @@ class NidiaState:
     current_session: ChargeSession = field(default_factory=ChargeSession)
     ev: EVState = field(default_factory=EVState)
     consumption: ConsumptionState = field(default_factory=ConsumptionState)
+    savings: SavingsState = field(default_factory=SavingsState)
+    pricing: PricingConfig = field(default_factory=PricingConfig)
 
     # Last run info
     last_run_summary: str = "Not run yet"
     last_run_charged_kwh: float = 0.0
 
-    # Window state
+    # Window state (configurable)
     is_in_charging_window: bool = False
     window_start_hour: int = 0
     window_start_minute: int = 1
     window_end_hour: int = 7
     window_end_minute: int = 0
 
+    # EV timeout (configurable)
+    ev_timeout_hours: float = 6.0
+
     def __post_init__(self):
         """Initialize logger after dataclass init."""
         self._logger = get_logger()
+
+    @property
+    def window_start_time(self) -> time:
+        """Get charging window start as time object."""
+        return time(self.window_start_hour, self.window_start_minute)
+
+    @property
+    def window_end_time(self) -> time:
+        """Get charging window end as time object."""
+        return time(self.window_end_hour, self.window_end_minute)
 
     def update(self, **kwargs) -> None:
         """Update state fields and log the change.
@@ -214,9 +286,12 @@ class NidiaState:
             "current_plan": self.current_plan.to_dict(),
             "current_session": self.current_session.to_dict(),
             "ev": self.ev.to_dict(),
+            "savings": self.savings.to_dict(),
             "last_run_summary": self.last_run_summary,
             "last_run_charged_kwh": self.last_run_charged_kwh,
             "is_in_charging_window": self.is_in_charging_window,
+            "window_start": f"{self.window_start_hour:02d}:{self.window_start_minute:02d}",
+            "window_end": f"{self.window_end_hour:02d}:{self.window_end_minute:02d}",
         }
 
     # Convenience properties for backward compatibility

@@ -1,7 +1,7 @@
 # Nidia Smart Battery Recharge
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.1.0-blue?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/github/license/antoniobaldassarre/nidia-smart-battery-recharge?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/HACS-Custom-orange?style=for-the-badge" alt="HACS">
   <img src="https://img.shields.io/badge/Home%20Assistant-2024.1+-blue?style=for-the-badge" alt="HA Version">
@@ -41,8 +41,14 @@ If you have a home battery system with solar panels, you face a daily challenge:
 ### EV Integration (New in v2.0)
 - Input EV energy needs for overnight charging
 - Automatic bypass control when battery energy is insufficient
-- 6-hour timeout protection
+- Configurable timeout protection (1-12 hours)
 - Visual feedback on EV charging status
+
+### Economic Savings Tracking (New in v2.1)
+- Track money saved by charging at night vs daytime rates
+- Support for Italian PUN pricing (F1/F2/F3 tiers)
+- Monthly and lifetime savings statistics
+- Configurable peak/off-peak rates
 
 ### Safe & Configurable
 - Minimum SOC reserve to protect battery health
@@ -85,7 +91,7 @@ If you have a home battery system with solar panels, you face a daily challenge:
 
 ## Configuration
 
-The integration uses a friendly **3-step configuration wizard**:
+The integration uses a friendly **4-step configuration wizard**:
 
 ### Step 1: Core Configuration
 - **Inverter Grid Charge Switch**: The switch entity that enables/disables grid charging on your inverter
@@ -100,6 +106,15 @@ The integration uses a friendly **3-step configuration wizard**:
 - **Minimum SOC Reserve** (default: 15%): Battery level always preserved, never counted as available for consumption
 - **Safety Spread** (default: 10%): Extra buffer percentage added to calculated charging need
 - **Notification Service** (optional): Service to receive morning summaries (e.g., `notify.mobile_app_your_phone`)
+- **Charging Window Start** (default: 00:00): When the charging window begins
+- **Charging Window End** (default: 07:00): When the charging window ends
+- **EV Timeout Hours** (default: 6): How long before EV energy request expires
+
+### Step 4: Pricing Configuration (Optional)
+- **Pricing Mode**: Two-tier (peak/off-peak) or Three-tier (F1/F2/F3 Italian PUN)
+- **Peak Price** (default: €0.25/kWh): Daytime electricity rate
+- **Off-Peak Price** (default: €0.12/kWh): Nighttime electricity rate
+- **F1/F2/F3 Rates**: For three-tier Italian PUN pricing
 
 ### Optional: EV Integration
 - **Bypass Switch Entity**: Switch that enables direct grid-to-EV charging when battery is insufficient
@@ -173,6 +188,13 @@ Every morning:
 | `sensor.nidia_smart_battery_recharge_average_consumption_friday` | Average consumption on Fridays | kWh |
 | `sensor.nidia_smart_battery_recharge_average_consumption_saturday` | Average consumption on Saturdays | kWh |
 | `sensor.nidia_smart_battery_recharge_average_consumption_sunday` | Average consumption on Sundays | kWh |
+| `sensor.nidia_smart_battery_recharge_total_savings` | Total money saved by night charging | EUR |
+| `sensor.nidia_smart_battery_recharge_monthly_savings` | Current month savings | EUR |
+| `sensor.nidia_smart_battery_recharge_lifetime_savings` | All-time savings | EUR |
+| `sensor.nidia_smart_battery_recharge_total_charged_kwh` | Total energy charged from grid | kWh |
+| `sensor.nidia_smart_battery_recharge_price_peak` | Configured peak electricity rate | EUR/kWh |
+| `sensor.nidia_smart_battery_recharge_price_offpeak` | Configured off-peak electricity rate | EUR/kWh |
+| `sensor.nidia_smart_battery_recharge_charging_window` | Current charging window times | - |
 
 ### Binary Sensors
 
@@ -323,6 +345,54 @@ cards:
         icon_color: >
           {{ 'red' if is_state(entity, 'on') else 'grey' }}
 
+  # Economic Savings Section
+  - type: custom:mushroom-title-card
+    title: Economic Savings
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-template-card
+        primary: "€{{ states('sensor.nidia_smart_battery_recharge_monthly_savings') }}"
+        secondary: This Month
+        icon: mdi:calendar-month
+        icon_color: green
+        layout: vertical
+
+      - type: custom:mushroom-template-card
+        primary: "€{{ states('sensor.nidia_smart_battery_recharge_lifetime_savings') }}"
+        secondary: Lifetime
+        icon: mdi:piggy-bank
+        icon_color: amber
+        layout: vertical
+
+      - type: custom:mushroom-template-card
+        primary: "{{ states('sensor.nidia_smart_battery_recharge_total_charged_kwh') }} kWh"
+        secondary: Total Charged
+        icon: mdi:battery-charging
+        icon_color: blue
+        layout: vertical
+
+  # Pricing Info
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: sensor.nidia_smart_battery_recharge_price_peak
+        name: Peak Rate
+        icon: mdi:currency-eur
+        icon_color: red
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.nidia_smart_battery_recharge_price_offpeak
+        name: Off-Peak Rate
+        icon: mdi:currency-eur
+        icon_color: green
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.nidia_smart_battery_recharge_charging_window
+        name: Window
+        icon: mdi:clock-outline
+        icon_color: purple
+
   # Plan Reasoning
   - type: markdown
     title: Algorithm Reasoning
@@ -425,6 +495,30 @@ cards:
         name: Bypass Active
       - entity: binary_sensor.nidia_smart_battery_recharge_ev_timer_active
         name: EV Timer Active
+
+  # Economic Savings
+  - type: glance
+    title: Economic Savings
+    entities:
+      - entity: sensor.nidia_smart_battery_recharge_monthly_savings
+        name: Month
+      - entity: sensor.nidia_smart_battery_recharge_lifetime_savings
+        name: Lifetime
+      - entity: sensor.nidia_smart_battery_recharge_total_charged_kwh
+        name: Charged
+
+  - type: entities
+    title: Pricing Configuration
+    entities:
+      - entity: sensor.nidia_smart_battery_recharge_price_peak
+        name: Peak Rate (€/kWh)
+        icon: mdi:currency-eur
+      - entity: sensor.nidia_smart_battery_recharge_price_offpeak
+        name: Off-Peak Rate (€/kWh)
+        icon: mdi:currency-eur
+      - entity: sensor.nidia_smart_battery_recharge_charging_window
+        name: Charging Window
+        icon: mdi:clock-outline
 
   # Forecasts
   - type: entities
@@ -551,6 +645,7 @@ entities:
     label: Tonight's Plan
   - entity: sensor.nidia_smart_battery_recharge_planned_grid_charge
   - entity: sensor.nidia_smart_battery_recharge_target_soc
+  - entity: sensor.nidia_smart_battery_recharge_charging_window
   - type: section
     label: Forecast
   - entity: sensor.nidia_smart_battery_recharge_load_forecast_today
@@ -559,6 +654,15 @@ entities:
     label: EV
   - entity: number.nidia_smart_battery_recharge_ev_energy
   - entity: binary_sensor.nidia_smart_battery_recharge_bypass_active
+  - type: section
+    label: Savings
+  - entity: sensor.nidia_smart_battery_recharge_monthly_savings
+  - entity: sensor.nidia_smart_battery_recharge_lifetime_savings
+  - entity: sensor.nidia_smart_battery_recharge_total_charged_kwh
+  - type: section
+    label: Pricing
+  - entity: sensor.nidia_smart_battery_recharge_price_peak
+  - entity: sensor.nidia_smart_battery_recharge_price_offpeak
   - type: section
     label: Controls
   - entity: button.nidia_smart_battery_recharge_recalculate_plan

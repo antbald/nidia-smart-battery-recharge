@@ -1,0 +1,751 @@
+[debug] [2025-12-29T15:50:10.198Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:10.200Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:10.200Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:10.200Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:10.201Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.201Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.201Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:10.202Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:10.202Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:10.203Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.203Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.203Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:10.203Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:10.203Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:10.204Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:10.204Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:10.204Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.204Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:10.204Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:10.204Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:10.204Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:16.416Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:16.418Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:16.418Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:16.418Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:16.418Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.419Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.419Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:16.419Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:16.419Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:16.421Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.421Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.421Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:16.421Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:16.421Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:16.421Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:16.421Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:16.421Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.421Z] Checked if tokens are valid: false, expires at: 1766775585317
+[debug] [2025-12-29T15:50:16.421Z] > refreshing access token with scopes: []
+[debug] [2025-12-29T15:50:16.421Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-29T15:50:16.421Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:16.823Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-29T15:50:16.823Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:16.836Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:18.027Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:18.027Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:18.029Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.029Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.029Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.029Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.034Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.034Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.034Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.034Z] Checked if tokens are valid: true, expires at: 1767027015823
+[debug] [2025-12-29T15:50:18.034Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:50:18.034Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:18.035Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:50:18.035Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:18.036Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:50:18.036Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:18.036Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:50:18.036Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:19.281Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:50:19.281Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:19.520Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:50:19.520Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:20.354Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-29T15:50:20.354Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:20.363Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:20.702Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:20.702Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:20.753Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:20.754Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:20.754Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:20.754Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:20.754Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:50:20.754Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:20.754Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:50:20.754Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:21.201Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:50:21.201Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:21.292Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:21.292Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:21.293Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:21.293Z] Checked if tokens are valid: true, expires at: 1767027019354
+[debug] [2025-12-29T15:50:21.293Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:21.336Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-29T15:50:21.336Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-29T15:50:21.348Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:21.491Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:50:21.491Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:50:21.498Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:21.498Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:21.499Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:21.500Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:24.246Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:24.246Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:24.506Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:50:24.506Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:24.510Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:24.510Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:24.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:24.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:24.510Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:25.167Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:25.167Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:25.170Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:25.170Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:25.414Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:50:25.414Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:50:35.292Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:35.293Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:35.294Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:35.294Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:35.294Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.294Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.294Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.294Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.294Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:35.295Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:35.295Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.295Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:35.295Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:35.296Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:35.296Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:36.147Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:36.148Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:36.149Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.150Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.150Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.150Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.154Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.154Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.154Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.154Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:36.154Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:50:36.154Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:36.155Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:50:36.155Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:36.156Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:50:36.156Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:36.156Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:50:36.156Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:37.462Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:50:37.462Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:50:38.099Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:38.099Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:38.106Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.106Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.106Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.106Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.108Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.108Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:38.108Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:50:38.108Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:38.109Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:50:38.109Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:38.109Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:50:38.109Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:50:38.986Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:50:38.986Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:39.411Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:39.411Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:39.412Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:39.412Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:39.412Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:39.529Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:39.529Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:39.568Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:50:39.569Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:39.570Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:50:39.570Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:39.612Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:39.612Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:39.613Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:39.613Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:39.650Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:39.650Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:39.650Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:39.650Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:39.650Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:39.760Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:50:39.760Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:39.836Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:50:39.836Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:50:39.837Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:39.837Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:42.569Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:50:42.569Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:50:47.203Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:47.205Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:47.205Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:47.205Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:47.205Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:50:47.206Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:50:47.206Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:50:47.206Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:47.207Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:50:47.208Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:51:26.996Z] *** [apiv2] error from fetch(https://www.googleapis.com/oauth2/v3/token, {"headers":{},"method":"POST","body":{"_overheadLength":545,"_valueLength":212,"_valuesToMeasure":[],"writable":false,"readable":true,"dataSize":0,"maxDataSize":2097152,"pauseStreams":true,"_released":true,"_streams":[],"_currentStream":null,"_insideLoop":false,"_pendingNext":false,"_boundary":"--------------------------0360bcce04a127a2c09da895","_events":{},"_eventsCount":1}}): FetchError: request to https://www.googleapis.com/oauth2/v3/token failed, reason: 
+[debug] [2025-12-29T15:51:45.579Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:51:45.581Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:56.445Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:51:56.445Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:51:56.452Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.452Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.453Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.453Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.463Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.463Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.463Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.464Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.464Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.464Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.466Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.466Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.466Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.466Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.467Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:51:56.467Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.472Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:51:56.472Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:51:56.480Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.480Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.480Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.480Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.483Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.483Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.483Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.483Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.483Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.483Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.484Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.484Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.485Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.485Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.485Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:51:56.485Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.507Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:51:56.507Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:51:56.507Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.507Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.507Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.507Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.510Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:56.510Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.510Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-29T15:51:56.512Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-29T15:51:57.323Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:51:57.323Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:51:57.332Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:51:57.333Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:51:57.346Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-29T15:51:57.347Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-29T15:51:57.366Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:51:57.366Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.393Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:51:57.393Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.398Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:51:57.398Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.405Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:51:57.405Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.417Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:51:57.417Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.422Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-29T15:51:57.422Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.423Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:51:57.423Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.430Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-29T15:51:57.430Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.477Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-29T15:51:57.477Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-29T15:51:57.524Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:51:57.524Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:51:57.524Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:57.524Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:57.524Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:51:57.562Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:51:57.562Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:51:57.562Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:57.562Z] Checked if tokens are valid: true, expires at: 1767027020336
+[debug] [2025-12-29T15:51:57.562Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-29T15:51:57.728Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:51:57.728Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:51:57.728Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:51:57.728Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-29T15:51:58.255Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-29T15:51:58.255Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-29T15:51:58.258Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-29T15:51:58.258Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:18.763Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:18.764Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:18.765Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:18.765Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:18.765Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.765Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.765Z] > refreshing access token with scopes: []
+[debug] [2025-12-30T19:25:18.766Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-30T19:25:18.766Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:18.767Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.767Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.767Z] > refreshing access token with scopes: []
+[debug] [2025-12-30T19:25:18.768Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-30T19:25:18.768Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:18.768Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:18.768Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:18.768Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.768Z] Checked if tokens are valid: false, expires at: 1767027020336
+[debug] [2025-12-30T19:25:18.768Z] > refreshing access token with scopes: []
+[debug] [2025-12-30T19:25:18.768Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-30T19:25:18.768Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:19.161Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-30T19:25:19.161Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:19.182Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:19.202Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-30T19:25:19.202Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:19.230Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:19.874Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-30T19:25:19.874Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-30T19:25:19.889Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:20.401Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:20.401Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:20.405Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.405Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.405Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.405Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.410Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.410Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.410Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.410Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.411Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.411Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:20.412Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.612Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:20.612Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:20.618Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.618Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.618Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.618Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.620Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.620Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.620Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.620Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:20.620Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.620Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.620Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.620Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.621Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:20.621Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:20.621Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:20.621Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:21.232Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:21.232Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:21.233Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.233Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.233Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.233Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.234Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.234Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.234Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.234Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:21.234Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:21.234Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:21.235Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:21.761Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:21.762Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:21.957Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:21.957Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:22.123Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:22.123Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:22.334Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:22.334Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:22.484Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:22.484Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:22.686Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:22.686Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:22.906Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:22.907Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:23.169Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:23.169Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:23.177Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:23.177Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:23.229Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:23.229Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:23.229Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:23.229Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:23.229Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:23.528Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:23.528Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:23.529Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:23.529Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:23.663Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:23.663Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:23.663Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:23.663Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:23.663Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:23.937Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:23.937Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:23.938Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:23.938Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:27.936Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:27.936Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:30.234Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.235Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.235Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.235Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.235Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.236Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.236Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.236Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.236Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.236Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.236Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.236Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.237Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.237Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.238Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.338Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.339Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.339Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.339Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.340Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:30.340Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.340Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.341Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.341Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.342Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:30.516Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:30.516Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:30.518Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.518Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.518Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.518Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.523Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.523Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.523Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.523Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.523Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.523Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.524Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.524Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.525Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.525Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.525Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:30.525Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.598Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:30.598Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:30.600Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.601Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.601Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.601Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.608Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.608Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.608Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.608Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:30.608Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.608Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.609Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.609Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.610Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:30.610Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:30.610Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:30.610Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.068Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:31.068Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:31.069Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:31.083Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.084Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.084Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.084Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.088Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.089Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.089Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.091Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:31.091Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.069Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:31.083Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.083Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.084Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.084Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.087Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.088Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.088Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.088Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.090Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.091Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:31.091Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.099Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:31.093Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:31.093Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:31.094Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.094Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.094Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.094Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.095Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.095Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.095Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.096Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.096Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.096Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.096Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.096Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.098Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.098Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.099Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:31.099Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.100Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:31.100Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.100Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.100Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.100Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.102Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.102Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.102Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.102Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:31.102Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.102Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.102Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.103Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.103Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:31.103Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.103Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:31.103Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:31.324Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:31.325Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:31.436Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:31.436Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:31.443Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:31.443Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:31.444Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:31.444Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:31.565Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:31.566Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:31.568Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:31.568Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:31.686Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:31.687Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:31.762Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:31.762Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.141Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:32.142Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.264Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:32.264Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.266Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:32.266Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.411Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:32.412Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:32.600Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:32.601Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:32.601Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.602Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:32.602Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.601Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:32.687Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:32.687Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:32.687Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:32.687Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:32.687Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:32.900Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:32.900Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:32.942Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:32.942Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:33.126Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:33.126Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.128Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:33.128Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:33.131Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:33.131Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:33.248Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:33.248Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.290Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:33.291Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:33.291Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.291Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.291Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:33.400Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:33.400Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.480Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:33.481Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:33.500Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:33.500Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.503Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:33.503Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.547Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:33.547Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:33.548Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.548Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.548Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:33.577Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:33.577Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:33.628Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:33.628Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:33.629Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.629Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:33.629Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:33.745Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:33.746Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:33.747Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:33.747Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:33.988Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:33.988Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:33.989Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:33.989Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:34.344Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:34.346Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:34.344Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:34.346Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:34.346Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:34.346Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:34.347Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:34.347Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:40.836Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:40.838Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:40.838Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:40.838Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:40.838Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:40.839Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:40.839Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:40.839Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:40.840Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:40.840Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:41.100Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:41.101Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:41.129Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.129Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.130Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.130Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.140Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.140Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.140Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.140Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.140Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.140Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.142Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.142Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.143Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.143Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.143Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [none]
+[debug] [2025-12-30T19:25:41.143Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.419Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com 403
+[debug] [2025-12-30T19:25:41.420Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseio.com [omitted]
+[debug] [2025-12-30T19:25:41.541Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:41.541Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:41.555Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.555Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.555Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.555Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.560Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.560Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.560Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.560Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.561Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.561Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.562Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.562Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.569Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:41.569Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:41.570Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.570Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.570Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.570Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.572Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.572Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:41.572Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.572Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.573Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.573Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:41.574Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-30T19:25:41.574Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/gender-reveal-baldamas
+[debug] [2025-12-30T19:25:42.032Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:42.032Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.058Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:42.058Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.078Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:42.078Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.130Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:42.131Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:42.132Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:42.132Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:42.132Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:42.341Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:42.341Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:42.344Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:42.344Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:42.393Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:42.393Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.452Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:42.452Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.460Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-30T19:25:42.460Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.464Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:42.465Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.472Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-12-30T19:25:42.472Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.474Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com 200
+[debug] [2025-12-30T19:25:42.475Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gender-reveal-baldamas/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2025-12-30T19:25:42.526Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:42.526Z] > authorizing via signed-in user (thebusterazz@gmail.com)
+[debug] [2025-12-30T19:25:42.526Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:42.526Z] Checked if tokens are valid: true, expires at: 1767126318874
+[debug] [2025-12-30T19:25:42.526Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo [none]
+[debug] [2025-12-30T19:25:43.175Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo 200
+[debug] [2025-12-30T19:25:43.175Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gender-reveal-baldamas/billingInfo {"name":"projects/gender-reveal-baldamas/billingInfo","projectId":"gender-reveal-baldamas","billingAccountName":"","billingEnabled":false}
+[debug] [2025-12-30T19:25:43.177Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-30T19:25:43.177Z] > authorizing via signed-in user (thebusterazz@gmail.com)
