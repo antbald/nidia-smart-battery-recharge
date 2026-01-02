@@ -51,7 +51,7 @@ from .const import (
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Nidia Smart Battery Recharge."""
 
-    VERSION = 3  # Incremented for new time selector format
+    VERSION = 4  # String format for TimeSelector "HH:MM:SS"
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -143,12 +143,16 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            # Validate window times
+            # Validate window times (TimeSelector returns "HH:MM:SS" string)
             start = user_input.get(CONF_CHARGING_WINDOW_START, DEFAULT_CHARGING_WINDOW_START)
             end = user_input.get(CONF_CHARGING_WINDOW_END, DEFAULT_CHARGING_WINDOW_END)
 
-            start_minutes = start.get("hour", 0) * 60 + start.get("minute", 0)
-            end_minutes = end.get("hour", 7) * 60 + end.get("minute", 0)
+            # Parse time strings "HH:MM:SS"
+            start_parts = start.split(":") if isinstance(start, str) else ["0", "0"]
+            end_parts = end.split(":") if isinstance(end, str) else ["7", "0"]
+
+            start_minutes = int(start_parts[0]) * 60 + int(start_parts[1])
+            end_minutes = int(end_parts[0]) * 60 + int(end_parts[1])
 
             # Allow overnight windows (e.g., 23:00 to 07:00)
             if start_minutes == end_minutes:
@@ -352,13 +356,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self._config_entry.data.get(key, default)
         )
 
-    def _get_time_value(self, key: str, default: dict) -> dict:
-        """Get time value, handling both dict and legacy formats."""
+    def _get_time_value(self, key: str, default: str) -> str:
+        """Get time value in 'HH:MM:SS' string format."""
         value = self._config_entry.options.get(
             key,
             self._config_entry.data.get(key, default)
         )
-        if isinstance(value, dict):
+        # TimeSelector uses string format "HH:MM:SS"
+        if isinstance(value, str) and ":" in value:
             return value
         # Fallback for any edge cases
         return default

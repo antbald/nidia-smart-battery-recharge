@@ -45,9 +45,9 @@ DEFAULT_NOTIFY_ON_START = True
 DEFAULT_NOTIFY_ON_UPDATE = True
 DEFAULT_NOTIFY_ON_END = True
 
-# Charging Window Defaults (TimeSelector returns dict with hour, minute, second)
-DEFAULT_CHARGING_WINDOW_START = {"hour": 0, "minute": 1, "second": 0}
-DEFAULT_CHARGING_WINDOW_END = {"hour": 7, "minute": 0, "second": 0}
+# Charging Window Defaults (TimeSelector returns string "HH:MM:SS")
+DEFAULT_CHARGING_WINDOW_START = "00:01:00"
+DEFAULT_CHARGING_WINDOW_END = "07:00:00"
 
 # EV Defaults
 DEFAULT_EV_TIMEOUT_HOURS = 6

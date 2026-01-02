@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.0")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.6")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -179,24 +179,26 @@ class NidiaCoordinator:
         def get_config(key, default):
             return options.get(key, data.get(key, default))
 
-        def parse_time_value(time_val: dict, default: dict) -> tuple[int, int]:
-            """Parse time value from TimeSelector dict format.
+        def parse_time_value(time_val: str, default: str) -> tuple[int, int]:
+            """Parse time value from TimeSelector string format.
 
             Args:
-                time_val: Time value dict with hour, minute, second keys
-                default: Default dict if time_val is invalid
+                time_val: Time value string in "HH:MM:SS" format
+                default: Default string if time_val is invalid
 
             Returns:
                 Tuple of (hour, minute)
             """
-            if not isinstance(time_val, dict):
+            if not isinstance(time_val, str) or ":" not in time_val:
                 time_val = default
-            return (
-                int(time_val.get("hour", default.get("hour", 0))),
-                int(time_val.get("minute", default.get("minute", 0))),
-            )
+            try:
+                parts = time_val.split(":")
+                return (int(parts[0]), int(parts[1]))
+            except (ValueError, IndexError):
+                parts = default.split(":")
+                return (int(parts[0]), int(parts[1]))
 
-        # Parse charging window times (TimeSelector returns dict)
+        # Parse charging window times (TimeSelector returns "HH:MM:SS" string)
         window_start = get_config(CONF_CHARGING_WINDOW_START, DEFAULT_CHARGING_WINDOW_START)
         window_end = get_config(CONF_CHARGING_WINDOW_END, DEFAULT_CHARGING_WINDOW_END)
         start_hour, start_minute = parse_time_value(window_start, DEFAULT_CHARGING_WINDOW_START)
