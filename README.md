@@ -1,7 +1,7 @@
 # Nidia Smart Battery Recharge
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.1.1-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.2.5-blue?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/github/license/antoniobaldassarre/nidia-smart-battery-recharge?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/HACS-Custom-orange?style=for-the-badge" alt="HACS">
   <img src="https://img.shields.io/badge/Home%20Assistant-2024.1+-blue?style=for-the-badge" alt="HA Version">

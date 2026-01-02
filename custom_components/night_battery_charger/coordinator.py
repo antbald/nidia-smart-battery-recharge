@@ -70,7 +70,7 @@ from .const import (
     POWER_CHANGE_THRESHOLD,
 )
 
-from .logging import get_logger
+from .nidia_logging import get_logger
 from .core.state import NidiaState, ChargePlan, ChargeSession, PricingConfig
 from .core.events import NidiaEventBus, NidiaEvent
 from .core.hardware import HardwareController

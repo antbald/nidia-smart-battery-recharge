@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from ..const import DOMAIN
-from ..logging import get_logger
+from ..nidia_logging import get_logger
 
 
 class RecalculatePlanButton(ButtonEntity):

@@ -146,13 +146,14 @@ SENSOR_DEFINITIONS: list[SensorDefinition] = [
     ),
 
     # Economic Savings Sensors
+    # Note: device_class=MONETARY requires state_class=TOTAL (not TOTAL_INCREASING)
     SensorDefinition(
         key="total_savings",
         name="Total Savings",
         value_fn=lambda s: round(s.savings.total_savings_eur, 2),
         unit="EUR",
         device_class=SensorDeviceClass.MONETARY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
         icon="mdi:piggy-bank",
     ),
     SensorDefinition(
@@ -170,7 +171,7 @@ SENSOR_DEFINITIONS: list[SensorDefinition] = [
         value_fn=lambda s: round(s.savings.lifetime_savings_eur, 2),
         unit="EUR",
         device_class=SensorDeviceClass.MONETARY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
         icon="mdi:trophy",
     ),
     SensorDefinition(

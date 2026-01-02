@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, time
 from typing import Any
 
-from ..logging import get_logger
+from ..nidia_logging import get_logger
 
 
 @dataclass

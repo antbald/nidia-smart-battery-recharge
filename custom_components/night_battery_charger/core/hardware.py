@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 
-from ..logging import get_logger
+from ..nidia_logging import get_logger
 from .state import NidiaState
 from .events import NidiaEventBus, NidiaEvent
 

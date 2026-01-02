@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any, Callable, Awaitable
 
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from ..logging import get_logger
+from ..nidia_logging import get_logger
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
