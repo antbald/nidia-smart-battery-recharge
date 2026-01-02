@@ -201,6 +201,8 @@ SENSOR_DEFINITIONS: list[SensorDefinition] = [
 ]
 
 # Add weekday average sensors
+# Note: These are computed averages, not cumulative totals, so we don't use
+# device_class=ENERGY (which requires state_class=TOTAL or TOTAL_INCREASING)
 WEEKDAY_NAMES = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 WEEKDAY_DISPLAY = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -216,8 +218,7 @@ for i, (key, display) in enumerate(zip(WEEKDAY_NAMES, WEEKDAY_DISPLAY)):
                 or 0.0
             ),
             unit=UnitOfEnergy.KILO_WATT_HOUR,
-            device_class=SensorDeviceClass.ENERGY,
-            state_class=SensorStateClass.MEASUREMENT,
+            icon="mdi:chart-bar",
         )
     )
 
