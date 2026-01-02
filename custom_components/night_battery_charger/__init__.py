@@ -134,8 +134,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Forward to platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    _LOGGER.info("Nidia Smart Battery Recharge v2.2.0 initialized")
+    # Register update listener for options changes
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+
+    _LOGGER.info("Nidia Smart Battery Recharge v2.2.1 initialized")
     return True
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update - reload the integration."""
+    _LOGGER.info("Options changed, reloading Nidia integration")
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
