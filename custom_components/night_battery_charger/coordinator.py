@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.10")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.11")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -318,6 +318,8 @@ class NidiaCoordinator:
             # Load consumption history
             if "history" in data:
                 self.forecaster = ConsumptionForecaster.from_dict(data)
+                # Keep state in sync for sensors that read from NidiaState.
+                self.state.consumption.history = list(self.forecaster.history)
                 self._logger.info(
                     "HISTORY_LOADED",
                     records=self.forecaster.history_count
@@ -485,6 +487,9 @@ class NidiaCoordinator:
             date=record.date,
             consumption_kwh=record.consumption_kwh
         )
+        # Sync state for weekday average sensors and current day reset.
+        self.state.consumption.history = list(self.forecaster.history)
+        self.state.consumption.current_day_kwh = self.forecaster.current_day_consumption
 
         # Save to storage
         await self._save_data()

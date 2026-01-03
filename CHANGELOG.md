@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.11 - 2026-01-03
+
+### Fixed
+
+- Weekday average consumption sensors now read from synced history, so dashboard bars show actual values
+
 ## 2.2.10 - 2026-01-03
 
 ### Fixed
