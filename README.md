@@ -428,11 +428,32 @@ cards:
         color: '#00BCD4'
     max: 30
     height: 30px
+    decimal: 0
     positions:
+      icon: 'off'
       name: outside
       value: inside
       indicator: 'off'
     unit_of_measurement: kWh
+    card_mod:
+      style: |
+        #states {
+          padding-left: 0;
+        }
+        bar-card-name {
+          width: 56px;
+          flex: 0 0 56px;
+          text-align: left;
+          margin-right: 8px;
+        }
+        bar-card-background {
+          flex: 1 1 auto;
+        }
+        bar-card-value {
+          margin-left: auto;
+          padding-right: 8px;
+          text-align: right;
+        }
 
   # Last Run Summary
   - type: markdown
