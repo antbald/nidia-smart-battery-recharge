@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.8")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.9")
 
         # Initialize state from config
         self.state = self._create_state_from_config()

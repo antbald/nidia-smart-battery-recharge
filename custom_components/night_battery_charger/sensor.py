@@ -18,4 +18,6 @@ async def async_setup_entry(
 ) -> None:
     """Set up sensor entities."""
     coordinator: NidiaCoordinator = hass.data[DOMAIN][entry.entry_id]
-    await async_setup_sensors(hass, entry, coordinator.state, async_add_entities)
+    await async_setup_sensors(
+        hass, entry, coordinator.state, async_add_entities, coordinator=coordinator
+    )

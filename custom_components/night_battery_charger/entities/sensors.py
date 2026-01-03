@@ -276,15 +276,91 @@ class NidiaSensor(SensorEntity):
         self.async_write_ha_state()
 
 
+class ConsumptionTrackingSensor(SensorEntity):
+    """Specialized sensor for consumption tracking with detailed attributes."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_device_class = SensorDeviceClass.ENERGY
+    _attr_state_class = SensorStateClass.TOTAL
+    _attr_icon = "mdi:home-lightning-bolt"
+
+    def __init__(self, entry_id: str, coordinator) -> None:
+        """Initialize the sensor."""
+        self._coordinator = coordinator
+
+        self._attr_unique_id = f"{entry_id}_consumption_tracking"
+        self._attr_name = "Consumption Tracking"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry_id)},
+            name="Nidia Smart Battery Recharge",
+            manufacturer="Nidia",
+        )
+
+    async def async_added_to_hass(self) -> None:
+        """Register for updates."""
+        self.async_on_remove(
+            async_dispatcher_connect(
+                self.hass,
+                "night_battery_charger_update",
+                self._handle_update,
+            )
+        )
+        self._handle_update()
+
+    @callback
+    def _handle_update(self) -> None:
+        """Handle state update."""
+        self._attr_native_value = self._coordinator.forecaster.current_day_consumption
+        self.async_write_ha_state()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        """Return detailed tracking attributes."""
+        forecaster = self._coordinator.forecaster
+
+        attrs = {
+            "current_day_kwh": round(forecaster.current_day_consumption, 3),
+            "history_days": forecaster.history_count,
+            "tracking_active": forecaster._last_reading_time is not None,
+        }
+
+        # Last reading info
+        if forecaster._last_reading_time:
+            attrs["last_reading_time"] = forecaster._last_reading_time.isoformat()
+            attrs["last_reading_watts"] = round(forecaster._last_reading_value or 0, 1)
+
+        # Weekday averages
+        weekday_avgs = forecaster.get_all_weekday_averages()
+        for day, avg in weekday_avgs.items():
+            attrs[f"avg_{day}"] = round(avg, 2)
+
+        # Recent history (last 7 days)
+        recent = sorted(forecaster.history, key=lambda x: x["date"], reverse=True)[:7]
+        attrs["recent_history"] = [
+            {"date": r["date"], "kwh": round(r["consumption_kwh"], 2)}
+            for r in recent
+        ]
+
+        return attrs
+
+
 async def async_setup_sensors(
     hass: HomeAssistant,
     entry: ConfigEntry,
     state: NidiaState,
     async_add_entities: AddEntitiesCallback,
+    coordinator=None,
 ) -> None:
     """Set up all sensor entities."""
     entities = [
         NidiaSensor(entry.entry_id, state, definition)
         for definition in SENSOR_DEFINITIONS
     ]
+
+    # Add specialized consumption tracking sensor if coordinator is provided
+    if coordinator:
+        entities.append(ConsumptionTrackingSensor(entry.entry_id, coordinator))
+
     async_add_entities(entities)

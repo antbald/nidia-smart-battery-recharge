@@ -1,9 +1,9 @@
 """The Nidia Smart Battery Recharge integration.
 
-Version 2.2.8 - EV Energy tracking debug logging:
-- Added comprehensive logging for EV value restore/sync
-- Track EV state at window start
-- Log when EV is reset at window end
+Version 2.2.9 - Consumption Tracking sensor:
+- New sensor with detailed consumption tracking attributes
+- Shows history days, last reading, weekday averages
+- Recent history visible in attributes
 """
 
 from __future__ import annotations
@@ -173,7 +173,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Register update listener for options changes
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
-    _LOGGER.info("Nidia Smart Battery Recharge v2.2.8 initialized")
+    _LOGGER.info("Nidia Smart Battery Recharge v2.2.9 initialized")
     return True
 
 
