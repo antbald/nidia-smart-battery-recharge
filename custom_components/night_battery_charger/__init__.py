@@ -1,9 +1,9 @@
 """The Nidia Smart Battery Recharge integration.
 
-Version 2.2.7 - Debug logging for scheduled events:
-- Added detailed logging for time value parsing
-- Added logging for scheduled event registration
-- Added support for legacy dict time format as fallback
+Version 2.2.8 - EV Energy tracking debug logging:
+- Added comprehensive logging for EV value restore/sync
+- Track EV state at window start
+- Log when EV is reset at window end
 """
 
 from __future__ import annotations
@@ -173,7 +173,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Register update listener for options changes
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
-    _LOGGER.info("Nidia Smart Battery Recharge v2.2.7 initialized")
+    _LOGGER.info("Nidia Smart Battery Recharge v2.2.8 initialized")
     return True
 
 

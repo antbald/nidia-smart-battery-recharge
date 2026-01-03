@@ -62,21 +62,35 @@ class EVEnergyNumber(NumberEntity, RestoreEntity):
         """Restore state and register for updates."""
         await super().async_added_to_hass()
 
+        self._logger.info("EV_ENTITY_ADDED_TO_HASS")
+
         # Restore previous state
         last_state = await self.async_get_last_state()
+        self._logger.info(
+            "EV_LAST_STATE_CHECK",
+            has_last_state=last_state is not None,
+            last_state_value=last_state.state if last_state else None
+        )
+
         if last_state and last_state.state not in ("unknown", "unavailable"):
             try:
                 restored = float(last_state.state)
                 if 0 <= restored <= 200:
                     self._attr_native_value = restored
+                    self._logger.info(
+                        "EV_ENERGY_RESTORING",
+                        value=restored,
+                        coordinator_ev_before=self._coordinator.state.ev.energy_kwh
+                    )
                     # Notify coordinator of restored value
                     await self._coordinator.handle_ev_restored(restored)
                     self._logger.info(
                         "EV_ENERGY_RESTORED",
-                        value=restored
+                        value=restored,
+                        coordinator_ev_after=self._coordinator.state.ev.energy_kwh
                     )
-            except (ValueError, TypeError):
-                pass
+            except (ValueError, TypeError) as ex:
+                self._logger.error("EV_RESTORE_ERROR", error=str(ex))
 
         # Register for updates
         self.async_on_remove(
@@ -86,11 +100,23 @@ class EVEnergyNumber(NumberEntity, RestoreEntity):
                 self._handle_update,
             )
         )
+        self._logger.info("EV_DISPATCHER_CONNECTED")
 
     @callback
     def _handle_update(self) -> None:
         """Sync with coordinator state."""
-        self._attr_native_value = self._coordinator.state.ev.energy_kwh
+        old_value = self._attr_native_value
+        new_value = self._coordinator.state.ev.energy_kwh
+
+        # Only log if value actually changed
+        if old_value != new_value:
+            self._logger.info(
+                "EV_SYNC_FROM_COORDINATOR",
+                old_value=old_value,
+                new_value=new_value
+            )
+
+        self._attr_native_value = new_value
         self.async_write_ha_state()
 
     async def async_set_native_value(self, value: float) -> None:

@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.7")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.8")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -500,7 +500,9 @@ class NidiaCoordinator:
         self._logger.info(
             "WINDOW_START_HANDLER",
             triggered_at=now.strftime("%Y-%m-%d %H:%M:%S"),
-            expected_time=f"{self.state.window_start_hour:02d}:{self.state.window_start_minute:02d}"
+            expected_time=f"{self.state.window_start_hour:02d}:{self.state.window_start_minute:02d}",
+            ev_energy_at_start=self.state.ev.energy_kwh,
+            ev_timer_start=self.state.ev.timer_start
         )
 
         self.state.is_in_charging_window = True
@@ -544,6 +546,10 @@ class NidiaCoordinator:
         await self.notifier.send_end_notification(self.state.current_session)
 
         # Reset EV state
+        self._logger.info(
+            "EV_RESET_AT_WINDOW_END",
+            ev_value_before=self.state.ev.energy_kwh
+        )
         self.state.ev.reset()
 
         # Disable bypass
@@ -854,10 +860,20 @@ class NidiaCoordinator:
 
     async def handle_ev_restored(self, value: float) -> None:
         """Handle EV value restored from HA storage."""
-        self._logger.info("EV_RESTORED", value=value)
+        self._logger.info(
+            "EV_RESTORED_HANDLER",
+            value=value,
+            current_ev_value=self.state.ev.energy_kwh,
+            is_in_window=self.state.is_in_charging_window
+        )
         self.state.ev.energy_kwh = value
         if value > 0:
             self.state.ev.timer_start = dt_util.now()
+        self._logger.info(
+            "EV_RESTORED_COMPLETE",
+            ev_value_after=self.state.ev.energy_kwh,
+            timer_start=self.state.ev.timer_start
+        )
 
     # ========== Override Handlers ==========
 
