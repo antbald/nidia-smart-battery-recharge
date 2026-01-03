@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.6")
+        self._logger.info("COORDINATOR_INIT_START", version="2.2.7")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -179,30 +179,79 @@ class NidiaCoordinator:
         def get_config(key, default):
             return options.get(key, data.get(key, default))
 
-        def parse_time_value(time_val: str, default: str) -> tuple[int, int]:
+        def parse_time_value(time_val, default: str) -> tuple[int, int]:
             """Parse time value from TimeSelector string format.
 
             Args:
-                time_val: Time value string in "HH:MM:SS" format
+                time_val: Time value string in "HH:MM:SS" format (or dict for legacy)
                 default: Default string if time_val is invalid
 
             Returns:
                 Tuple of (hour, minute)
             """
+            self._logger.debug(
+                "PARSE_TIME_VALUE",
+                time_val=time_val,
+                time_val_type=type(time_val).__name__,
+                default=default
+            )
+
+            # Handle dict format (legacy, shouldn't happen after migration)
+            if isinstance(time_val, dict):
+                hour = int(time_val.get("hour", 0))
+                minute = int(time_val.get("minute", 0))
+                self._logger.warning(
+                    "LEGACY_DICT_FORMAT_DETECTED",
+                    time_val=time_val,
+                    parsed_hour=hour,
+                    parsed_minute=minute
+                )
+                return (hour, minute)
+
+            # Handle string format "HH:MM:SS"
             if not isinstance(time_val, str) or ":" not in time_val:
+                self._logger.warning(
+                    "INVALID_TIME_FORMAT",
+                    time_val=time_val,
+                    using_default=default
+                )
                 time_val = default
+
             try:
                 parts = time_val.split(":")
                 return (int(parts[0]), int(parts[1]))
-            except (ValueError, IndexError):
+            except (ValueError, IndexError) as ex:
+                self._logger.error(
+                    "TIME_PARSE_ERROR",
+                    time_val=time_val,
+                    error=str(ex),
+                    using_default=default
+                )
                 parts = default.split(":")
                 return (int(parts[0]), int(parts[1]))
 
         # Parse charging window times (TimeSelector returns "HH:MM:SS" string)
         window_start = get_config(CONF_CHARGING_WINDOW_START, DEFAULT_CHARGING_WINDOW_START)
         window_end = get_config(CONF_CHARGING_WINDOW_END, DEFAULT_CHARGING_WINDOW_END)
+
+        self._logger.info(
+            "CONFIG_TIME_VALUES",
+            window_start_raw=window_start,
+            window_start_type=type(window_start).__name__,
+            window_end_raw=window_end,
+            window_end_type=type(window_end).__name__,
+            from_options=CONF_CHARGING_WINDOW_START in options,
+            from_data=CONF_CHARGING_WINDOW_START in data
+        )
+
         start_hour, start_minute = parse_time_value(window_start, DEFAULT_CHARGING_WINDOW_START)
         end_hour, end_minute = parse_time_value(window_end, DEFAULT_CHARGING_WINDOW_END)
+
+        self._logger.info(
+            "PARSED_WINDOW_TIMES",
+            start=f"{start_hour:02d}:{start_minute:02d}",
+            end=f"{end_hour:02d}:{end_minute:02d}"
+        )
 
         return NidiaState(
             # Battery config
@@ -334,10 +383,12 @@ class NidiaCoordinator:
             )
         )
 
-        self._logger.debug(
+        # Log at INFO level to ensure visibility
+        self._logger.info(
             "SCHEDULED_EVENTS_REGISTERED",
             window_start=f"{self.state.window_start_hour:02d}:{self.state.window_start_minute:02d}",
-            window_end=f"{self.state.window_end_hour:02d}:{self.state.window_end_minute:02d}"
+            window_end=f"{self.state.window_end_hour:02d}:{self.state.window_end_minute:02d}",
+            listeners_count=len(self._listeners)
         )
 
     def _setup_power_tracking(self) -> None:
@@ -446,7 +497,11 @@ class NidiaCoordinator:
     async def _handle_window_start(self, now: datetime) -> None:
         """Handle window start - Start charging window."""
         self._logger.separator("CHARGING WINDOW START")
-        self._logger.info("WINDOW_START_HANDLER")
+        self._logger.info(
+            "WINDOW_START_HANDLER",
+            triggered_at=now.strftime("%Y-%m-%d %H:%M:%S"),
+            expected_time=f"{self.state.window_start_hour:02d}:{self.state.window_start_minute:02d}"
+        )
 
         self.state.is_in_charging_window = True
 
