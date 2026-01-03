@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.10 - 2026-01-03
+
+### Fixed
+
+- Consumption tracking sensor now pushes UI updates on new power readings, so dashboard values no longer stick at 0
+
 ## 0.9.1 - 2025-12-11
 
 ### Fixed

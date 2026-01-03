@@ -1,6 +1,6 @@
 """The Nidia Smart Battery Recharge integration.
 
-Version 2.2.9 - Consumption Tracking sensor:
+Version 2.2.10 - Consumption Tracking sensor refresh fix:
 - New sensor with detailed consumption tracking attributes
 - Shows history days, last reading, weekday averages
 - Recent history visible in attributes
@@ -173,7 +173,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Register update listener for options changes
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
-    _LOGGER.info("Nidia Smart Battery Recharge v2.2.9 initialized")
+    _LOGGER.info("Nidia Smart Battery Recharge v2.2.10 initialized")
     return True
 
 
