@@ -247,6 +247,35 @@ class ConsumptionForecaster:
         self._last_reading_time = None
         self._last_reading_value = None
 
+    def delete_record(self, date_str: str) -> bool:
+        """Delete a specific consumption record by date.
+
+        Args:
+            date_str: Date in ISO format (YYYY-MM-DD)
+
+        Returns:
+            True if record was found and deleted, False otherwise
+        """
+        original_count = len(self._history)
+        self._history = [
+            record for record in self._history
+            if record.get("date") != date_str
+        ]
+
+        if len(self._history) < original_count:
+            self._invalidate_cache()
+            return True
+        return False
+
+    def get_available_dates(self) -> list[str]:
+        """Get list of dates available in history.
+
+        Returns:
+            List of dates in ISO format, sorted descending (newest first)
+        """
+        dates = [record.get("date", "") for record in self._history]
+        return sorted(dates, reverse=True)
+
     @property
     def current_day_consumption(self) -> float:
         """Get current day consumption so far."""

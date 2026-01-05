@@ -144,12 +144,14 @@ class Notifier:
         self,
         session: ChargeSession | None,
         early_completion: bool = False,
+        current_soc: float | None = None,
     ) -> bool:
-        """Send notification at end of charging.
+        """Send notification at end of charging window.
 
         Args:
             session: Charge session data
-            early_completion: True if target reached before 07:00
+            early_completion: True if target reached before window end
+            current_soc: Current SOC (used if session not available)
 
         Returns:
             True if sent successfully
@@ -157,10 +159,21 @@ class Notifier:
         if not self.state.notify_on_end:
             return False
 
-        if session is None or session.start_time is None:
-            return False
+        now = datetime.now()
 
-        # Calculate charged energy
+        # Case 1: No session or no charging happened
+        if session is None or session.start_time is None:
+            # Still send a notification that the window ended
+            soc_info = f"SOC attuale: {current_soc:.0f}%" if current_soc is not None else ""
+            message = (
+                "🔋 Nidia Battery: Finestra di Carica Terminata\n\n"
+                f"⏰ Orario: {now.strftime('%H:%M')}\n"
+                f"• {soc_info}\n"
+                "• Nessuna ricarica effettuata durante la notte"
+            )
+            return await self.hardware.send_notification(message)
+
+        # Case 2: Session exists - calculate charged energy
         charged_kwh = session.charged_kwh
         if charged_kwh == 0 and session.end_soc is not None:
             charged_kwh = (
@@ -169,7 +182,6 @@ class Notifier:
             )
 
         # Calculate duration
-        now = datetime.now()
         duration = now - session.start_time
         hours = int(duration.total_seconds() // 3600)
         minutes = int((duration.total_seconds() % 3600) // 60)

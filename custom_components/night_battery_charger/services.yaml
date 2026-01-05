@@ -9,3 +9,15 @@ force_charge_tonight:
 disable_tonight:
   name: Disable Charge Tonight
   description: Prevents the system from charging tonight, even if the plan suggests it.
+
+delete_consumption_record:
+  name: Delete Consumption Record
+  description: Deletes a specific day's consumption record from the history.
+  fields:
+    date:
+      name: Date
+      description: The date to delete in YYYY-MM-DD format (e.g., 2025-01-05)
+      required: true
+      example: "2025-01-05"
+      selector:
+        date:

@@ -135,7 +135,7 @@ class NidiaCoordinator:
         self._listeners = []
         self._logger = get_logger()
 
-        self._logger.info("COORDINATOR_INIT_START", version="2.2.11")
+        self._logger.info("COORDINATOR_INIT_START", version="2.3.0")
 
         # Initialize state from config
         self.state = self._create_state_from_config()
@@ -259,13 +259,13 @@ class NidiaCoordinator:
             min_soc_reserve_percent=get_config(CONF_MIN_SOC_RESERVE, DEFAULT_MIN_SOC_RESERVE),
             safety_spread_percent=get_config(CONF_SAFETY_SPREAD, DEFAULT_SAFETY_SPREAD),
 
-            # Entity IDs
-            soc_sensor_entity=data.get(CONF_BATTERY_SOC_SENSOR, ""),
-            inverter_switch_entity=data.get(CONF_INVERTER_SWITCH, ""),
-            bypass_switch_entity=data.get(CONF_BATTERY_BYPASS_SWITCH, ""),
-            load_sensor_entity=data.get(CONF_HOUSE_LOAD_SENSOR, ""),
-            solar_forecast_entity=data.get(CONF_SOLAR_FORECAST_SENSOR, ""),
-            solar_forecast_today_entity=data.get(CONF_SOLAR_FORECAST_TODAY_SENSOR, ""),
+            # Entity IDs (can be changed via options flow)
+            soc_sensor_entity=get_config(CONF_BATTERY_SOC_SENSOR, ""),
+            inverter_switch_entity=get_config(CONF_INVERTER_SWITCH, ""),
+            bypass_switch_entity=get_config(CONF_BATTERY_BYPASS_SWITCH, ""),
+            load_sensor_entity=get_config(CONF_HOUSE_LOAD_SENSOR, ""),
+            solar_forecast_entity=get_config(CONF_SOLAR_FORECAST_SENSOR, ""),
+            solar_forecast_today_entity=get_config(CONF_SOLAR_FORECAST_TODAY_SENSOR, ""),
             notify_service=get_config(CONF_NOTIFY_SERVICE, ""),
 
             # Notification flags
@@ -422,6 +422,10 @@ class NidiaCoordinator:
             DOMAIN, "disable_tonight",
             self._rate_limited_disable_charge
         )
+        self.hass.services.async_register(
+            DOMAIN, "delete_consumption_record",
+            self._handle_delete_consumption_record
+        )
         self._logger.debug("SERVICES_REGISTERED")
 
     def _check_rate_limit(self, service_name: str) -> bool:
@@ -462,6 +466,30 @@ class NidiaCoordinator:
         if self._check_rate_limit("disable_charge"):
             await self.set_disable_charge(True)
 
+    async def _handle_delete_consumption_record(self, call) -> None:
+        """Handle delete consumption record service call."""
+        date_str = call.data.get("date")
+        if not date_str:
+            self._logger.error("DELETE_RECORD_MISSING_DATE")
+            return
+
+        self._logger.info("DELETE_RECORD_REQUEST", date=date_str)
+
+        deleted = self.forecaster.delete_record(date_str)
+        if deleted:
+            # Sync state
+            self.state.consumption.history = list(self.forecaster.history)
+
+            # Save to storage
+            await self._save_data()
+
+            # Update sensors
+            self._update_sensors()
+
+            self._logger.info("DELETE_RECORD_SUCCESS", date=date_str)
+        else:
+            self._logger.warning("DELETE_RECORD_NOT_FOUND", date=date_str)
+
     def async_unload(self) -> None:
         """Unload the coordinator."""
         for remove in self._listeners:
@@ -471,6 +499,7 @@ class NidiaCoordinator:
         self.hass.services.async_remove(DOMAIN, "recalculate_plan_now")
         self.hass.services.async_remove(DOMAIN, "force_charge_tonight")
         self.hass.services.async_remove(DOMAIN, "disable_tonight")
+        self.hass.services.async_remove(DOMAIN, "delete_consumption_record")
 
         self._logger.info("COORDINATOR_UNLOADED")
 
@@ -547,8 +576,14 @@ class NidiaCoordinator:
         # Stop charging
         await self._stop_charging()
 
-        # Send end notification
-        await self.notifier.send_end_notification(self.state.current_session)
+        # Get current SOC for notification (even if no charging happened)
+        current_soc = self.hardware.get_battery_soc()
+
+        # Send end notification (always, even if no charging happened)
+        await self.notifier.send_end_notification(
+            self.state.current_session,
+            current_soc=current_soc
+        )
 
         # Reset EV state
         self._logger.info(
@@ -718,6 +753,14 @@ class NidiaCoordinator:
             minimum_fallback=self.state.minimum_consumption_fallback,
         )
 
+        # Get EV energy (0 if ignored)
+        ev_energy = 0.0 if self.state.ignore_ev_in_calculations else self.state.ev.energy_kwh
+        if self.state.ignore_ev_in_calculations and self.state.ev.energy_kwh > 0:
+            self._logger.info(
+                "EV_IGNORED_IN_CALCULATION",
+                actual_ev_kwh=self.state.ev.energy_kwh
+            )
+
         # Create planning input
         planning_input = PlanningInput(
             current_soc_percent=current_soc,
@@ -726,7 +769,7 @@ class NidiaCoordinator:
             safety_spread_percent=self.state.safety_spread_percent,
             consumption_forecast_kwh=consumption_forecast,
             solar_forecast_kwh=solar_forecast,
-            ev_energy_kwh=self.state.ev.energy_kwh,
+            ev_energy_kwh=ev_energy,
             force_charge=self.state.force_charge_enabled,
             disable_charge=self.state.disable_charge_enabled,
             is_preview=for_preview,
@@ -821,24 +864,29 @@ class NidiaCoordinator:
             self._logger.info(
                 "EV_PROCESSED",
                 value=decision.value,
-                bypass=decision.bypass_should_activate
+                bypass=decision.bypass_should_activate,
+                ignored=self.state.ignore_ev_in_calculations
             )
 
-            # Start timer if needed
-            if decision.value > 0 and self.state.ev.timer_start is None:
+            # Start timer if needed (only if EV is not ignored)
+            if decision.value > 0 and self.state.ev.timer_start is None and not self.state.ignore_ev_in_calculations:
                 self.state.ev.timer_start = now
                 self._logger.info("EV_TIMER_STARTED")
 
-            # Control bypass
-            if decision.bypass_should_activate:
+            # Control bypass (skip if EV is ignored in calculations)
+            if self.state.ignore_ev_in_calculations:
+                self._logger.info("EV_BYPASS_SKIPPED_IGNORED")
+                await self.hardware.set_bypass(False)
+                self.state.ev.bypass_active = False
+            elif decision.bypass_should_activate:
                 await self.hardware.set_bypass(True)
                 self.state.ev.bypass_active = True
             else:
                 await self.hardware.set_bypass(False)
                 self.state.ev.bypass_active = False
 
-            # Handle timeout notification
-            if decision.is_timeout:
+            # Handle timeout notification (only if not ignored)
+            if decision.is_timeout and not self.state.ignore_ev_in_calculations:
                 elapsed = EVManager.get_elapsed_hours(self.state.ev.timer_start, now)
                 await self.notifier.send_ev_timeout_notification(decision.value, elapsed)
 
