@@ -873,11 +873,13 @@ class NidiaCoordinator:
                 self.state.ev.timer_start = now
                 self._logger.info("EV_TIMER_STARTED")
 
-            # Control bypass (skip if EV is ignored in calculations)
+            # Control bypass
+            # When ignore_ev is ON: bypass is ALWAYS active
+            # When ignore_ev is OFF: bypass follows normal EV logic
             if self.state.ignore_ev_in_calculations:
-                self._logger.info("EV_BYPASS_SKIPPED_IGNORED")
-                await self.hardware.set_bypass(False)
-                self.state.ev.bypass_active = False
+                self._logger.info("EV_BYPASS_FORCED_ON_IGNORED_MODE")
+                await self.hardware.set_bypass(True)
+                self.state.ev.bypass_active = True
             elif decision.bypass_should_activate:
                 await self.hardware.set_bypass(True)
                 self.state.ev.bypass_active = True
