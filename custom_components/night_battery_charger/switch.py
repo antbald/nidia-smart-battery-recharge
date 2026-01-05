@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .const import DOMAIN
 from .entities.switches import async_setup_switches
 
 
@@ -15,4 +16,5 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switch entities."""
-    await async_setup_switches(hass, entry, async_add_entities)
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    await async_setup_switches(hass, entry, coordinator, async_add_entities)

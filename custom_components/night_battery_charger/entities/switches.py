@@ -16,6 +16,46 @@ from ..const import DOMAIN
 from ..nidia_logging import get_logger
 
 
+class IgnoreEVSwitch(SwitchEntity):
+    """Switch to ignore EV energy in charge calculations."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:car-off"
+    _attr_translation_key = "ignore_ev"
+
+    def __init__(self, entry_id: str, coordinator) -> None:
+        """Initialize."""
+        self._coordinator = coordinator
+        self._logger = get_logger()
+
+        self._attr_unique_id = f"{entry_id}_ignore_ev"
+        self._attr_is_on = coordinator.state.ignore_ev_in_calculations
+
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry_id)},
+            name="Nidia Smart Battery Recharge",
+            manufacturer="Nidia",
+        )
+
+    async def async_turn_on(self, **kwargs) -> None:
+        """Turn on - ignore EV in calculations."""
+        self._coordinator.state.ignore_ev_in_calculations = True
+        self._attr_is_on = True
+        self._logger.info("IGNORE_EV_ENABLED")
+        # Recalculate plan without EV
+        await self._coordinator.recalculate_plan(for_preview=True)
+        self.async_write_ha_state()
+
+    async def async_turn_off(self, **kwargs) -> None:
+        """Turn off - include EV in calculations."""
+        self._coordinator.state.ignore_ev_in_calculations = False
+        self._attr_is_on = False
+        self._logger.info("IGNORE_EV_DISABLED")
+        # Recalculate plan with EV
+        await self._coordinator.recalculate_plan(for_preview=True)
+        self.async_write_ha_state()
+
+
 class DebugLoggingSwitch(SwitchEntity):
     """Switch to control debug file logging."""
 
@@ -88,9 +128,11 @@ class DebugLoggingSwitch(SwitchEntity):
 async def async_setup_switches(
     hass: HomeAssistant,
     entry: ConfigEntry,
+    coordinator,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switch entities."""
     async_add_entities([
+        IgnoreEVSwitch(entry.entry_id, coordinator),
         DebugLoggingSwitch(entry.entry_id, hass),
     ])

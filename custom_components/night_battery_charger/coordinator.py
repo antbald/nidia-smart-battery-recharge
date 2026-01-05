@@ -753,6 +753,14 @@ class NidiaCoordinator:
             minimum_fallback=self.state.minimum_consumption_fallback,
         )
 
+        # Get EV energy (0 if ignored)
+        ev_energy = 0.0 if self.state.ignore_ev_in_calculations else self.state.ev.energy_kwh
+        if self.state.ignore_ev_in_calculations and self.state.ev.energy_kwh > 0:
+            self._logger.info(
+                "EV_IGNORED_IN_CALCULATION",
+                actual_ev_kwh=self.state.ev.energy_kwh
+            )
+
         # Create planning input
         planning_input = PlanningInput(
             current_soc_percent=current_soc,
@@ -761,7 +769,7 @@ class NidiaCoordinator:
             safety_spread_percent=self.state.safety_spread_percent,
             consumption_forecast_kwh=consumption_forecast,
             solar_forecast_kwh=solar_forecast,
-            ev_energy_kwh=self.state.ev.energy_kwh,
+            ev_energy_kwh=ev_energy,
             force_charge=self.state.force_charge_enabled,
             disable_charge=self.state.disable_charge_enabled,
             is_preview=for_preview,
@@ -856,24 +864,29 @@ class NidiaCoordinator:
             self._logger.info(
                 "EV_PROCESSED",
                 value=decision.value,
-                bypass=decision.bypass_should_activate
+                bypass=decision.bypass_should_activate,
+                ignored=self.state.ignore_ev_in_calculations
             )
 
-            # Start timer if needed
-            if decision.value > 0 and self.state.ev.timer_start is None:
+            # Start timer if needed (only if EV is not ignored)
+            if decision.value > 0 and self.state.ev.timer_start is None and not self.state.ignore_ev_in_calculations:
                 self.state.ev.timer_start = now
                 self._logger.info("EV_TIMER_STARTED")
 
-            # Control bypass
-            if decision.bypass_should_activate:
+            # Control bypass (skip if EV is ignored in calculations)
+            if self.state.ignore_ev_in_calculations:
+                self._logger.info("EV_BYPASS_SKIPPED_IGNORED")
+                await self.hardware.set_bypass(False)
+                self.state.ev.bypass_active = False
+            elif decision.bypass_should_activate:
                 await self.hardware.set_bypass(True)
                 self.state.ev.bypass_active = True
             else:
                 await self.hardware.set_bypass(False)
                 self.state.ev.bypass_active = False
 
-            # Handle timeout notification
-            if decision.is_timeout:
+            # Handle timeout notification (only if not ignored)
+            if decision.is_timeout and not self.state.ignore_ev_in_calculations:
                 elapsed = EVManager.get_elapsed_hours(self.state.ev.timer_start, now)
                 await self.notifier.send_ev_timeout_notification(decision.value, elapsed)
 

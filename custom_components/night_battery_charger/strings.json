@@ -165,6 +165,9 @@
             }
         },
         "switch": {
+            "ignore_ev": {
+                "name": "Ignore EV in Calculations"
+            },
             "debug_logging": {
                 "name": "Debug Logging"
             }

@@ -211,6 +211,7 @@ class NidiaState:
     # Override flags
     force_charge_enabled: bool = False
     disable_charge_enabled: bool = False
+    ignore_ev_in_calculations: bool = False
 
     # Complex state objects
     current_plan: ChargePlan = field(default_factory=ChargePlan)
