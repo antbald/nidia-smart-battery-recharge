@@ -382,6 +382,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             if peak <= offpeak:
                 errors["base"] = "peak_must_be_higher"
 
+            # Validate entities exist
+            inverter_state = self.hass.states.get(user_input.get(CONF_INVERTER_SWITCH, ""))
+            soc_state = self.hass.states.get(user_input.get(CONF_BATTERY_SOC_SENSOR, ""))
+
+            if inverter_state is None and user_input.get(CONF_INVERTER_SWITCH):
+                errors[CONF_INVERTER_SWITCH] = "entity_not_found"
+            if soc_state is None and user_input.get(CONF_BATTERY_SOC_SENSOR):
+                errors[CONF_BATTERY_SOC_SENSOR] = "entity_not_found"
+
             if not errors:
                 return self.async_create_entry(title="", data=user_input)
 
@@ -389,7 +398,46 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         notify_services = self._get_notify_services()
 
         schema_dict = {
-            # Battery
+            # === ENTITIES SECTION ===
+            vol.Required(
+                CONF_INVERTER_SWITCH,
+                default=self._get_value(CONF_INVERTER_SWITCH, ""),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="switch")
+            ),
+            vol.Required(
+                CONF_BATTERY_SOC_SENSOR,
+                default=self._get_value(CONF_BATTERY_SOC_SENSOR, ""),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(
+                    domain="sensor", device_class="battery"
+                )
+            ),
+            vol.Required(
+                CONF_HOUSE_LOAD_SENSOR,
+                default=self._get_value(CONF_HOUSE_LOAD_SENSOR, ""),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor")
+            ),
+            vol.Required(
+                CONF_SOLAR_FORECAST_SENSOR,
+                default=self._get_value(CONF_SOLAR_FORECAST_SENSOR, ""),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor")
+            ),
+            vol.Required(
+                CONF_SOLAR_FORECAST_TODAY_SENSOR,
+                default=self._get_value(CONF_SOLAR_FORECAST_TODAY_SENSOR, ""),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor")
+            ),
+            vol.Optional(
+                CONF_BATTERY_BYPASS_SWITCH,
+                description={"suggested_value": self._get_value(CONF_BATTERY_BYPASS_SWITCH, "")},
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="switch")
+            ),
+            # === BATTERY SECTION ===
             vol.Required(
                 CONF_BATTERY_CAPACITY,
                 default=self._get_value(CONF_BATTERY_CAPACITY, DEFAULT_BATTERY_CAPACITY),

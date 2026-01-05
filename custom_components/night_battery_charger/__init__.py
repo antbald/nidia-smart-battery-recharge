@@ -1,9 +1,10 @@
 """The Nidia Smart Battery Recharge integration.
 
-Version 2.2.11 - Sync consumption history into state for dashboard averages:
-- New sensor with detailed consumption tracking attributes
-- Shows history days, last reading, weekday averages
-- Recent history visible in attributes
+Version 2.3.0 - Configuration and notifications improvements:
+- End-of-charge notifications now always sent (even if no charging occurred)
+- Bypass always activated when EV is charging
+- Options flow now allows changing all entity assignments
+- New service to delete individual consumption history records
 """
 
 from __future__ import annotations
@@ -173,7 +174,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Register update listener for options changes
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
 
-    _LOGGER.info("Nidia Smart Battery Recharge v2.2.11 initialized")
+    _LOGGER.info("Nidia Smart Battery Recharge v2.3.0 initialized")
     return True
 
 

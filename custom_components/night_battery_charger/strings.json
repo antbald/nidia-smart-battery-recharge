@@ -94,8 +94,14 @@
         "step": {
             "init": {
                 "title": "Nidia Settings",
-                "description": "Adjust your charging configuration.",
+                "description": "Adjust your charging configuration and entity assignments.",
                 "data": {
+                    "inverter_switch_entity_id": "Grid Charge Switch",
+                    "battery_soc_sensor_entity_id": "Battery SOC Sensor",
+                    "house_load_power_sensor_entity_id": "House Load Sensor",
+                    "solar_forecast_sensor_entity_id": "Solar Forecast Tomorrow",
+                    "solar_forecast_today_sensor": "Solar Forecast Today",
+                    "battery_bypass_switch": "Bypass Switch (Optional)",
                     "battery_capacity_kwh": "Battery Capacity",
                     "charging_window_start": "Charging Window Start",
                     "charging_window_end": "Charging Window End",
@@ -111,6 +117,12 @@
                     "notify_service": "Notification Service"
                 },
                 "data_description": {
+                    "inverter_switch_entity_id": "The switch that enables grid charging on your inverter.",
+                    "battery_soc_sensor_entity_id": "Sensor showing current battery level (0-100%).",
+                    "house_load_power_sensor_entity_id": "Sensor measuring house power consumption in Watts.",
+                    "solar_forecast_sensor_entity_id": "Tomorrow's expected solar production in kWh.",
+                    "solar_forecast_today_sensor": "Today's expected solar production in kWh.",
+                    "battery_bypass_switch": "Switch to enable direct grid-to-EV charging.",
                     "battery_capacity_kwh": "Total usable capacity of your battery system.",
                     "charging_window_start": "Time when the charging window opens.",
                     "charging_window_end": "Time when the charging window closes.",
@@ -128,6 +140,7 @@
             }
         },
         "error": {
+            "entity_not_found": "Entity not found. Please check the entity ID.",
             "peak_must_be_higher": "Peak rate must be higher than off-peak rate."
         }
     },

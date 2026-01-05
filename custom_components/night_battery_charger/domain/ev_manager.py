@@ -141,12 +141,17 @@ class EVManager:
     def should_activate_bypass(
         energy_balance: dict,
         is_timeout: bool = False,
+        ev_energy_kwh: float = 0.0,
     ) -> tuple[bool, str]:
         """Decide whether bypass should be activated.
+
+        Bypass is ALWAYS activated when EV is charging to ensure the EV
+        draws power from the grid instead of depleting the battery.
 
         Args:
             energy_balance: Energy balance from ChargePlanner.calculate_energy_balance()
             is_timeout: Whether timeout has been reached
+            ev_energy_kwh: EV energy being charged
 
         Returns:
             Tuple of (should_activate, reason)
@@ -154,10 +159,11 @@ class EVManager:
         if is_timeout:
             return False, "timeout"
 
-        if energy_balance["sufficient"]:
-            return False, "sufficient_energy"
+        # Always activate bypass when EV is charging (ev_energy > 0)
+        if ev_energy_kwh > 0:
+            return True, "ev_charging_active"
 
-        return True, "insufficient_energy"
+        return False, "no_ev_charging"
 
     @staticmethod
     def evaluate(
@@ -222,9 +228,9 @@ class EVManager:
         # Check timeout
         is_timeout = EVManager.is_timeout_reached(timer_start, now, timeout_hours)
 
-        # Decide bypass
+        # Decide bypass - always activate when EV is charging
         bypass_activate, bypass_reason = EVManager.should_activate_bypass(
-            energy_balance, is_timeout
+            energy_balance, is_timeout, ev_energy_kwh=value
         )
 
         return EVDecision(
