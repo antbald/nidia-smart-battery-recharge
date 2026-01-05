@@ -38,19 +38,26 @@ class IgnoreEVSwitch(SwitchEntity):
         )
 
     async def async_turn_on(self, **kwargs) -> None:
-        """Turn on - ignore EV in calculations."""
+        """Turn on - ignore EV in calculations, bypass always ON."""
         self._coordinator.state.ignore_ev_in_calculations = True
         self._attr_is_on = True
         self._logger.info("IGNORE_EV_ENABLED")
+        # Activate bypass (always on when ignoring EV)
+        await self._coordinator.hardware.set_bypass(True)
+        self._coordinator.state.ev.bypass_active = True
         # Recalculate plan without EV
         await self._coordinator.recalculate_plan(for_preview=True)
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
-        """Turn off - include EV in calculations."""
+        """Turn off - include EV in calculations, bypass follows EV logic."""
         self._coordinator.state.ignore_ev_in_calculations = False
         self._attr_is_on = False
         self._logger.info("IGNORE_EV_DISABLED")
+        # Deactivate bypass (will be controlled by EV logic)
+        if self._coordinator.state.ev.energy_kwh == 0:
+            await self._coordinator.hardware.set_bypass(False)
+            self._coordinator.state.ev.bypass_active = False
         # Recalculate plan with EV
         await self._coordinator.recalculate_plan(for_preview=True)
         self.async_write_ha_state()
