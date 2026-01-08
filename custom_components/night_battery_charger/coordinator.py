@@ -333,11 +333,36 @@ class NidiaCoordinator:
                     lifetime_savings=self.savings.state.lifetime_savings_eur
                 )
 
+                # Sync pricing with current config (in case user changed prices)
+                self._sync_pricing()
+
                 # Update state with loaded savings
                 self.state.savings.total_savings_eur = self.savings.state.total_savings_eur
                 self.state.savings.monthly_savings_eur = self.savings.state.monthly_savings_eur
                 self.state.savings.lifetime_savings_eur = self.savings.state.lifetime_savings_eur
                 self.state.savings.total_charged_kwh = self.savings.state.total_charged_kwh
+
+    def _sync_pricing(self) -> None:
+        """Sync SavingsCalculator pricing with current state.pricing config.
+
+        This ensures that calculations always use the latest pricing config
+        from the user's settings, even if the SavingsCalculator was loaded
+        from storage with old pricing values.
+        """
+        self.savings.update_prices(
+            price_peak=self.state.pricing.price_peak,
+            price_offpeak=self.state.pricing.price_offpeak,
+            price_f1=self.state.pricing.price_f1,
+            price_f2=self.state.pricing.price_f2,
+            price_f3=self.state.pricing.price_f3,
+            pricing_mode=self.state.pricing.pricing_mode,
+        )
+        self._logger.debug(
+            "PRICING_SYNCED",
+            peak=self.state.pricing.price_peak,
+            offpeak=self.state.pricing.price_offpeak,
+            mode=self.state.pricing.pricing_mode,
+        )
 
     async def _save_data(self) -> None:
         """Save data to storage."""
@@ -715,6 +740,9 @@ class NidiaCoordinator:
 
         # Record savings
         if session.charged_kwh > 0:
+            # Ensure we're using current pricing config
+            self._sync_pricing()
+
             savings_record = self.savings.record_charge_session(
                 charged_kwh=session.charged_kwh,
                 charge_date=date.today(),
@@ -722,7 +750,9 @@ class NidiaCoordinator:
             self._logger.info(
                 "SAVINGS_RECORDED",
                 charged_kwh=session.charged_kwh,
-                savings_eur=savings_record.savings
+                savings_eur=savings_record.savings,
+                night_rate=self.savings.get_night_rate(),
+                day_rate=self.savings.get_day_rate(),
             )
 
             # Update state with savings
